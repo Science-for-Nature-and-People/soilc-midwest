@@ -2,7 +2,7 @@ library(rnassqs)
 
 setwd("/home/shares/soilcarbon/soilc-midwest/code/")
 
-api_key <- as.character(read.table("code/NASS_API_key.txt", header = F)[1,1])       # api key
+api_key <- as.character(read.csv("NASS_API_key.csv", header = F)[1,1])       # api key
 # Specify the range of years across which you want to collect data
 years <- as.list(2000:2017)
 d <- plyr::ldply(years, function(x){
