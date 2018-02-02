@@ -1,0 +1,62 @@
+# Getting raw data
+
+## Query NASS corn yields
+
+1. Get API key
+(figure out R framework for querying APIs)
+
+maybe:
+https://github.com/potterzot/rnassqs
+library(nassqs)
+params = list("commodity_desc"="CORN", "year__GE"=2012, "state_alpha"="VA")
+req = nassqs_GET(params=params, key=your_api_key)
+qsJSON = nassqs_parse(req)
+
+
+2. Query NASS quickstats for data_item =  "CORN, GRAIN - YIELD, MEASURED IN BU / ACRE"
+query = {"source_desc": ["SURVEY"],
+         "short_desc": data_item,
+         "year__GE": str(min_year)
+         }
+
+## Query NASS irrigated
+
+    data_item_list = ['CORN, GRAIN, IRRIGATED - ACRES HARVESTED',
+    'CORN, GRAIN - ACRES HARVESTED']
+
+    agg_level = 'COUNTY'
+    query = {"source_desc": ["CENSUS"],
+             "short_desc": data_item,
+             "year": str(year),
+             'sector_desc': 'CROPS',
+             'agg_level_desc': agg_level
+            }
+
+  cens = [1997, 2002, 2007, 2012] # which one?
+
+## SSURGO data
+
+1. Valu1 table
+
+- download state level gSSURGO data for NRCS data gateway
+- ogr2ogr -f CSV valu1.csv valu_fy2016.gdb
+
+2. Tabular data
+
+- download STATSGO state level data from NRCS datagateway
+- probably want to automate ingestion of these tabular data
+
+## CDL
+
+What year? Corn frequency map?
+
+- catalog
+
+## Spatial analysis
+- Looks like we should use sf
+
+to get dependencies I did: (assuming gdal not installed currently)
+brew install proj
+brew install geos
+brew install udunits
+brew install gdal2 --with-armadillo --with-complete --with-libkml --with-unsupported
