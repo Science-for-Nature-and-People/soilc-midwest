@@ -9,8 +9,10 @@ Accomplished at NCEAS:
 To do: 
 
 1.) Make decsions re: filtering NASS yield data
-	- Availbility of CV metrics
-	- Include/exclude counties with little corn production prior to ethanol legislation? Or truncate entire time series at point of leg introduction (circa 2001)?
+	X Availbility of CV metrics - 2/27/18, no CV metrics available for corn yield
+	- Include/exclude counties with little corn production prior to ethanol legislation? Or truncate entire time series at point of      leg introduction (circa 2001)?
+	- How to use irrigation numbers? Take average from 3 census years to get thresholds?
+	  - Ag census only began collecting info on irrigation starting in 1997
 2.) Decide how to use SSURGO and STATSGO data
 	- Which variables?
 	- Whether to add measurement error?
@@ -18,7 +20,7 @@ To do:
 	- Whether and how to aggregate data across spatial scales (i.e. horizon -> component -> mukey -> county)
 3.) Give Steve skeleton dataset to begin testing Bayesian modeling framework
 4.) Clean/consolidate yield and soils data pipelines
-5.) Decide how to use CDL crop layer to clip soils data (current thinking, use crop frequency layer to clip grids that are used for corn production)
+5.) Decide how to use CDL crop layer to clip soils data (current thinking, use crop frequency layer to clip grids that are used for     corn production)
 6.) Model with final dataset
 	- Decide on variability metrics, methods
 	- Use Bayesian modeling? Or ML?
