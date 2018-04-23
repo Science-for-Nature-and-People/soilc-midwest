@@ -1,4 +1,6 @@
-February 2, 2018:
+//Dan's notes//
+
+February 2, 2018::
 
 Accomplished at NCEAS:
 
@@ -10,9 +12,16 @@ To do:
 
 1.) Make decsions re: filtering NASS yield data
 	X Availbility of CV metrics - 2/27/18, no CV metrics available for corn yield
-	- Include/exclude counties with little corn production prior to ethanol legislation? Or truncate entire time series at point of      leg introduction (circa 2001)?
+	- Include/exclude counties with little corn production prior to ethanol legislation? Or truncate entire time series at point of leg introduction (circa 2001)?
+	  - To consider, consistency of data reporting...need contiguous data
+	  - Alternatively, can use the crop frequency layer -- check metadata for time period and changes in classification methods
+	  - Corn yield data goes back really far, though. Is there a trade-off in cutting things off to such a recent time point.
+	  - Corn prior to WWII was basically a different crop looking at yields, so I think ~1950 is the farthest back we could go. 
 	- How to use irrigation numbers? Take average from 3 census years to get thresholds?
-	  - Ag census only began collecting info on irrigation starting in 1997
+	  - Ag census only began collecting info on irrigation starting in 1997 --> USE 1997 as yield data cut off
+	  - In some counties, irrigation numbers change frequently (surprising)
+	  - Suggest subsetting based on both % irrigated, but also some kind of variance % irrigated figure
+	    - Keep track of these smaller analyses used to make filtering choices throughout...
 2.) Decide how to use SSURGO and STATSGO data
 	- Which variables?
 	- Whether to add measurement error?
@@ -28,3 +37,36 @@ To do:
 	- Coefficent strengths or variable importance
 	- Maps of variability across corn growing areas
 8.) Explore possibility of isolating drought year data...
+
+March 2, 2018::
+
+Decisions made:
+- Use 1997 as a cutoff for yield data given that the data on irrigated acres starts then
+- Don't try to parse out yield data based on different ag census periods. All yield data should be across the same time period and number of years. -->
+- Take means of % irrigated acreage across the 4 census years, as well as some measure of variation. Only select counties that have had consistent number of irrigated acres since 1997 and a % irrigated that falls in the bottom of the distibution (TBD, but likely around 5% or less).
+
+To do:
+
+1.) To do items 2 through 7 from 2/2/2018
+2.) Check that data subset from NASS is contiguous across time period 
+3.) Provide Steve with toy dataset to test out his Stan code (subset 1 state from 1997- period) DONE
+4.) Make pull requests for code review to Emma once NASS data ETL is finished
+5.) Begin Markdown file that includes smaller analyses used to make data filtering decisions. Will help to construct arguments in future paper. DONE
+
+
+March 21, 2018::
+
+To date:
+- Completed NASS data pipeline and filtering, still some decisions to be made and some questions that popped up for me in the process of looking at data
+- Developing script to load SSURGO data. Encountering a problem I remember encountering before - the valu1.gdb database has no spatial features and is meant to be joined in a GIS with the MU polygons in SSURGO. Going to see if gSSURGO includes soil C data and would circumvent this problem, but not sure.
+
+To do:
+1.) Test different ways to filter out counties where corn isn't a priority crop
+2.) Check out droughtmonitor.unl.edu
+3.) Plot irrigated acres against total corn acreage to look for red flags
+4.) Interpolate missing yield data by looking at % drop...
+5.) Connect with Brent Myers?
+  
+
+
+

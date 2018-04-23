@@ -1,0 +1,32 @@
+---
+title: "analysis_notes"
+author: "Dan Kane"
+date: "3/7/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+We decided to limit data to 1997 and after. This decision was primarily guided by the fact that data on number of irrigated acres was unavailable before 1997. 
+
+```{r Limiting data to 1997 and after}
+
+```
+
+The majority of counties represented in this analysis had less than 5% irrigated acres according to the USDA ag census. As such, we decided to exclude all counties with greater than 5% irrigated acres.
+
+(Across the different census years, counties that have NAs for acres irrigated are often the same, indicates that those counties never report irrigation numbers to Ag Census or have insufficient number of irrigated operations to report, will set those NAs to zero for now, but worth dicussing)
+
+```{r Subsetting out counties based on irrigation info}
+hist(d.acres.summary$Mean.irrigated)
+
+
+```
+
+(Checked to see if data were always contiguous across years. Interestingly, in a few of the years I know to be drought years, there are no data reported (2008, 2012). Was going to filter data based on criterion that all counties need a full 21 years of data, but maybe it needs to be more specific than that.)
+
+```{r Eliminating counties without contiguous yield observations over the whole period}
+
+```

@@ -34,7 +34,7 @@ names(model_data)[c(5,9)] <- c('county','yield')
 ## Subset for one county
 md_onecounty <- filter(model_data, county=="PUTNAM")
 ## Weird alternating high and low numbers. Take only high
-md_onecounty <- filter(md_onecounty, yield > 200)
+md_onecounty <- filter(md_onecounty, yield < 200)
 
 # ## Generate county-level dummies and merge back original data
 # md_dummy <- model_data[,c('county','yield')] %>% 
