@@ -67,6 +67,12 @@ To do:
 4.) Interpolate missing yield data by looking at % drop...
 5.) Connect with Brent Myers?
   
+April 23, 2018::
+
+- Check when classification scheme on crop frequency data layer changed. 2010?
+- Use all of crop frequency raster, weight by number of years in corn per county. 
+
+
 
 
 
