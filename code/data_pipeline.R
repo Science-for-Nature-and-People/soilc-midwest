@@ -106,37 +106,3 @@ d %>%
 d %>%
   add_count(FIPS_county) %>%
   filter(n == 21) -> d
-
-# Load gSSURGO data ####
-
-library(rgdal)
-library(sf)
-
-d.valu1 <- sf::st_read(dsn = "/home/shares/soilcarbon/soilc-midwest/data/soil/valu_fy2016.gdb", layer = "valu1")
-
-states <- paste(unique(d$State.alpha), collapse = "|")
-
-gdb.dir <- "/home/shares/soilcarbon/soilc-midwest/data/soil/gssurgo/"
-state.gdbs <- list.files(gdb.dir)[grep(x=list.files(gdb.dir), pattern = states)]
-
-test.dir <- "/home/shares/soilcarbon/soilc-midwest/data/soil/gssurgo/gSSURGO_AL.gdb"
-
-test <- readOGR(dsn = "/home/shares/soilcarbon/soilc-midwest/data/soil/gssurgo/gSSURGO_AL.gdb",layer = "MUPOLYGON")
-
-test@data
-
-# Filter out soil data cells that are not primarily corn-growing ####
-
-library(tigris)
-library(raster)
-library(sp)
-library(rgeos)
-
-county.boundaries <- counties(state = c(d$FIPS))
-county.boundaries <- county.boundaries[county.boundaries@data$GEOID %in% d$FIPS_county,]
-
-crop.freq <- raster("/home/shares/soilcarbon/soilc-midwest/data/crop_frequency/crop_frequency_corn_2008-2017.img")
-
-
-
-
