@@ -11,7 +11,7 @@ library(tidyverse)  # For reading in and manipulating data
 library(rstan)      # For interfacing with Stan
 
 # READ DATA
-model_data <- read_csv("/home/shares/soilcarbon/soilc-midwest/data/IL_toy_data.csv")
+model_data <- read_csv("/home/shares/soilcarbon/soilc-midwest/IL_toy_data.csv")
 
 # MANIPULATE DATA
 ## Drop NA values
@@ -51,7 +51,7 @@ dat_list <- list(
 
 # CALL STAN MODEL
 ar1_model <- stan(
-                    file = "/home/shares/soilcarbon/soilc-midwest/mock_model/stan/yield-ar1_mock.stan", 
+                    file = "/home/shares/soilcarbon/soilc-midwest/code/models/mock_model/stan/yield-ar1_mock.stan", 
                     data = dat_list, 
                     control = list(adapt_delta=0.99,max_treedepth=15), chains = 4
 )
