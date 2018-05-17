@@ -1,4 +1,3 @@
-//Dan's notes//
 
 February 2, 2018::
 
@@ -72,6 +71,10 @@ April 23, 2018::
 - Check when classification scheme on crop frequency data layer changed. 2010?
 - Use all of crop frequency raster, weight by number of years in corn per county. 
 
+- Temporal yield with weather variables--need to generate reliable drought severity index
+- All models with latent soil variables
+- Check for need for spatial error modeling?
+- Need for more explicit temporal model, like specific autoregressive model or temporal error structure?
 
 
 
