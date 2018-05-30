@@ -41,8 +41,16 @@ cor(a,b) #0.65
 acf(d2)
 
 # Checking for temporal autocorrelation without collapsing data
-acf(resid(lm(Yield.bu.acre ~ as.factor(Year) + NAME, data=t.dat)))
-acf(resid(lm(Acres.harvested ~ Year + NAME,data=t.dat)))
+lm1 <- lm(Yield.bu.acre ~ as.factor(Year) + NAME, data=t.dat)
+lm2 <- lm(Acres.harvested ~ Year + NAME,data=t.dat)
+
+plot(lm1)
+plot(lm2)
+
+acf(resid(lm1))
+acf(resid(lm2))
+
+influence.measures(lm1)
 
 ## Looks like acres harvested has temporal errors, but not yield
 ## Lets look some more
@@ -64,3 +72,6 @@ m1AR1 <- bam(Acres.harvested ~ as.factor(Year)+NAME, rho = r1, data=t.dat, AR.st
 par(mfrow=c(1,2), cex=1.1)
 acf_resid(m1)
 acf_resid(m1AR1)
+
+
+plot(ts(d.IL,start=c(1997,1),fr=20))
