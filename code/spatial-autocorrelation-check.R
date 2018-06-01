@@ -29,7 +29,7 @@ c.data <- select(d,FIPS_county,Year,Yield.bu.acre) %>%
 names(c.data)[2] <- 'median.yield'
 
 ## Merge with spatial data frame and drop NA values
-combined <- sp::merge(sub.counties,c.data,by.x="GEOID10",by.y="FIPS_county") %>%
+combined <- sp::merge(sub.counties,c.data,by.x="GEOID",by.y="FIPS_county") %>%
   subset(is.na(median.yield)==FALSE)
 
 ## Plot county median yield
