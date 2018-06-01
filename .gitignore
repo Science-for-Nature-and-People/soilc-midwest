@@ -1,2 +1,6 @@
 .Rproj.user
-/data
+/data/soil
+/data/metadata
+/data/crop_frequency
+/data/zip_archive
+/KBS
