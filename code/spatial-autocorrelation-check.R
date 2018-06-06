@@ -1,3 +1,8 @@
+#######################################################
+# Code to check spatial autocorrelation in data set   #
+# Written by: Steve Wood  & Jeff Evans                #
+# Last update: June 1, 2018                           #
+#######################################################
 
 # LOAD LIBRARIES
 library(tidyverse)

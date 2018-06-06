@@ -1,0 +1,16 @@
+# Spatial auto-correlation notes
+
+## From Jeff Evans
+### Email 1
+As far as autocorrelation, with the degree of global autocorrelation present in your data, most would choose to only deal with the first-order effect and ignore the second-order. The only real way to deal with local autocorrelation is to treat it as a traditional statistical nonstationarity process. However, there are few satisfactory statistical methods for this problem. This is one of the reasons that GWR will not just die. Even huge opponents of the method, myself included, will admit that it is one of the few ways to account for high levels of spatial nonstationarity in spatial data. Some also refer to these type of higher-order spatial effects as spatial outliers and can be treated such. The one thing that always comes to mind, when facing this issue, is to apply a sampling approach, following an MCMC with a distribution that controls for the local autocorrelation. This has been done successfully but, with little evidence that it is worth the effort.
+ 
+I have no absolute answer here but, one should always test for higher dimensional spatial process and, at least, incorporate it into your inference of the data and corresponding model results. It would seem that the juxtaposition of autocorrelative structures would reveal some important characteristics in the data. The cluster values are exactly what they sound like, autocorrelation representing the juxtaposition of “High surrounded by High”, “High surrounded by Low”, “Low surrounded by High” and “Low surrounded by Low”, along with non-significant autocorrelation values.
+
+Oh, and I also meant to say that the most problematic values are those that are juxtaposed with the opposite values (ie., high-low and low-high) as these will likely act as true spatial outliers and have a potentially adverse influence on a model. The “like value” clustering would likely be dealt with using a global autocorrelation term or random effect. 
+
+### Email 2
+I asked: "How much of this do you think would be dealt with using traditional fixed effects of spatially varying properties, like soil and climate? Is there a good way to test spatial autocorrelation after inclusion of those variables, like you could do for temporal autocorrelation?"
+
+Jeff: There is always the argument to made that if the model is correctly specified, spatial effects can be partialed out on the x side of the equation. For testing the autocorrelation of a model you can directly test the residuals or use the Lagrange Multiplier (1996) test for spatial dependence and evaluate models based on the presence of certain covariates.
+ 
+Anselin, L., Bera, A. K., Florax, R. & Yoon, M. J. (1996). Simple diagnostic tests for spatial dependence. Regional Science and Urban Economics, 26, 77–104.
