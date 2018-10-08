@@ -10,7 +10,7 @@ library(tidyverse)      # For reading in data
 library(rstan)          # For interfacing with Stan
 
 # READ DATA
-load("data/IL_toy_data_05112018.RData")
+load("data-subset/IL_toy_data_05112018.RData")
 
 # SUBSET DATA
 cv.data <- select(d.IL.summary,c('CV.yield','ORCDRC.sl3','PHIKCL.sl3'))
@@ -40,8 +40,8 @@ temp.model <- stan(file = "code/models/stan/linear-model.stan",
                    control = list(adapt_delta=0.99,max_treedepth=15), chains = 2)
 
 ## Model results
-print(model,pars='beta',probs=c(0.05,0.95))
-plot(model,pars=c("beta_std"))
+print(cv.model,pars='beta',probs=c(0.05,0.95))
+plot(cv.model,pars=c("beta_std"))
 
 print(temp.model,pars='beta',probs=c(0.05,0.95))
 plot(temp.model,pars=c("beta_std"))
@@ -50,7 +50,7 @@ plot(temp.model,pars=c("beta_std"))
 
 ## Posterior predictive checks
 ### Corn yield
-y_pred <- extract(model,pars='y_tilde')
+y_pred <- extract(cv.model,pars='y_tilde')
 y_pred <- unlist(y_pred, use.names=FALSE)
 yield.pp.data <- data.frame(
   c(y_pred,data.list$y),
