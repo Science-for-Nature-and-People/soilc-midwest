@@ -34,14 +34,10 @@ drought %>%
   
 drought %>%
   group_by(Year, FIPS, State, County) %>%
-  dplyr::summarise(DSCI.mean = mean(DSCI), DSCI.median = median(DSCI), DSCI.mode = getmode(DSCI)) -> 
+  summarise(DSCI.mean = mean(DSCI), DSCI.median = median(DSCI), DSCI.mode = getmode(DSCI)) -> 
   drought.summary
   
-drought %>%
-  group_by(Year, FIPS, State, County) %>%
-  mutate(Drought_threshold = 
-  length(.[DSCI > 200,])) -> test
-  
+save(list = c("drought.summary"), file = "data/weather/DSCI_summary_stats.county.by.year.RData")
 
 
 
