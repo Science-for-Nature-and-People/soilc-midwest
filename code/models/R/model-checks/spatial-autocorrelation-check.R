@@ -21,29 +21,44 @@ sub.counties <- subset(counties, GEOID %in% unique(d$FIPS_county))
 
 # SPATIAL AUTOCORRELATION CHECKING
 ## Regress yield against year for each county
+cv <- function(x) {
+  return(mean(x)/sd(x))
+}
+
 model <- d %>% 
   as.tibble() %>% 
   dplyr::select(FIPS_county,Year,Yield.bu.acre) %>%
   nest(-FIPS_county) %>%
-  mutate(fit = map(data, ~ median(predict(loess(Yield.bu.acre ~ Year, span = 0.91, data = .)))))
+  mutate(fit = map(data, ~ cv(predict(loess(Yield.bu.acre ~ Year, span = 0.91, data = .)))))
 
 ## Collapse to county-level yield score
 c.data <- dplyr::select(d,FIPS_county,Year,Yield.bu.acre) %>% 
   spread(Year,Yield.bu.acre) %>% 
   cbind(unlist(model$fit)) %>%
   dplyr::select(FIPS_county,`unlist(model$fit)`)
-names(c.data)[2] <- 'median.yield'
+names(c.data)[2] <- 'cv'
 
 ## Merge with spatial data frame and drop NA values
 combined <- sp::merge(sub.counties,c.data,by.x="GEOID",by.y="FIPS_county") %>%
-  subset(is.na(median.yield)==FALSE)
+  subset(is.na(cv)==FALSE)
 
 ## Plot county median yield
-brks <- quantile(combined$median.yield, seq(0,1,1/7))
-cols <- grey((length(brks):2)/length(brks))
+brks <- quantile(combined$cv, seq(0,1,1/7))
+# cols <- grey((length(brks):2)/length(brks))
+cols <- c("#d9f0a3","#addd8e","#78c679","#41ab5d","#238443","#006837","#004529")
 dens <- (2:length(brks))*3
-maps::map('usa')
-plot(combined, col=cols[findInterval(combined$median.yield, brks, all.inside=TRUE)] , add = T)
+maps::map('usa', resolution = 0, projection = proj, mar=c(1,1,par("mar")[3],0.1))
+plot(combined, col=cols[findInterval(combined$cv, brks, all.inside=TRUE)], add = T, lwd = 0.0001)
+
+
+states <- c('01', '04', '05', '06', '08', '09', '11', '10', '12', '13', '19', '16',
+            '17', '18', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29',
+            '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41',
+            '42', '44', '45', '46', '47', '48', '49', '50', '51', '53', '54', '55',
+            '56')
+forty.eight <- subset(counties, STATEFP %in% states)
+plot(forty.eight, lwd=0.1)
+plot(combined, col=cols[findInterval(combined$cv, brks, all.inside=TRUE)], add = T, lwd = 0.0001)
 
 
 # EVALUATE GLOBAL AND LOCAL AUTOCORRELATION
