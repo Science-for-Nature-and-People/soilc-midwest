@@ -26,15 +26,18 @@ drought %>%
 
 ### Split release date into Y-M-D and subset to growing season
 
-drought$ReleaseDate <- as.character(drought$ReleaseDate)
+drought$MapDate <- as.character(drought$MapDate)
 
 drought %>%
-  separate(ReleaseDate, into = c("Year","Month","Day"), sep = c(4,6)) %>%
+  separate(MapDate, into = c("Year","Month","Day"), sep = c(4,6)) %>%
   filter(as.numeric(Month) %in% c(4:9)) -> drought
   
 drought %>%
   group_by(Year, FIPS, State, County) %>%
-  summarise(DSCI.mean = mean(DSCI), DSCI.median = median(DSCI), DSCI.mode = getmode(DSCI)) -> 
+  summarise(DSCI.sum = sum(DSCI), 
+            DSCI.mean = mean(DSCI), 
+            DSCI.median = median(DSCI), 
+            DSCI.mode = getmode(DSCI)) -> 
   drought.summary
   
 save(list = c("drought.summary"), file = "data/weather/DSCI_summary_stats.county.by.year.RData")
