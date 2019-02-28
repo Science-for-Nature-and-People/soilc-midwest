@@ -1,7 +1,7 @@
 ---
 title: "analysis_notes"
 author: "Dan Kane"
-date: "3/7/2018"
+date: "2/25/2018"
 output: html_document
 ---
 
@@ -9,24 +9,37 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-We decided to limit data to 1997 and after. This decision was primarily guided by the fact that data on number of irrigated acres was unavailable before 1997. 
+Step 1: Import corn yield data from NASS API
 
-```{r Limiting data to 1997 and after}
+First, we called in all data on a per county basis for corn yield (bushels per acre) and corn acres harvested from the USDA National Agricultural Statistics Service API using the 'rnassqs' package. We limited data to 2000 and after. This decision was made for three reasons: 
+  1.) Data on irrigation, which we use in the next step to filter to counties that would actually be impacted by        drought, was only available beginning in 1997. 
+  2.) Around this time adoption of modern GMO corn genetics was increasing. Modern transgenic corn led to a marked increase in yields, meaning data prior to adoption are less comparable. 
+  3.) Data on drought patterns across CONUS were only available for 2000 and forward. (*NOTE: did we filter to 2000 forward in a later step?)
+
+```{r NASS data import}
 
 ```
 
-The majority of counties represented in this analysis had less than 5% irrigated acres according to the USDA ag census. As such, we decided to exclude all counties with greater than 5% irrigated acres.
+Step 2: Subset yield data to counties where <5% of acres were irrigated 
 
-(Across the different census years, counties that have NAs for acres irrigated are often the same, indicates that those counties never report irrigation numbers to Ag Census or have insufficient number of irrigated operations to report, will set those NAs to zero for now, but worth dicussing)
+Data on corn yields from counties with high levels of irrigation would likely have confounded our analysis, so we chose to filter data to those counties in which there were relatively fewer irrigated acres over the study period. To do this, we imported all data on the number of irrigated corn acres harvested from the USDA agricultural census in the years 1997, 2002, 2007, and 2012 using the 'nassqs' package again to access the USDA NASS API. We then divided this number by the total number of corn acres harvested for each county (those data were called in in step 1) to generate a 'Percent Irrigated' figure for each year of the census. NAs were assumed to mean 'no data reported' and converted to '0.' These data were then averaged across all four census years. 
+
+The majority of counties represented in this analysis had less than 5% irrigated acres according to the USDA ag census. As such, we decided to exclude all counties with greater than 5% irrigated acres. 
 
 ```{r Subsetting out counties based on irrigation info}
-hist(d.acres.summary$Mean.irrigated)
+
 
 
 ```
 
-(Checked to see if data were always contiguous across years. Interestingly, in a few of the years I know to be drought years, there are no data reported (2008, 2012). Was going to filter data based on criterion that all counties need a full 21 years of data, but maybe it needs to be more specific than that.)
+Step 3: Subset to counties with contiguous yield data
+
+In order to calculate reasonable MYP and variability figures, data need to be contiguous across the study period. As such, we subsetted the data to those counties for which we had contiguous data. 
+
+(*NOTE: Interestingly, in a few of the years I know to be drought years, there are no data reported (2008, 2012). Was going to filter data based on criterion that all counties need a full 21 years of data, but maybe it needs to be more specific than that.)
 
 ```{r Eliminating counties without contiguous yield observations over the whole period}
 
 ```
+
+

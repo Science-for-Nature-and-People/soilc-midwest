@@ -1,3 +1,6 @@
 .Rproj.user
 /data
 /KBS
+/.RData
+/.Rhistory
+/figures

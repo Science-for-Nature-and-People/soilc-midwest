@@ -76,6 +76,18 @@ April 23, 2018::
 - Check for need for spatial error modeling?
 - Need for more explicit temporal model, like specific autoregressive model or temporal error structure?
 
+June 7, 2018::
+
+- 
+
+
+January 2019:
+How we dealth with drought. 
+1. drought-data-API-call.R : Pre-select counties and pull from API
+1. drought-data-processing.R is main script to process data.
+
+
+
 
 
 

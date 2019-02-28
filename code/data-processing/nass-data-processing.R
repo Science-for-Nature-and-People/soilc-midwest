@@ -5,11 +5,9 @@ library(ggplot2)
 library(tidyr)
 library(reshape2)
 
-setwd("/home/shares/soilcarbon/soilc-midwest/code/")
-
-api_key <- as.character(read.csv("NASS_API_key.csv", header = F)[1,1])       # api key
+api_key <- as.character(read.csv("code/NASS_API_key.csv", header = F)[1,1])       # api key
 # Specify the range of years across which you want to collect data
-years <- as.list(1997:2017)
+years <- as.list(2000:2017)
 # Call in all corn yield data via NASS API ####
 d <- plyr::ldply(years, function(x){
   nassqs(params = list("short_desc" = "CORN, GRAIN - YIELD, MEASURED IN BU / ACRE", 
@@ -22,7 +20,9 @@ d$year <- as.numeric(d$year)
 
 # Combine state FIPS code and county code
 d$FIPS_county <- paste(d$state_fips_code, d$county_code, sep = "")
-d.save <- d
+
+
+# Rename columns, subset to those needed for analysis, eliminate spurious data
 d <- d %>%
   filter(county_code != 998,
          agg_level_desc %in% "COUNTY") %>%
@@ -32,7 +32,7 @@ d <- d %>%
   spread(variable, Value) %>%
   rename(Acres.harvested = ACRES, Yield.bu.acre = `BU / ACRE`) -> d
 
-
+# Remove commas in yield and acres numbers, convert to numeric
 d$Yield.bu.acre <- as.numeric(gsub(pattern = ",", replacement = "", d$Yield.bu.acre))
 d$Acres.harvested <- as.numeric(gsub(pattern = ",", replacement = "", d$Acres.harvested))
 
@@ -95,48 +95,15 @@ d.acres.summary %>%
   filter(Mean.irrigated < 5) %>%
   filter(Irrigated.sd <= 1) -> d.acres.summary
 
-# Create filter to select counties that are 5 percent or less irrigated, 
-# choice of 5 percent based on dsitribution of percentages, vast majority of counties are 5 percent or less irrigated
-
 d %>%
   filter(FIPS_county %in% d.acres.summary$FIPS_county) -> d
 
 # Filter out any counties without contiguous corn yield observations
 
 d %>%
-  add_count(FIPS_county) %>%
-  filter(n == 21) -> d
-
-# Load gSSURGO data ####
-
-library(rgdal)
-library(sf)
-
-d.valu1 <- sf::st_read(dsn = "/home/shares/soilcarbon/soilc-midwest/data/soil/valu_fy2016.gdb", layer = "valu1")
-
-states <- paste(unique(d$State.alpha), collapse = "|")
-
-gdb.dir <- "/home/shares/soilcarbon/soilc-midwest/data/soil/gssurgo/"
-state.gdbs <- list.files(gdb.dir)[grep(x=list.files(gdb.dir), pattern = states)]
-
-test.dir <- "/home/shares/soilcarbon/soilc-midwest/data/soil/gssurgo/gSSURGO_AL.gdb"
-
-test <- readOGR(dsn = "/home/shares/soilcarbon/soilc-midwest/data/soil/gssurgo/gSSURGO_AL.gdb",layer = "MUPOLYGON")
-
-test@data
-
-# Filter out soil data cells that are not primarily corn-growing ####
-
-library(tigris)
-library(raster)
-library(sp)
-library(rgeos)
-
-county.boundaries <- counties(state = c(d$FIPS))
-county.boundaries <- county.boundaries[county.boundaries@data$GEOID %in% d$FIPS_county,]
-
-crop.freq <- raster("/home/shares/soilcarbon/soilc-midwest/data/crop_frequency/crop_frequency_corn_2008-2017.img")
-
-
-
+  group_by(FIPS_county) %>%
+  tally() -> test
+  
+  #add_count(FIPS_county) -> test #%>%
+  # filter(n >= 16) -> test
 

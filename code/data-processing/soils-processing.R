@@ -45,31 +45,52 @@ sub.counties <- sp::spTransform(sub.counties, crs(soils.stack))
 # Crop raster by counties
 crop.stack <- crop(soils.stack, extent(sub.counties))
 
+### FILTER DATA ####
+## Filter out soil data cells that are not primarily corn-growing #
+# Import raster of corn frequency 2008-2017. 
+# Each cell categorized based on number of years it has been used for corn over the past 10 years
+crop.freq <- brick("data/crop_frequency/crop_frequency_corn_2008-2017.img")
+# Split 'sub.counties' polygon object into a list of individual polygons. 
+# This makes it possible to use split-apply-combine on downstream operations and not overload memory
+sub.counties.list <- sapply(sub.counties$GEOID, function(x) sub.counties[sub.counties$GEOID == x,])
 
-#### EXTRACT DATA ####
-results <- raster::extract(crop.stack,
-        sub.counties,
-        fun=mean,
-        na.rm=T
-)
+# Crop the corn frequency layer to each county then change projection and resolution to match soils data
+crop.freq.by.county <- lapply(sub.counties.list, function(x) crop(crop.freq, x))
+crop.freq.by.county <- lapply(crop.freq.by.county, function(x) projectRaster(x, crs = crs(crop.stack), res = 100))
 
+# Reclassify cells in each crop frequency by county layer such that 0 and 1 cells are NA and all else are 1. 
+rcl.m <- matrix(c(-Inf, 1, NA,
+                  1, Inf,1), 
+                ncol=3, 
+                byrow=TRUE)
+corn.cells.by.county <- lapply(crop.freq.by.county, function(x) reclassify(x, rcl.m))
+
+# Mask the soils data to just corn growing cells for each county
+soil.stack.corn.cells.by.county <- lapply(corn.cells.by.county, function(x) {
+  mask(resample(crop.stack, x), x)
+})
+
+# Summarize soils data for each county
+soil.corn <- plyr::ldply(soil.stack.corn.cells.by.county, function(x) cellStats(x, 'mean'))
+names(soil.corn)[1] <- "FID"
 
 #### GET TAXONOMY ####
 tax <- raster("data/soil/SoilGridsUS/TAXgg_M_100m.tif")
 tax.cat <- read_csv("data/soil/SoilGridsUS/TAXgg_M_100m.csv")
 
-sub.counties <- sp::spTransform(sub.counties, crs(tax))
-crop.tax <- crop(tax, extent(sub.counties))
+soil.tax.corn.cells.by.county <- lapply(corn.cells.by.county, function(x) {
+  mask(resample(tax, x), x)
+})
 
-tax.res <- raster::extract(crop.tax,
-                           sub.counties,
-                           fun=mode,
-                           na.rm=T
-)
+soil.tax.corn <- plyr::ldply(soil.tax.corn.cells.by.county, function(x) cellStats(x, mode))
+names(soil.tax.corn)[1] <- "FID"
 
-results <- cbind(results, tax.res)
-names(tax.cat)[1] <- "tax.res"
-res.merge <- merge(results, tax.cat)
+soil.corn %>%
+  left_join(soil.tax.corn) %>%
+  rename("Value" = V1) %>%
+  mutate(Value = as.numeric(as.character(res.merge$Value))) %>%
+  left_join(tax.cat) -> res.merge
+
 
 # Create soil order category
 res.merge$Order <- res.merge$Class

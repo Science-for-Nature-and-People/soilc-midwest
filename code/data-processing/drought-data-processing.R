@@ -33,8 +33,8 @@ drought %>%
   filter(as.numeric(Month) %in% c(4:9)) -> drought
   
 drought %>%
-  group_by(Year, FIPS, State, County) %>%
-  summarise(DSCI.sum = sum(DSCI), 
+  dplyr::group_by(Year, FIPS, State, County) %>%
+  dplyr::summarise(DSCI.sum = sum(DSCI), 
             DSCI.mean = mean(DSCI), 
             DSCI.median = median(DSCI), 
             DSCI.mode = getmode(DSCI)) -> 

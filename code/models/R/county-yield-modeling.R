@@ -101,35 +101,36 @@ interplot::interplot(m = model, var2 = "DSCI.sum", var1 = "soc_M_sl4_100m", hist
 
   
 ###
-library(caret)
-train.index <- createDataPartition(all_data$Yield.bu.acre, p = .8,times = 1, list = F)
-train.df <- all_data[train.index,]
-test.df <- all_data[-train.index,]
-
-grid.control <- trainControl(
-  method = "repeatedcv",
-  number = 10,
-  repeats = 3,
-  search = "grid")
-
-metric <- "RMSE"
-
-tunegrid <- expand.grid(.mtry=seq(from = 1, to = 5, by=1))
-
-rf.yield <- train(Yield.bu.acre ~ 
-                             DSCI.mean + soc_M_sl4_100m + soc_M_sl4_100m + H + sand_M_sl4_100m + 
-                             Order, 
-                           data = train.df,
-                           method="rf",
-                           metric=metric,
-                           tuneGrid=tunegrid,
-                           trControl=grid.control,
-                           importance=T,
-                           keep.forest=T)
-
-var.imp <- varImp(rf.yield)[[1]]
-var.imp$variable <- row.names(var.imp)
-
-ggplot(data = var.imp, aes(y= variable, x= Overall))+
-  geom_point()
+# library(caret)
+# all.data_drought <- all_data[all_data$DSCI.sum > 1000,]
+# train.index <- createDataPartition(all.data_drought$Yield.bu.acre, p = .8,times = 1, list = F)
+# train.df <- all.data_drought[train.index,]
+# test.df <- all.data_drought[-train.index,]
+# 
+# grid.control <- trainControl(
+#   method = "repeatedcv",
+#   number = 5,
+#   repeats = 3,
+#   search = "grid")
+# 
+# metric <- "RMSE"
+# 
+# tunegrid <- expand.grid(.mtry=seq(from = 1, to = 5, by=1))
+# 
+# rf.yield <- train(Yield.bu.acre ~ 
+#                              DSCI.sum + soc_M_sl4_100m + H + sand_M_sl4_100m + 
+#                              Order, 
+#                            data = train.df,
+#                            method="rf",
+#                            metric=metric,
+#                            tuneGrid=tunegrid,
+#                            trControl=grid.control,
+#                            importance=T,
+#                            keep.forest=T)
+# 
+# var.imp <- varImp(rf.yield)[[1]]
+# var.imp$variable <- row.names(var.imp)
+# 
+# ggplot(data = var.imp, aes(y= variable, x= Overall))+
+#   geom_point()
   
