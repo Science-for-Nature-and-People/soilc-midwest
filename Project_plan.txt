@@ -1,4 +1,3 @@
-
 February 2, 2018::
 
 Accomplished at NCEAS:
@@ -76,16 +75,27 @@ April 23, 2018::
 - Check for need for spatial error modeling?
 - Need for more explicit temporal model, like specific autoregressive model or temporal error structure?
 
-June 7, 2018::
-
-- 
-
-
 January 2019:
 How we dealth with drought. 
 1. drought-data-API-call.R : Pre-select counties and pull from API
 1. drought-data-processing.R is main script to process data.
 
+March 7, 2019:
+
+To do:
+1. Subset out 50% of data and use model to predict other 50%. Want to make sure the the subsetting doesn't subset out areas that are key to variation in the data--like dropping the high SOC counties. Is random the right way?
+2. Remove the part of the model with SOC (and the interaction) for the 50% of the data and re-predict whole data set. How much does predictive capacity change?
+3. Run model of yield ~ SOC + soil covariates (no drought, no interaction) and plot coefficient (and error bars) of SOC on yield by year (year on x axis, coefficient on y axis)
+4. Do logistic regression where response variable is 1/0 if yield in year X dropped Y% from 5-year moving average. Then plot coefficients by year, like above?
+
+
+June 2019:
+
+- Incorporating one last risk metric using the RMA data that available at https://swclimatehub.info/rma/rma-data-viewer.html
+
+August 7, 2019:
+
+- RMA data results are interesting, as SOC increases RMA loss cost decreases, indicates that SOC protects against losses that would otherwise require insurance payouts
 
 
 
