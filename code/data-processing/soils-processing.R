@@ -88,7 +88,7 @@ names(soil.tax.corn)[1] <- "FID"
 soil.corn %>%
   left_join(soil.tax.corn) %>%
   rename("Value" = V1) %>%
-  mutate(Value = as.numeric(as.character(res.merge$Value))) %>%
+  mutate(Value = as.numeric(as.character(.$Value))) %>%
   left_join(tax.cat) -> res.merge
 
 
