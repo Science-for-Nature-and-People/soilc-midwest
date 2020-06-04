@@ -30,11 +30,15 @@ d <- d %>%
          County.name = county_name, FIPS = state_fips_code, variable = unit_desc) %>%
   select(FIPS_county, Year, State, State.alpha, County.name, FIPS, County.code, county_ansi, variable, Value) %>%
   spread(variable, Value) %>%
-  rename(Acres.harvested = ACRES, Yield.bu.acre = `BU / ACRE`) -> d
+  rename(Acres.harvested = ACRES, Yield.bu.acre = `BU / ACRE`)
 
 # Remove commas in yield and acres numbers, convert to numeric
 d$Yield.bu.acre <- as.numeric(gsub(pattern = ",", replacement = "", d$Yield.bu.acre))
 d$Acres.harvested <- as.numeric(gsub(pattern = ",", replacement = "", d$Acres.harvested))
+
+
+##### IRRIGATED ACRES
+
 
 # Call in data on number of irrigated acres in each county in recent census years, clean ####
 census.years <- as.list(c(1997,2002,2007,2012))
@@ -77,33 +81,48 @@ d.acres$Acres.irrigated.census[is.na(d.acres$Acres.irrigated.census)] <- 0
 
 d.acres <- d.acres %>%
   mutate(Percent.irrigated.census = 100*(Acres.irrigated.census/Acres.total.census))
+
 # NOTE: Check on 100% irrigated counties for data quality
 # UPDATE: 100% irrigated counties appear to all be in arid locations (i.e. TX, MT, CA)
 
-d.acres %>%
+d.acres.summary <- d.acres %>%
   group_by(state_alpha,county_name,county_ansi,FIPS_county) %>%
   summarize(Mean.total = round(mean(Acres.total.census, na.rm = T),digits = 4),
             Total.sd = round(sd(Acres.total.census, na.rm = T),digits = 4),
             Mean.irrigated = round(mean(Percent.irrigated.census, na.rm = T),digits = 4),
-            Irrigated.sd = round(sd(Percent.irrigated.census, na.rm = T),digits = 4))  -> d.acres.summary
+            Irrigated.sd = round(sd(Percent.irrigated.census, na.rm = T),digits = 4)) 
 
-hist(d.acres.summary$Mean.irrigated, breaks = 20)
+hist(d.acres.summary$Mean.irrigated, breaks = 5)
+ggplot(data = d.acres.summary, aes(x = Mean.irrigated))+
+  geom_histogram(binwidth = 5)
+
+
+## FILTER BASED ON IRRIGATED ACRES DATA
+
 # Create filter to select counties that are 5 percent or less irrigated, 
 # choice of 5 percent based on dsitribution of percentages, vast majority of counties are 5 percent or less irrigated
 
-d.acres.summary %>%
+d.acres.summary <- d.acres.summary %>%
   filter(Mean.irrigated < 5) %>%
-  filter(Irrigated.sd <= 1) -> d.acres.summary
+  filter(Irrigated.sd <= 1) 
+
+
 
 d %>%
   filter(FIPS_county %in% d.acres.summary$FIPS_county) -> d
 
-# Filter out any counties without contiguous corn yield observations
+# Filter to counties without contiguous corn yield observations
 
 d %>%
   group_by(FIPS_county) %>%
-  tally() -> test
-  
-  #add_count(FIPS_county) -> test #%>%
-  # filter(n >= 16) -> test
+  add_count(FIPS_county) %>%
+  filter(n >= 16) -> test
+
+d.acres %>%
+  filter(FIPS_county %in% unique(d$FIPS_county),
+         Percent.irrigated.census < 100) %>%
+  ggplot(data = ., aes(x = Year, y = Percent.irrigated.census))+
+  geom_point()+
+  geom_smooth()+
+  facet_wrap(facets = "state_alpha", nrow = 5, ncol = 10)
 

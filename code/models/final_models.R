@@ -1,152 +1,263 @@
+## libraries #####
+
 library(tidyverse)
 library(lme4)
 library(mgcv)
 library(itsadug)
 library(reghelper)
 
+# data #####
 all_data <- readRDS("data/all_data_2019.08.28.rds")
 
+all_data$SSURGO_taxorder_mode[is.na(all_data$SSURGO_taxorder_mode)] <- "Unknown"
+
+View(all_data %>%
+  filter(is.na(DSCI.mean)) %>%
+  count(as.character(GEOID)))
+
 all_data <- all_data %>%
+  filter(!is.na(july_spei),
+         !is.na(DSCI.mean), 
+         SSURGO_taxorder_mode != "Entisols") %>%
+  rename(Yield_mg_ha = Yield.bu.acre) %>%
+  mutate(Yield_mg_ha = Yield_mg_ha*0.0628) %>%
   group_by(GEOID) %>%
-  mutate(County_avg_yield = mean(Yield.bu.acre)) %>%
+  mutate(County_avg_yield = mean(Yield_mg_ha)) %>%
   ungroup() %>% 
-  mutate(Yield_diff = ((Yield.bu.acre - County_avg_yield)/County_avg_yield),
-         SSURGO_soc0_30_mean = SSURGO_soc0_30_mean/1000,
+  mutate(Yield_diff = ((Yield_mg_ha - County_avg_yield)/County_avg_yield),
+         DSCI.mean = DSCI.mean/1000,
+         SSURGO_soc0_30_mean = SSURGO_soc0_30_mean/10000,
+         SSURGO_sandtotal_r_mean = SSURGO_sandtotal_r_mean/100,
+         SSURGO_silttotal_r_mean = SSURGO_silttotal_r_mean/100,
+         SSURGO_claytotal_r_mean = SSURGO_claytotal_r_mean/100,
          SSURGO_siltclay = SSURGO_claytotal_r_mean + SSURGO_silttotal_r_mean) %>%
-  filter(!is.na(loss_cost), 
-         !is.na(july_spei),
-         loss_cost <200)
+  dplyr::select(Year, GEOID, FIPS, County.name, State.alpha, State,
+                Yield_mg_ha,loss_cost,Yield_diff,
+                starts_with("soilgrids"), starts_with("SSURGO"),
+                starts_with("DSCI"), ends_with("spei")) %>%
+  distinct(.)
 
 
+View(all_data %>%
+       dplyr::select(Yield_mg_ha,july_spei,SSURGO_soc0_30_mean,SSURGO_sandtotal_r_mean))
 
-#### FIT MODELS ####
+ggplot(all_data, aes(x =as.factor(as.character(Year)), y = DSCI.mean)) + 
+  geom_boxplot()
 
-#### Are yields lower under drought years ####
-# Basic model
-# N.B. Don't use county random effects because there's no sub-county data
-# all_data %>%
-#   filter(july_spei < -1) %>%
-# lmerTest::lmer(data = ., formula = Yield.bu.acre ~  soilgrids_soc_M_sl4_100m + 
-#                  (1|soilgrids_Order)) %>%
-# summary(.)
-# 
-# all_data %>%
-#   filter(july_spei < -1,
-#          !is.na(loss_cost), 
-#          !is.na(july_spei)) %>%
-#   lmerTest::lmer(data = ., formula = loss_cost ~  soilgrids_soc_M_sl4_100m + 
-#                    (1|soilgrids_Order)) %>%
-#   summary(.)
-# 
-# all_data %>%
-#   filter(july_spei < -1,
-#          !is.na(loss_cost), 
-#          !is.na(july_spei)) %>%
-#   lmerTest::lmer(data = ., formula = Yield_diff ~  SSURGO_soc0_30_mean + 
-#                    (1|soilgrids_Order)) %>%
-#   summary(.)
-
-m3 <- lmerTest::lmer(data = all_data, formula = loss_cost ~ july_spei*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean + (1|SSURGO_taxorder_mode))
-
-m4 <- lmerTest::lmer(data = all_data, formula = loss_cost ~ july_spei*SSURGO_soc0_30_mean*SSURGO_sandtotal_r_mean + (1|SSURGO_taxorder_mode))
-
-summary(m3)
-
-m4 <- glmer(data = all_data, formula = Yield.bu.acre ~ july_spei*SSURGO_soc0_30_mean*SSURGO_sandtotal_r_mean + (1|SSURGO_taxorder_mode),
-            family = gaussian(link = "log"), mustart=pmax(all_data$Yield.bu.acre,1e-2))
-
-summary(m4)
+all_data %>%
+  filter(july_spei < 0)
 
 
-interactions::interact_plot(model = m3, modx = july_spei,modx.values = c(-3, -1.5, 0),
+# NOTE - this set of filters eliminates data from the year 2017, for which no SPEI data are available, 
+# and data from 1997-1999, for which there are no DSCI data
+
+# Generate standardized dataframe
+
+scale.2sd <- function(x){
+  (x-mean(x))/(2*sd(x))
+}
+
+all.data.stan <- all_data %>%
+  mutate_at(.vars = vars(10:37),.funs = function(x) {if(is.numeric(x)) as.vector(scale.2sd(x)) else x})
+  
+
+# Yield, SPEI, and SSURGO #####
+## unstandardized 
+m <- glmer(data = all_data, 
+           formula = Yield_mg_ha ~ DSCI.mean*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+
+             (1|SSURGO_taxorder_mode),
+      family = gaussian(link = "log"))
+
+summary(m)
+
+interactions::interact_plot(model = m, modx = DSCI.mean,modx.values = c(0.1,0.2,0.3),
                             pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
-                            mod2 = SSURGO_claytotal_r_mean,mod2.values = c(15,25,35),mod2.labels = c("Clay, 15%", "Clay, 25%", "Clay, 35%"),
+                            plot.points = F, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
+                            legend.main = "DSCI",
+                            x.label = "SOC, 0-30 cm", y.label = "Yield (mg per hectare)", 
+                            mod2 = SSURGO_claytotal_r_mean,mod2.values = c(0.2,0.3,0.5))
+
+
+
+interactions::interact_plot(model = m, modx = july_spei,modx.values = c(-3, -1.5, 0),
+                            pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
+                            plot.points = FALSE, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, partial.residuals = FALSE,
+                            legend.main = "July SPEI",
+                            x.label = "SOC, 0-30 cm", y.label = "Yield (mg per hectare)")
+
+## standardized
+m <- glmer(data = all.data.stan, 
+           formula = Yield_mg_ha ~ july_spei*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+           family = gaussian(link = "log"))
+
+summary(m)
+
+# Loss cost, SPEI, and SSURGO #####
+gm <- glmer(data = all_data, 
+           formula = loss_cost ~ july_spei*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+           family = gaussian(link = "log"), mustart=pmax(all_data$loss_cost,1e-3))
+
+summary(gm)
+
+interactions::interact_plot(model = gm, modx = july_spei,modx.values = c(-3, -1.5),
+                            pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
                             plot.points = F, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
                             legend.main = "July SPEI",
                             x.label = "SOC, 0-30 cm", y.label = "Loss cost")
 
 
-interactions::interact_plot(model = m4, modx = july_spei,modx.values = c(-3, -1.5, 0),
+lm <- lmerTest::lmer(data = all_data, 
+           formula = loss_cost ~ july_spei*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode))
+
+summary(lm)
+
+
+
+## standardized
+gm <- glmer(data = all.data.stan, 
+            formula = loss_cost ~ july_spei*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+            family = gaussian(link = "log"), mustart=pmax(all_data$loss_cost,1e-3))
+
+summary(gm)
+
+
+# Yield, DSCI, and SSURGO #######
+## unstandardized 
+m <- glmer(data = all_data %>% filter(SSURGO_taxorder_mode != "Unknown"), 
+           formula = Yield_mg_ha ~ DSCI.mean*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+           family = gaussian(link = "log"))
+
+summary(m)
+
+
+interactions::interact_plot(model = m, modx = DSCI.mean,modx.values = c(0, 0.025, 0.4),
                             pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
-                            mod2 = SSURGO_sandtotal_r_mean,mod2.values = c(10,30,50),mod2.labels = c("Sand, 10%", "Sand, 30%", "Sand, 50%"),
+                            plot.points = T, point.size = 0.8, jitter = 0.1,line.thickness = 1.25, 
+                            legend.main = "July SPEI",
+                            x.label = "SOC, 0-30 cm", y.label = "Yield (mg per hectare)", partial.residuals = F, 
+                            point.shape = T)+
+  facet_wrap(facets = "SSURGO_taxorder_mode", nrow = 3, ncol = 3)
+
+## standardized
+m <- glmer(data = all.data.stan, 
+           formula = Yield_mg_ha ~ DSCI.mean*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+           family = gaussian(link = "log"))
+
+summary(m)
+MuMIn::r.squaredGLMM(m)
+
+
+interactions::interact_plot(model = m, modx = DSCI.mean,modx.values = c(-0.4, 0, 2),
+                            pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
+                            plot.points = F, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
+                            legend.main = "DSCI",
+                            x.label = "SOC, 0-30 cm", y.label = "Yield (mg per hectare)", 
+                            mod2 = SSURGO_claytotal_r_mean,mod2.values = c(-1, 0, 1))
+
+
+
+m <- glmer(data = all.data.stan, 
+           formula = Yield_mg_ha ~ DSCI.mean*SSURGO_soc0_30_mean+SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+           family = gaussian(link = "log"))
+
+summary(m)
+MuMIn::r.squaredGLMM(m)
+
+
+interactions::interact_plot(model = m, modx = DSCI.mean,modx.values = c(-0.3, 0, 2),
+                            pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
+                            plot.points = F, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
+                            legend.main = "DSCI",
+                            x.label = "SOC, 0-30 cm", y.label = "Yield (mg per hectare)")
+
+
+
+# Loss cost, DSCI, and SSURGO #####
+gm <- glmer(data = all_data, 
+            formula = loss_cost ~ DSCI.mean*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+            family = gaussian(link = "log"), mustart=pmax(all_data$loss_cost,1e-3))
+
+summary(gm)
+
+interactions::interact_plot(model = gm, modx = DSCI.mean,modx.values = c(-3, -1.5),
+                            pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
                             plot.points = F, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
                             legend.main = "July SPEI",
                             x.label = "SOC, 0-30 cm", y.label = "Loss cost")
 
 
+lm <- lmerTest::lmer(data = all_data, 
+                     formula = loss_cost ~ DSCI.mean*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode))
 
-m5 <- glmer(data = all_data, formula = Yield.bu.acre ~ july_spei + SSURGO_soc0_30_mean + SSURGO_soc0_30_mean:july_spei + (1|SSURGO_taxorder_mode),
-            family = gaussian(link = "log"), mustart=pmax(all_data$Yield.bu.acre,1e-2))
+summary(lm)
 
 
-interactions::interact_plot(model = m5, modx = july_spei,modx.values = c(-3, -1.5, 0),
-                            pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
-                            plot.points = T, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
+
+## standardized
+gm <- glmer(data = all.data.stan, 
+            formula = loss_cost ~ DSCI.mean*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+            family = gaussian(link = "log"), mustart=pmax(all_data$loss_cost,1e-3))
+
+summary(gm)
+
+
+
+##### Yield, SPEI, and SOILGRIDS #######
+
+
+# Yield models
+## unstandardized 
+m <- glmer(data = all_data, 
+           formula = Yield_mg_ha ~ july_spei*soilgrids_soc_M_sl4_100m*soilgrids_sand_M_sl4_100m+(1|soilgrids_Order),
+           family = gaussian(link = "log"))
+
+summary(m)
+
+
+interactions::interact_plot(model = m, modx = july_spei,modx.values = c(-3, -1.5, 0),
+                            pred = soilgrids_soc_M_sl4_100m, interval = T, int.type = "prediction", outcome.scale = "response",
+                            plot.points = F, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
                             legend.main = "July SPEI",
-                            x.label = "SOC, 0-30 cm", y.label = "Yield (bu/ac)")
+                            x.label = "SOC, 0-30 cm", y.label = "Yield (mg per hectare)")
+
+## standardized
+m <- glmer(data = all.data.stan, 
+           formula = Yield_mg_ha ~ july_spei*soilgrids_soc_M_sl4_100m*soilgrids_sand_M_sl4_100m+(1|soilgrids_Order),
+           family = gaussian(link = "log"))
+
+summary(m)
+
+m <- lmerTest::lmer(data = all.data.stan, 
+           formula = Yield_mg_ha ~ july_spei*soilgrids_soc_M_sl4_100m*soilgrids_sand_M_sl4_100m+(1|soilgrids_Order))
+
+summary(m)
 
 
-m6 <- glmer(data = all_data, formula = loss_cost ~ july_spei + SSURGO_soc0_30_mean + SSURGO_soc0_30_mean:july_spei + (1|SSURGO_taxorder_mode),
-            family = gaussian(link = "log"), mustart=pmax(all_data$loss_cost,1e-2))
+# Loss cost, SPEI, and soilgrids ####
+gm <- glmer(data = all_data, 
+            formula = loss_cost ~ july_spei*soilgrids_soc_M_sl4_100m*soilgrids_sand_M_sl4_100m+(1|soilgrids_Order),
+            family = gaussian(link = "log"), mustart=pmax(all_data$loss_cost,1e-3))
 
+summary(gm)
 
-interactions::interact_plot(model = m6, modx = july_spei,modx.values = c(-3, -1.5, 0),
+interactions::interact_plot(model = gm, modx = DSCI.mean,modx.values = c(-3, -1.5),
                             pred = SSURGO_soc0_30_mean, interval = T, int.type = "prediction", outcome.scale = "response",
-                            plot.points = T, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
+                            plot.points = F, point.size = 0.2, jitter = 0.1,line.thickness = 1.25, 
                             legend.main = "July SPEI",
-                            x.label = "SOC, 0-30 cm", y.label = "Loss Cost")
+                            x.label = "SOC, 0-30 cm", y.label = "Loss cost")
+
+
+lm <- lmerTest::lmer(data = all_data, 
+                     formula = loss_cost ~ july_spei*soilgrids_soc_M_sl4_100m*soilgrids_sand_M_sl4_100m+(1|soilgrids_Order))
+
+summary(lm)
 
 
 
-## test plots
+## standardized
+gm <- glmer(data = all.data.stan, 
+            formula = loss_cost ~ july_spei*soilgrids_soc_M_sl4_100m*soilgrids_sand_M_sl4_100m+(1|soilgrids_Order),
+            family = gaussian(link = "log"), mustart=pmax(all_data$loss_cost,1e-3))
 
-all_data %>%
-  filter(july_spei < -1,
-         !is.na(loss_cost), 
-         !is.na(july_spei)) %>%
-  ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = Yield_diff)) +
-  geom_point(alpha = 1,size = 0.7)
-  # facet_wrap(facets = "SSURGO_taxorder_mode", nrow = 4, ncol = 4)+
-  # theme(legend.position = "none")
-  # 
-
-
-
-all_data %>%
-  filter(july_spei < -1,
-         !is.na(loss_cost), 
-         !is.na(july_spei)) %>%
-  ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = Yield.bu.acre, color = SSURGO_taxorder_mode)) +
-  geom_point(alpha = 0.4,size = 1)+
-  facet_wrap(facets = "SSURGO_taxorder_mode", nrow = 4, ncol = 4)+
-theme(legend.position = "none")
-
-all_data_summary <- all_data %>%
-  group_by(GEOID) %>%
-  summarize(Corn_yield = mean(Yield.bu.acre),
-            SOC = mean(SSURGO_soc0_30_mean, na.rm = T)/100) 
-  
-
-devtools::install_github("UrbanInstitute/urbnmapr")
-devtools::install_github("UrbanInstitute/urbnthemes")
-
-library(urbnmapr)
-library(urbnthemes)
-
-set_urbn_defaults(style = "map")
-
-
-counties_sf <- get_urbn_map("counties", sf = TRUE)
-
-all_data_summary <- all_data_summary %>%
-  right_join(counties_sf, by = c(GEOID = "county_fips"))
-  
-all_data_summary %>% 
-  ggplot() +
-  geom_sf(mapping = aes(fill = SOC),
-          color = "#ffffff", size = 0.25) +
-  scale_fill_gradientn(labels = scales::percent) +
-  labs(fill = "SOC, %") +
-  coord_sf(datum = NA)
-
+summary(gm)
 

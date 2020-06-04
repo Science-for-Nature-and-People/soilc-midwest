@@ -1,0 +1,338 @@
+---
+title: "Yield data analysis"
+output: html_notebook
+---
+
+Setup chunk: Load data, filter, and generate necessary extra variables. This set of filters eliminates data from the year 2017, for which no SPEI data are available, and data from 1997-1999, for which there are no DSCI data. Generating a standardized data frame as well. 
+
+
+```{r Setup, echo = TRUE}
+## libraries #####
+
+library(tidyverse)
+library(lme4)
+library(mgcv)
+library(itsadug)
+library(reghelper)
+library(wesanderson)
+
+# data #####
+all_data <- readRDS("../../data/all_data_2019.08.28.rds")
+
+all_data$SSURGO_taxorder_mode[is.na(all_data$SSURGO_taxorder_mode)] <- "Unknown"
+
+
+all_data <- all_data %>%
+  filter(!is.na(july_spei),
+         !is.na(DSCI.mean), 
+         SSURGO_taxorder_mode != "Entisols",
+         loss_cost < 300) %>%
+  rename(Yield_mg_ha = Yield.bu.acre) %>%
+  mutate(Yield_mg_ha = Yield_mg_ha*0.0628) %>%
+  group_by(GEOID) %>%
+  mutate(County_avg_yield = mean(Yield_mg_ha)) %>%
+  ungroup() %>% 
+  mutate(Yield_diff = ((Yield_mg_ha - County_avg_yield)/County_avg_yield)) %>%
+  dplyr::select(Year, GEOID, FIPS, County.name, State.alpha, State,
+                Yield_mg_ha,loss_cost,Yield_diff,
+                starts_with("soilgrids"), starts_with("SSURGO"),
+                starts_with("DSCI"), ends_with("spei")) %>%
+  distinct(.) %>%
+  mutate(Corn.belt = case_when(State.alpha %in% c("SD", "NE", "MN", "IA", "WI", "IL", "IN", "OH") ~ "CB",
+                               TRUE ~ "NCB"))
+
+# NOTE - this set of filters eliminates data from the year 2017, for which no SPEI data are available, 
+# and data from 1997-1999, for which there are no DSCI data
+
+# Generate standardized dataframe ####
+
+scale.2sd <- function(x){
+  (x-mean(x))/(2*sd(x))
+}
+
+all.data.stan <- all_data %>%
+  mutate_at(.vars = vars(10:36),.funs = function(x) {if(is.numeric(x)) as.vector(scale.2sd(x)) else x})
+```
+
+Develop simple generalized mixed models to anlayze yield data. GLMM models use a log link function and assume a gaussian distribution of residuals. 
+
+```{r Yield models, echo = TRUE}
+
+# SPEI as drought indicator
+m <- all.data.stan %>%
+  filter(Corn.belt == "NCB") %>%
+  glmer(data = ., 
+           formula = Yield_mg_ha ~ july_spei*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+           family = gaussian(link = "log"))
+
+# Inspect coefficients
+summary(m)
+
+
+
+# Plot residuals and inspect
+ggplot(data.frame(eta=predict(m,type="link"),pearson=residuals(m,type="pearson")),
+       aes(x=eta,y=pearson)) +
+  geom_point() +
+  theme_bw()
+
+# DSCI as drought indicator
+m <- glmer(data = all.data.stan, 
+      formula = Yield_mg_ha ~ DSCI.mean*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean+(1|SSURGO_taxorder_mode),
+      family = gaussian(link = "log"))
+
+# Inspect coefficients
+summary(m)
+
+# Plot residuals and inspect
+ggplot(data.frame(eta=predict(m,type="link"),pearson=residuals(m,type="pearson")),
+       aes(x=eta,y=pearson)) +
+  geom_point() +
+  theme_bw()
+
+```
+
+Initial GLMs indicate significant interaction effect of SOC and drought such that SOC reduces the impact of drought on yields. But relationships of yield with SOC and SPEI are likely non-linear. Check if this is because of differences across soil type. That is, is one soil type driving the non-linearity. 
+
+```{r}
+
+mod <- function(df){
+  glm(data = df, 
+        formula = Yield_mg_ha ~ july_spei*SSURGO_soc0_30_mean*SSURGO_claytotal_r_mean,
+        family = gaussian(link = "log"))
+}
+
+model_by_order <- all.data.stan %>%
+  group_by(SSURGO_taxorder_mode) %>%
+  nest() %>%
+  mutate(model_by_order = map(data, mod))
+
+
+model_by_order %>% 
+  mutate(glance = map(model_by_order, broom::tidy)) %>% 
+  unnest(glance) %>%
+  mutate(p.value = round(p.value, digits = 5)) %>%
+  arrange(term)
+```
+
+Significant interaction effect between SOC and SPEI is maintained across the majority of soil orders except inceptisols and vertisols.
+
+Plotting bivariate relationships of different variables faceted by soil order to take a closer look at the structure of relationships between the different variables.
+
+```{r}
+ggplot(data = all_data, aes(x = SSURGO_soc0_30_mean, y = Yield_mg_ha))+
+  geom_jitter()+
+  geom_smooth()+
+  facet_wrap(facets = "SSURGO_taxorder_mode")
+
+ggplot(data = all_data, aes(x = SSURGO_claytotal_r_mean, y = Yield_mg_ha))+
+  geom_jitter()+
+  geom_smooth(method = "loess")+
+  facet_wrap(facets = "SSURGO_taxorder_mode")
+
+ggplot(data = all_data, aes(x = SSURGO_claytotal_r_mean, y = Yield_mg_ha))+
+  geom_jitter()+
+  geom_smooth(method = "loess")
+
+ggplot(data = all_data, aes(x = july_spei, y = Yield_mg_ha))+
+  geom_jitter()+
+  geom_smooth()+
+  facet_wrap(facets = "SSURGO_taxorder_mode")
+
+```
+
+Plots indicate that for the majority of soil orders, the relationship between SOC and yield is mostly linear except for mollisols. In mollisols, the relationship saturates. Since mollisols have the highest yield potential based on their inherent fertility, this saturation may be explained as crops reaching physiological limits on yield. For all soil orders, yield saturates when plotted against SPEI. Above an SPEI of 0, yield does not continue to increase. This makes sense, as an SPEI above 0 indicates favorable growing conditions in which precip exceeds PET, but perhaps saturation is reached as crops reach limits of yield potential. There's a suprisingly strong relationship wherein once a soil passes 30% clay in the top 30 cm, yields decline. 
+
+Furthermore, these plots seem to indicate that a random shift to intercept based on soil order is not actually necessary. A random effect of soil order does not seem to explain additional variance beyond that explained by fixed effects based on soil texture and SOC.
+
+Next, we'll generate similar plots on the subset of observations below 0 SPEI given the interesting patterns revealed by the above figures. 
+
+```{r}
+all_data %>%
+  filter(july_spei < 0) %>%
+ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = Yield_mg_ha))+
+  geom_jitter()+
+  geom_smooth()+
+  facet_wrap(facets = "SSURGO_taxorder_mode")
+
+all_data %>%
+  filter(july_spei < 0) %>%
+ggplot(data = ., aes(x = SSURGO_claytotal_r_mean, y = Yield_mg_ha))+
+  geom_jitter()+
+  geom_smooth()+
+  facet_wrap(facets = "SSURGO_taxorder_mode")
+
+all_data %>%
+  filter(july_spei < 0) %>%
+ggplot(data = ., aes(x = july_spei, y = Yield_mg_ha))+
+  geom_jitter()+
+  geom_smooth()+
+  facet_wrap(facets = "SSURGO_taxorder_mode")
+
+```
+
+When data are subset to only those years in which SPEI is less than 0, the saturating relationship of SOC and yield becomes more pronounced in mollisols, but the relationship between SPEI and yield appears nearly linear for all soil orders. Given earlier results that above a SPEI of 0 yield saturates, we'll run models on data subset to years with SPEI below 0 on the supported assumption that these comprise years in which weather conditions kept yields below potential. Furthermore, we'll split the data into three levels of drought. First, though, given the relationship with clay, we'll fit a second order polynomial to the data, then take the residuals of that model for further analysis. 
+
+
+```{r}
+
+# Fit a second order polynomial to yield data based on clay content, then add residuals of that model as a column to the dataframe
+all.data.stan <- all.data.stan %>%
+  mutate(noclay.resids = residuals(lm(data = ., formula = Yield_mg_ha~poly(SSURGO_claytotal_r_mean, 2)))) 
+
+clay.yield.m <- lm(data = all.data.stan, formula = Yield_mg_ha~poly(SSURGO_claytotal_r_mean, 2))
+
+all.data.stan <- all.data.stan %>%
+  mutate(noclay.pred = predict(object = clay.yield.m, newdata = .)) 
+
+
+# All drought, SPEI < 0
+
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei < -1), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = noclay.resids)) + geom_point()
+
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei < -1), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = noclay.pred)) + geom_point()
+
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei < -1), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = Yield_mg_ha)) + geom_point()
+  
+  
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei < 0), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+# Severe drought, SPEI < -2
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei < -2), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = Yield_mg_ha)) + geom_point()
+  
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei < -2), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+# Moderate drought, SPEI > -2 , < -1
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei > -2 & july_spei < -1), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = Yield_mg_ha)) + geom_point()
+  
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei > -2 & july_spei < -1), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+# Minimal drought, SPEI > -1 , < 0
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei > -1 & july_spei < 0), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  ggplot(data = ., aes(x = SSURGO_soc0_30_mean, y = Yield_mg_ha)) + geom_point()
+  
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei > -1 & july_spei < 0), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+# Normal conditions, SPEI > 0
+all.data.stan %>%
+  semi_join(filter(all_data, july_spei > 0), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+# All conditions
+
+all.data.stan %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+
+
+```
+
+After partialing out the effect of clay on yields, we ran models with SOC as the lone fixed effect and soil order as a random effect. We ran models on different subsets of data to represent different levels of drought intensity. No matter the level of drought, SOC had a positive, significant effect on yields. At more intense levels of drought, that effect was more stronger, i.e. the coefficient was greater. Based on these data, we conclude that counties with higher SOC content per estimations in the gSSURGO database have greater resilence to yield losses in drought years.  
+
+```{r, Presentation figures}
+
+all_data <- all_data  %>%
+  mutate(noclay.resids = residuals(lm(data = ., formula = Yield_mg_ha~poly(SSURGO_claytotal_r_mean, 2)))) 
+
+range(all_data$noclay.resids)
+range(all_data$Yield_mg_ha)
+
+yield.plot <- all_data %>%
+  mutate(clayfct = cut(SSURGO_claytotal_r_mean, breaks = c(0,10,20,30,50,100)),
+         speifct = cut(july_spei, breaks = c(-3.1,-2,-1,0,3.1), labels = c("Very severe", "Severe", "Moderate", "Normal")),
+         soc.mg_ha = SSURGO_soc0_30_mean/100) %>%
+  mutate(speifct=factor(speifct,levels=c("Normal","Moderate","Severe","Very severe"))) %>%
+  arrange(speifct) %>%
+  ggplot(data = .) + 
+  scale_color_manual(values = c("#A0C04D","#23487A","#0096D6","#90214A","#C5351C","#F3901D"))+
+  geom_jitter(aes(x = soc.mg_ha, y = Yield_mg_ha, color = SSURGO_taxorder_mode), alpha = 0.5, size = 2)+
+  geom_smooth(aes(x = soc.mg_ha, y = Yield_mg_ha), method = "lm", color = "black", alpha = 0.2)+
+  facet_wrap(facets = "speifct", ncol = 4)+
+  labs(x = "SOC (Mg per ha)", y = "Yield (residuals of yield ~ clay)")+
+  theme(legend.title = element_blank(), legend.position = "bottom")+
+  theme(axis.title = element_text(size=12), axis.text.y = element_text(size=10),
+          axis.text.x = element_text(size=10), legend.text = element_text(size = 10))
+
+ggsave(yield.plot, filename = "~/yieldplot.jpg", width = 12, height = 7, units = "in")
+
+
+
+```
+
+```{r, coeff figures}
+
+# Very severe drought, SPEI < -2
+
+very_svr <- all.data.stan %>%
+  semi_join(filter(all_data, july_spei < -2), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+# Severe drought, SPEI > -2 , < -1
+
+severe <- all.data.stan %>%
+  semi_join(filter(all_data, july_spei > -2 & july_spei < -1), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+# Moderate drought, SPEI > -1 , < 0
+
+moderate <- all.data.stan %>%
+  semi_join(filter(all_data, july_spei > -1 & july_spei < 0), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+
+# Normal
+normal <- all.data.stan %>%
+  semi_join(filter(all_data, july_spei > 0), by = c("Year" = "Year","GEOID"="GEOID")) %>%
+  lmerTest::lmer(data = ., formula = noclay.resids ~ SSURGO_soc0_30_mean+(1|SSURGO_taxorder_mode)) %>%
+  summary(.)
+normal$coefficients[2,2]
+# coeff
+
+coeff.table <- tribble(
+  ~Drought, ~Coeff, ~std.error, ~p.value,
+  "Normal", normal$coefficients[2,1], normal$coefficients[2,2], normal$coefficients[2,5],
+  "Moderate",moderate$coefficients[2,1], moderate$coefficients[2,2], moderate$coefficients[2,5],
+  "Severe",severe$coefficients[2,1], severe$coefficients[2,2], severe$coefficients[2,5],
+  "Very severe",very_svr$coefficients[2,1], very_svr$coefficients[2,2], very_svr$coefficients[2,5]
+) %>%
+  mutate(Drought=factor(Drought,levels=c("Normal","Moderate","Severe","Very severe")))
+
+yield.coeff <- ggplot(coeff.table, aes(x = Drought, y = Coeff)) +
+  geom_errorbar(aes(ymin = Coeff - std.error, ymax = Coeff + std.error), width = 0) +
+  geom_point()+
+  xlab("Drought Level") +
+  ylab("SOC effect")+
+  ylim(0,4)
+
+ggsave(yield.coeff, filename = "yieldcoeff.jpg", width = 5, height = 3, units = "in")
+
+```
+
+

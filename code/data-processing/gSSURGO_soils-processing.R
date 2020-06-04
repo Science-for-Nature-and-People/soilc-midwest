@@ -57,35 +57,6 @@ sa_subset <- sa_catalogs %>%
   rename("state" = state.x)
 
 
-# # Read in polygons for counties that have data in yield data time series
-# sub.counties <- subset(tigris::counties(year = 2017), GEOID %in% sa_subset$GEOID)
-# 
-# # Project data to same CRS as rasters
-# sub.counties <- sp::spTransform(sub.counties, crs("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"))
-# 
-# # Split 'sub.counties' polygon object into a list of individual polygons. 
-# # This makes it possible to use split-apply-combine on downstream operations and not overload memory
-# sub.counties <- split(sub.counties, f = sub.counties$GEOID)
-
-# # Import raster of corn frequency 2008-2017. 
-# # Each cell categorized based on number of years it has been used for corn over the past 10 years
-# crop.freq <- brick("data/crop_frequency/crop_frequency_corn_2008-2017.img")
-# 
-# # Crop the corn frequency layer to each county then change projection and resolution to match soils data
-# crop.freq.by.county <- mclapply(mc.cores = 10, sub.counties.list, function(x) crop(crop.freq, x))
-# crop.freq.by.county <- mclapply(mc.cores = 10, crop.freq.by.county, function(x) 
-#   projectRaster(x, crs = crs("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")))
-# gc()
-# # Reclassify cells in each crop frequency by county layer such that 0 and 1 cells are NA and all else are 1. 
-# rcl.m <- matrix(c(-Inf, 1, NA,
-#                   1, Inf,1), 
-#                 ncol=3, 
-#                 byrow=TRUE)
-# corn.cells.by.county <- mclapply(mc.cores = 10, crop.freq.by.county, function(x) reclassify(x, rcl.m))
-# 
-# rm(list = setdiff(ls(), c("corn.cells.by.county")))
-# gc()
-# saveRDS(corn.cells.by.county, file = "data/soil/corn_mask_by_county.rds")
 
 # read in 'MUPOLYGON' and 'Valu1' tables from .gdb files as simple features
 all_states_gssurgo <- parallel::mclapply(mc.cores = 20, gdb_list, function(i){
@@ -130,3 +101,39 @@ saveRDS(all_counties_gssurgo[201:300], file = "data/soil/all_counties_gSSURGO_3.
 saveRDS(all_counties_gssurgo[301:400], file = "data/soil/all_counties_gSSURGO_4.rds")
 saveRDS(all_counties_gssurgo[401:491], file = "data/soil/all_counties_gSSURGO_5.rds")
 
+
+
+
+# EXTRA CODE
+
+
+
+# # Read in polygons for counties that have data in yield data time series
+# sub.counties <- subset(tigris::counties(year = 2017), GEOID %in% sa_subset$GEOID)
+# 
+# # Project data to same CRS as rasters
+# sub.counties <- sp::spTransform(sub.counties, crs("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"))
+# 
+# # Split 'sub.counties' polygon object into a list of individual polygons. 
+# # This makes it possible to use split-apply-combine on downstream operations and not overload memory
+# sub.counties <- split(sub.counties, f = sub.counties$GEOID)
+
+# # Import raster of corn frequency 2008-2017. 
+# # Each cell categorized based on number of years it has been used for corn over the past 10 years
+# crop.freq <- brick("data/crop_frequency/crop_frequency_corn_2008-2017.img")
+# 
+# # Crop the corn frequency layer to each county then change projection and resolution to match soils data
+# crop.freq.by.county <- mclapply(mc.cores = 10, sub.counties.list, function(x) crop(crop.freq, x))
+# crop.freq.by.county <- mclapply(mc.cores = 10, crop.freq.by.county, function(x) 
+#   projectRaster(x, crs = crs("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")))
+# gc()
+# # Reclassify cells in each crop frequency by county layer such that 0 and 1 cells are NA and all else are 1. 
+# rcl.m <- matrix(c(-Inf, 1, NA,
+#                   1, Inf,1), 
+#                 ncol=3, 
+#                 byrow=TRUE)
+# corn.cells.by.county <- mclapply(mc.cores = 10, crop.freq.by.county, function(x) reclassify(x, rcl.m))
+# 
+# rm(list = setdiff(ls(), c("corn.cells.by.county")))
+# gc()
+# saveRDS(corn.cells.by.county, file = "data/soil/corn_mask_by_county.rds")

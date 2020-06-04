@@ -1,0 +1,274 @@
+---
+title: "RMA data analysis"
+output:
+  html_document:
+    df_print: paged
+---
+
+Setup chunk: Load data, filter, and generate necessary extra variables. This set of filters eliminates data from the year 2017, for which no SPEI data are available, and data from 1997-1999, for which there are no DSCI data. Generating a standardized data frame as well. 
+
+```{r data and libraries, echo = TRUE, message=FALSE}
+## libraries #####
+
+library(tidyverse)
+library(lme4)
+library(mgcv)
+library(itsadug)
+library(reghelper)
+library(VGAM)
+library(censReg)
+library(stargazer)
+library(sampleSelection)
+
+
+# data #####
+
+all_data <- readRDS("../../data/all_data_2020.03.02.rds")
+
+all_data$SSURGO_taxorder_mode[is.na(all_data$SSURGO_taxorder_mode)] <- "Unknown"
+
+all_data <- all_data %>%
+  filter(!is.na(july_spei),
+         !is.na(DSCI.mean), 
+         SSURGO_taxorder_mode != "Entisols",
+         loss_cost < 300) %>%
+  rename(Yield_mg_ha = Yield.bu.acre) %>%
+  mutate(Yield_mg_ha = Yield_mg_ha*0.0628) %>%
+  group_by(GEOID) %>%
+  mutate(County_avg_yield = mean(Yield_mg_ha)) %>%
+  ungroup() %>% 
+  mutate(Yield_diff = ((Yield_mg_ha - County_avg_yield)/County_avg_yield)) %>%
+  dplyr::select(Year, GEOID, FIPS, County.name, State.alpha, State,
+                Yield_mg_ha,loss_cost, Yield_diff, Acres.harvested,
+                starts_with("RMA.drought"), starts_with("soilgrids"), starts_with("SSURGO"),
+                starts_with("DSCI"), ends_with("spei"), County_avg_yield) %>%
+  rename(Liability.drought = RMA.drought.Liability..US..,
+         Indemnity.drought = RMA.drought.Payment.indemnity..US..,
+         Count.drought = RMA.drought.Payment.count,
+         SOC.ssurgo = SSURGO_soc0_30_mean,
+         Clay.ssurgo = SSURGO_claytotal_r_mean,
+         Order.ssurgo = SSURGO_taxorder_mode) %>%
+  distinct(.) %>%
+  mutate(Corn.belt = case_when(State.alpha %in% c("SD", "NE", "MN", "IA", "WI", "IL", "IN", "OH") ~ "CB",
+                               TRUE ~ "NCB")) %>%
+  as.data.frame(.)
+
+all_data$Count.drought[is.na(all_data$Count.drought)] <- 0
+all_data$RMA.drought.Payment.acreage[is.na(all_data$RMA.drought.Payment.acreage)] <- 0
+
+
+# NOTE - this set of filters eliminates data from the year 2017, for which no SPEI data are available, 
+# and data from 1997-1999, for which there are no DSCI data
+
+# Generate standardized dataframe ####
+
+scale.2sd <- function(x){
+  round((x-mean(x))/(2*sd(x)), digits = 10)
+}
+
+all.data.stan <- all_data %>%
+  mutate_at(.vars = vars(10:44),.funs = function(x) {if(is.numeric(x)) as.vector(scale.2sd(x)) else x})
+```
+
+To start, we'll do a simple model of indemnities as a function of drought and various soil properties. 
+
+```{r, echo=TRUE}
+
+m <- all.data.stan %>%
+  lmerTest::lmer(data = ., formula = Indemnity.drought ~ july_spei*SOC.ssurgo*Clay.ssurgo +
+                   (1|Order.ssurgo),
+                 na.action = "na.omit")
+
+summary(m)
+
+interactions::interact_plot(model = m, pred = SOC.ssurgo, modx = july_spei, modx.values = c(-1.5,-1, -0.5))
+
+# Facet data into different ranges of july_spei value and plot indemnity ~ SOC
+all_data %>%
+  mutate(fct = cut(july_spei, breaks = c(-3.1,0,3.1))) %>% 
+  ggplot(data = ., aes(x = SOC.ssurgo, y = Indemnity.drought)) + 
+  geom_point() + 
+  facet_wrap(facets = "fct")
+
+```
+
+In a simple model, drought (july_spei) emerges as significant negative coefficient for indemnities - as july spei goes up, conditions get less droughty, and insurance payments go down. Interestingly, an interaction effect between SOC and july_spei emerges but in a direction that contradicts our hypothesis - SOC interacts with drought in an additive manner, as drought gets worse payouts are higher when SOC is higher. However, this pattern may be explained by the fact that SOC has a positive effect on yields, as demonstrated in our previous analysis, meaning that counties with higher SOC have higher yield potential to begin with and are more likely to be insured under adverse conditions. 
+
+Crop insurance is not just purchased at the beginning of the season. Additional coverage can be purchased as the season progresses, meaning growers have the opportunity to respond to bad early season conditions by increasing their insurance coverage. 
+
+```{r}
+
+# Facet data into different ranges of july_spei value and plot indemnity ~ liabilties
+all_data %>%
+  mutate(fct = cut(july_spei, breaks = c(-3.1,0,3.1))) %>% 
+  ggplot(data = ., aes(x = Liability.drought, y = Indemnity.drought)) + 
+  geom_point() + 
+  facet_wrap(facets = "fct")
+
+```
+
+Looking at the relationship between indemnities (payouts) and liabilities (coverage), a strong linear relatioship is apparent, and liabilities are generally much higher under droughty conditions. Given this strong relationship between indemnities and liabilities, we'll use a modeling approach that accounts for this by modeling the residuals of the linear relationship of indeminities ~ liabilities. 
+
+```{r models on residuals, echo = TRUE}
+
+all.data.stan <- all.data.stan %>%
+  mutate(liability.resids = as.numeric(residuals(lm(Indemnity.drought ~ Liability.drought, data = all.data.stan))))
+
+m <- all.data.stan %>%
+  lmerTest::lmer(data = ., formula = liability.resids ~ july_spei*SOC.ssurgo*Clay.ssurgo +
+                   (1|Order.ssurgo),
+                 na.action = "na.omit")
+
+summary(m)
+
+
+interactions::interact_plot(model = m, pred = SOC.ssurgo, modx = july_spei, modx.values = c(-1.5,-1, -0.5))
+interactions::interact_plot(model = m, pred = Clay.ssurgo, modx = july_spei, modx.values = c(-1.5,-1, -0.5))
+
+
+```
+
+Model coefficients suggest that SOC and clay both interact with drought to reduce payouts as drought intensity increases, but the effect of SOC is stronger (coefficient is higher). In addition, after accounting for the impact of liabilities, drought becomes a less reliable predictor of indemnities (p value goes up).  
+
+To test the efficacy of this approach with residuals, we'll also test if specifiying liabilities as a fixed effect produces similar results. 
+
+```{r}
+
+m <- all.data.stan %>%
+  lmerTest::lmer(data = ., formula = Indemnity.drought ~ Liability.drought+july_spei*SOC.ssurgo*Clay.ssurgo +
+                   (1|Order.ssurgo))
+
+summary(m)
+
+```
+
+Model coefficients change only very slightly, and liabilties emerge as a very strong effect (highest beta coefficient, least p value). 
+
+However, given that there are a significant number of observations for which indemnities are zero or very close to zero, simple LMEs are likely not appropriate for these questions. Tobit regression is an approach for when the dependent variable is zero-inflated (or has a distinct lower limit after data are standardized) and continuous.
+
+``` {r, tobit models}
+
+m <- all.data.stan %>%
+  vglm(data = ., formula = Indemnity.drought ~ Liability.drought+july_spei*SOC.ssurgo*Clay.ssurgo,
+       tobit(Lower =  -0.1076599716, type.fitted = "uncensored"), maxit = 50, smart = TRUE)
+
+summary(m)
+
+
+all.data.stan %>%
+  mutate(spei.minimal = as.data.frame(predict(m,newdata=transform(all.data.stan,july_spei=-1)))$mu,
+         spei.moderate = as.data.frame(predict(m,newdata=transform(all.data.stan,july_spei=-1.5)))$mu,
+         spei.severe = as.data.frame(predict(m,newdata=transform(all.data.stan,july_spei=-2)))$mu) %>%
+  ggplot(.) +
+  geom_smooth(method = "lm", aes(x =SOC.ssurgo, y= spei.severe), color = "red")+
+  geom_smooth(method = "lm", aes(x =SOC.ssurgo, y= spei.moderate), color = "green")+
+  geom_smooth(method = "lm", aes(x =SOC.ssurgo, y= spei.minimal), color = "blue")
+
+
+```
+
+Using a tobit regression, the effects structure and size of coefficients remains largely the same. An interaction effect for SOC and drought emerges, and in terms of directionality it is similar to simpler models- SOC reduces payouts under adverse conditions. 
+
+An additional 3-way interaction effect also emerges between SOC, drought, and clay. Below are two 3-way interaction graphs demonstrating how this effect manifests. Under drought conditions, SOC reduces payouts more strongly. Whereas, at nornal conditions, SOC has a negative effect on payouts regardless of clay content. However this effect is fairly weak, and may be due to a handful of data points with high leverage. 
+
+```{r, 3-way interaction graph}
+
+all.data.stan %>%
+  mutate(spei.severe = as.data.frame(predict(m,newdata=transform(all.data.stan,july_spei=-1)))$mu,
+         fct = cut(Clay.ssurgo, breaks = c(-1.3,-0.5,0,0.5,2.1))) %>%
+  ggplot(.) +
+  geom_smooth(method = "lm", aes(x =SOC.ssurgo, y= spei.severe))+
+  geom_jitter(aes(x =SOC.ssurgo, y= spei.severe))+
+  facet_wrap(facets = "fct")+
+  ggtitle("Drought")
+
+all.data.stan %>%
+  mutate(spei.severe = as.data.frame(predict(m,newdata=transform(all.data.stan,july_spei=1)))$mu,
+         fct = cut(Clay.ssurgo, breaks = c(-1.3,-0.5,0,0.5,2.1))) %>%
+  ggplot(.) +
+  geom_smooth(method = "lm", aes(x =SOC.ssurgo, y= spei.severe))+
+  geom_jitter(aes(x =SOC.ssurgo, y= spei.severe))+
+  geom_jitter(aes(x =SOC.ssurgo, y= spei.severe))+
+  facet_wrap(facets = "fct")+
+  ggtitle("Normal")
+
+```
+
+In addition to a tobit model, we'll run a Heckman selection model. A Heckman selection model is similar but rather than assuming that the process that creates "zeroes" in the dependent variable is latent, it assumes that "zero" observations of the dependent variable are based on some selection/threshold process that can be modeled by the data in hand. In this case, we'll model a selection process in which payouts are non-zero as a function of drought, and then any non-zero payouts are further predicted by a combination of drought and soil properties.
+
+```{r, Heckman selection model}
+m.sel <- all.data.stan %>%
+  mutate(non.zero = as.logical(all.data.stan$Indemnity.drought != -0.1076599716)) %>%
+  selection(data = ., 
+                   selection = non.zero ~ july_spei,
+                   outcome =  Indemnity.drought ~ Liability.drought+july_spei*SOC.ssurgo*Clay.ssurgo, 
+            method = "2step") 
+
+summary(m.sel)
+
+```
+
+A Heckman selection model produces very similar results to a standard tobit regression, but the p-value of the three-way interaction of drought, SOC, and clay increases. This change suggests that a Heckman selection model is picking up on some dynamic that is poorly described in other models. Looking at the data more closely, two patterns emerge: 
+
+1.) Coverage consistency is much higher in the corn belt - growers insure most years rather than on rare drought years, in which yields are likely to be poor. The selection model is capturing that pattern to some degree, but perhaps indirectly. 
+2.) The majority of clay dominant soils are outside the corn belt. 
+
+We'll apply the same selection model but split by corn belt and non corn belt.
+
+
+```{r, Corn belt}
+
+m.CB <- all.data.stan %>%
+  filter(Corn.belt == "CB") %>%
+  mutate(non.zero = as.logical(.$Indemnity.drought != -0.1076599716)) %>%
+  selection(data = ., 
+                   selection = non.zero ~ july_spei,
+                   outcome =  Indemnity.drought ~ Liability.drought+july_spei*SOC.ssurgo*Clay.ssurgo, 
+            method = "2step") 
+
+summary(m.CB)
+```
+
+```{r, Non corn belt}
+
+m.NCB <- all.data.stan %>%
+  filter(Corn.belt == "NCB") %>%
+  mutate(non.zero = as.logical(.$Indemnity.drought != -0.1076599716)) %>%
+  selection(data = ., 
+                   selection = non.zero ~ july_spei,
+                   outcome =  Indemnity.drought ~ Liability.drought+july_spei*SOC.ssurgo*Clay.ssurgo,
+            method = "2step") 
+
+summary(m.NCB)
+
+```
+
+Coefficient structures hold for the Corn Belt but for counties outside the corn belt the only significant/strong predictors of payouts are initial liabilities and drought conditions. It's hard to discern if this change is primarily because of soil factors or if it's still a consequence of coverage patterns. 
+
+
+CONCLUSIONS:
+
+Using multiple different modeling approaches that account for the fact that payouts are first and foremost a function of the amount of coverage in dollars in a given county, we demonstrate that SOC has a mitigating impact on payouts under drought conditions. In some modeling approaches this impact is also conditional on native clay content such that the impact is greater on soils with lower clay.   
+
+```{r}
+
+rma <- all_data %>%
+  mutate(speifct = cut(july_spei, breaks = c(-3.1,-2,-1,0,3.1), labels = c("Very severe", "Severe", "Moderate", "Normal")),
+         soc.mg_ha = SOC.ssurgo/100,
+         Corn.belt = case_when(Corn.belt == "CB"~"Corn belt",
+                               Corn.belt == "NCB"~"Not corn belt")) %>%
+  mutate(speifct=factor(speifct,levels=c("Normal","Moderate","Severe","Very severe"))) %>%
+  arrange(speifct) %>%
+  ggplot(data = .) + 
+  scale_color_manual(values = c("#A0C04D","#23487A","#0096D6","#90214A","#C5351C","#F3901D"))+
+  geom_jitter(aes(x = soc.mg_ha, y = loss_cost, color = Order.ssurgo), alpha = 0.5, size = 2)+
+  geom_smooth(aes(x = soc.mg_ha, y = loss_cost), method = "lm", color = "black", alpha = 0.2)+
+  geom_abline(slope = 0, color = "dark grey") +
+  facet_grid(Corn.belt ~ speifct, )+
+  labs(x = "SOC (Mg per ha)", y = "Proportion of liabilities paid (%)")+
+  theme(legend.title = element_blank(), legend.position = "bottom")+
+  theme(axis.title = element_text(size=12), axis.text.y = element_text(size=10),
+          axis.text.x = element_text(size=10), legend.text = element_text(size = 10))
+
+ggsave(rma, filename = "~/rma.jpg", width = 12, height = 7, units = "in")
+```
