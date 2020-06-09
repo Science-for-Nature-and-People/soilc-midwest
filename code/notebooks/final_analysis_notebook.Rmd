@@ -17,7 +17,7 @@ library(reghelper)
 library(wesanderson)
 
 # data #####
-all_data <- readRDS("../../data/all_data_2019.08.28.rds")
+all_data <- readRDS("../../data/all_data_2020.03.02.rds")
 
 all_data$SSURGO_taxorder_mode[is.na(all_data$SSURGO_taxorder_mode)] <- "Unknown"
 

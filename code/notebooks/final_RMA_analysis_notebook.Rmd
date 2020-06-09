@@ -272,3 +272,29 @@ rma <- all_data %>%
 
 ggsave(rma, filename = "~/rma.jpg", width = 12, height = 7, units = "in")
 ```
+
+
+
+```{r}
+
+rma.svr <- all_data %>%
+  mutate(speifct = cut(july_spei, breaks = c(-3.1,-2,-1,0,3.1), labels = c("Very severe", "Severe", "Moderate", "Normal")),
+         soc.mg_ha = SOC.ssurgo/100,
+         Corn.belt = case_when(Corn.belt == "CB"~"Corn belt",
+                               Corn.belt == "NCB"~"Not corn belt")) %>%
+  mutate(speifct=factor(speifct,levels=c("Normal","Moderate","Severe","Very severe"))) %>%
+  arrange(speifct) %>%
+  filter(speifct == c("Severe", "Very severe")) %>%
+  ggplot(data = .) + 
+  scale_color_manual(values = c("#A0C04D","#23487A","#0096D6","#90214A","#C5351C","#F3901D"))+
+  geom_jitter(aes(x = soc.mg_ha, y = loss_cost, color = Order.ssurgo), alpha = 0.5, size = 2)+
+  geom_smooth(aes(x = soc.mg_ha, y = loss_cost), method = "lm", color = "black", alpha = 0.2)+
+  geom_abline(slope = 0, color = "dark grey") +
+  facet_grid(Corn.belt ~ speifct, )+
+  labs(x = "SOC (Mg per ha)", y = "Proportion of liabilities paid (%)")+
+  theme(legend.title = element_blank(), legend.position = "bottom")+
+  theme(axis.title = element_text(size=12), axis.text.y = element_text(size=10),
+          axis.text.x = element_text(size=10), legend.text = element_text(size = 10))
+
+ggsave(rma.svr, filename = "~/rma.svr.jpg", width = 6, height = 6, units = "in")
+```
