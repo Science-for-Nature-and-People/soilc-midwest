@@ -1,0 +1,157 @@
+---
+title: "sem_analyses"
+author: "Dan Kane"
+date: "7/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+## libraries #####
+
+library(tidyverse)
+library(lme4)
+library(mgcv)
+library(itsadug)
+library(reghelper)
+library(wesanderson)
+library(piecewiseSEM)
+library(lavaan)
+
+# data #####
+all_data <- readRDS("../../data/all_data_2020.08.07.rds")
+all.data.stan <- readRDS("../../data/all_data_stan_2020.08.07.rds")
+
+data <- all_data %>%
+  mutate(FC = (ssurgo_awc_mean*100+ssurgo_fifteenbar_mean),
+         ssurgo_awc_mean = ssurgo_awc_mean*100)
+
+data %>%
+  ggplot(data = ., aes(x=ssurgo_clay_mean, y=ssurgo_cec_mean)) +
+  geom_point()
+
+mean(data$ssurgo_cec_mean)+(2*sd(data$ssurgo_cec_mean))
+```
+
+Process. Break datasets into normal and non-normal. 
+
+```{r, Model with normal SPEI}
+data.mod <- data %>%
+  filter(spei.cut !="Normal",
+         ssurgo_cec_mean <= 31.9153
+         ) %>%
+  group_by(GEOID, state_alpha) %>%
+  summarize(Yield_decomp_add = mean(Yield_decomp_add),
+            Yield_decomp_mult = mean(Yield_decomp_mult),
+            ssurgo_om_mean = mean(ssurgo_om_mean),
+            ssurgo_awc_mean = mean(ssurgo_awc_mean),
+            ssurgo_cec_mean = mean(ssurgo_cec_mean), ssurgo_clay_mean = mean(ssurgo_clay_mean), FC = mean(FC)) 
+
+m.normal.full <- 
+  
+  psem(
+  
+    lm(Yield_decomp_add ~ ssurgo_cec_mean+ssurgo_awc_mean, data = data.mod),
+    lm(ssurgo_awc_mean ~ ssurgo_om_mean,data = data.mod),
+    lm(ssurgo_cec_mean ~ ssurgo_om_mean, data = data.mod)
+)
+
+m.normal.partial <- 
+  
+  psem(
+  
+    lm(Yield_decomp_add ~ ssurgo_cec_mean+ssurgo_awc_mean+ssurgo_om_mean, data = data.mod),
+    lm(ssurgo_awc_mean ~ ssurgo_om_mean,data = data.mod),
+    lm(ssurgo_cec_mean ~ ssurgo_om_mean, data = data.mod)
+)
+
+
+
+anova(m.normal.full, m.normal.partial)
+View(coefs(m.normal.partial))
+
+```
+
+
+```{r, Model with drought SPEI}
+data.mod <- data %>%
+  filter(spei.cut == "Severe", 
+         ssurgo_cec_mean <= 31.9153
+         ) %>%
+  group_by(GEOID, state_alpha) %>%
+  summarize(Yield_decomp_add = mean(Yield_decomp_add),
+            Yield_decomp_mult = mean(Yield_decomp_mult),
+            ssurgo_om_mean = mean(ssurgo_om_mean),
+            ssurgo_awc_mean = mean(ssurgo_awc_mean),
+            ssurgo_cec_mean = mean(ssurgo_cec_mean), ssurgo_clay_mean = mean(ssurgo_clay_mean), FC = mean(FC)) 
+
+m.drought.full <- 
+  
+   psem(
+  
+    lm(Yield_decomp_add ~ ssurgo_cec_mean+ssurgo_awc_mean, data = data.mod),
+    lm(ssurgo_awc_mean ~ ssurgo_om_mean,data = data.mod),
+    lm(ssurgo_cec_mean ~ ssurgo_om_mean, data = data.mod)
+)
+
+m.drought.partial <- 
+  
+  psem(
+  
+    lm(Yield_decomp_add ~ ssurgo_cec_mean+ssurgo_awc_mean+ssurgo_om_mean, data = data.mod),
+    lm(ssurgo_awc_mean ~ ssurgo_om_mean,data = data.mod),
+    lm(ssurgo_cec_mean ~ ssurgo_om_mean, data = data.mod)
+)
+
+coefs(m.drought.partial)
+
+
+anova(m.drought.full, m.drought.partial)
+
+
+```
+
+
+
+```{r}
+View(bind_rows(coefs(m.drought.partial),
+               coefs(m.drought.full),
+               coefs(m.normal.partial),
+               coefs(m.normal.full)))
+```
+
+
+```{r}
+plot(
+  m.drought.partial,
+  node_attrs = list(
+    label = c("Yield", "AWC", "CEC", "SOM"),
+    fillcolor = "white",
+    shape = "oval",
+    color = "gray",
+    x = c(4, 3, 3,2),
+    y = c(2, 2.75, 1.25, 2),
+    fixedsize = FALSE
+  ),
+  alpha = 0.05,
+  add_edge_label_spaces = TRUE, digits = 2
+)
+
+
+```
+
+
+
+
+
+
+
+Across drought levels, a model structure in which clay and som effects on yield are only partially mediated achieves the best model fit in terms of multiple metrics - Fisher's C, AIC, BIC, and Rsquared. As such we'll fit multiple versions of the model at different levels of drought to see how coefficients change. 
+
+
+
+At nearly all drought levels, FC has a strongly positive effect on yield and it is generally the largest coefficient. SOM loads strongly onto FC, indicating that its impacts on yields are in part mediated by its impacts on FC. CEC has a positive, albeit smaller positive impact on yields in normal conditions and in moderate drought. In severe drought, this effect is non-significant, and under very severe drought this effect becomes negative and substantially larger in terms of absolute value. However, this negative value should be interpreted with caution - the negative effect of clay under very severe drought diminishes, meaning CEC may be picking up that effect in this subset of data. SOM loads positively onto CEC, as does clay. Nonetheless the diminishing coefficient of CEC indicates that the effect of CEC on yields is conditional on weather/drought.
+
+Finally, across all drought levels SOM has a non-mediated effect on yields that increases as drought becomes more severe. This pattern seems to indicate that independent of SOM's impacts on CEC (fertility) and FC (water retention), it supports and protects yields under drought. This indicates that available data may not properly capture patterns or that SOM is having an effect on soil water dynamics that is not quantified by FC. Read, soil water infiltration, increased days until complete water drawdown. 
+
+
+

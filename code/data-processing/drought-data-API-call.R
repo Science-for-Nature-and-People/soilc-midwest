@@ -7,10 +7,11 @@
 library(httr)
 library(tidyverse)
 library(plyr)
+library(parallel)
 
 # Read in unique county FIPS codes
 
-counties <- read_csv("data/Unique_counties.csv", col_types = cols(x = col_character()))$x
+counties <- c(unique(read_rds("data/yield_08062020.rds")$GEOID))
 
 # Create list of URLs for API calls for each county
 
@@ -18,7 +19,7 @@ URL_by_county <- lapply(counties, function(x) paste("http://usdmdataservices.unl
 
 # Retrieve data via API and resort into dataframe
 
-data_by_county <- lapply(URL_by_county, function(x) httr::content(httr::GET(url = x)))
+data_by_county <- mclapply(mc.cores = 30, URL_by_county, function(x) httr::content(httr::GET(url = x)))
 data_by_county_2 <- ldply(data_by_county, function(x) ldply(x, function(x) data.frame(t(unlist(x)))))
 
 # Save raw data

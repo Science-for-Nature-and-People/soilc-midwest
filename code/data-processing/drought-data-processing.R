@@ -30,14 +30,19 @@ drought$MapDate <- as.character(drought$MapDate)
 
 drought %>%
   separate(MapDate, into = c("Year","Month","Day"), sep = c(4,6)) %>%
-  filter(as.numeric(Month) %in% c(4:9)) -> drought
+  filter(as.numeric(Month) %in% c(5:8)) -> drought
   
 drought %>%
   dplyr::group_by(Year, FIPS, State, County) %>%
   dplyr::summarise(DSCI.sum = sum(DSCI), 
             DSCI.mean = mean(DSCI), 
             DSCI.median = median(DSCI), 
-            DSCI.mode = getmode(DSCI)) -> 
+            DSCI.mode = getmode(DSCI)) %>%
+  ungroup(.) %>%
+  mutate(GEOID = as.character(FIPS)) %>%
+  dplyr::rename("year" = Year) %>%
+  dplyr::select(-State, -County, -FIPS) %>%
+  filter(year != 2017) -> 
   drought.summary
   
 save(list = c("drought.summary"), file = "data/weather/DSCI_summary_stats.county.by.year.RData")

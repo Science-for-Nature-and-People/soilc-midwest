@@ -7,96 +7,118 @@ library(raster)
 library(tigris)
 library(fuzzyjoin)
 library(parallel)
+library(gdalUtils)
 
-mode <- function(x, na.rm = FALSE) {
+mode <- function(x, na.rm = TRUE) {
   if(na.rm){
     x = x[!is.na(x)]
   }
   
-  ux <- unique(x)
+  ux <- na.omit(unique(x))
   return(ux[which.max(tabulate(match(x, ux)))])
 }
 
 
-# define function that takes individual county gSSURGO vector, converts to raster, masks/resamples that raster by corn cells,
+counties <- tigris::counties(year = 2017)
+crop.freq <- brick("data/crop_frequency/crop_frequency_corn_2008-2017.img")
+
+
+# create list of filenames with gSSURGO polygon data
+all_counties_rds_list <- list.files("data/soil/county_gssurgo_gdbs", full.names = T, pattern = ".rds")
+
+# define function that takes individual county gSSURGO vector, converts to raster, 
+# masks/resamples that raster by corn cells,
 # then computes summary stats
 soil.stats.gather <- function(i){
-  
+
   # Set GEOID variable for function enviroment
   temp.GEOID <- unique(i$GEOID)
+  # Set boundary object for the county
+  ibound <- spTransform(subset(counties,GEOID %in% temp.GEOID), CRSobj = crs(crop.freq))
+  # Create reclassification matrix for converting crop frequency data into binary raster
+  rcl.m <- matrix(c(-Inf,2, NA,
+                    2, Inf,1), 
+                  ncol=3, 
+                  byrow=TRUE)
+  
+  # Create mask object
+  imask <-
+    reclassify(projectRaster(mask(crop(crop.freq, y = ibound), ibound), res = 30, crs = crs(ibound)), rcl.m)
+  
+  
+  # Convert dataframe to SF object
+  i <- st_as_sf(i)
+  # Create blank raster to rasterize sf to
+  irast <- raster(imask)
   
   # Convert the county-level data to a raster stack
-  temp.raster <- raster::stack(fasterize(sf = i, raster = raster(i, res = 10), field = "soc0_30"),
-                  fasterize(sf = i, raster = raster(i, res = 10), field = "aws0_30"),
-                  fasterize(sf = i, raster = raster(i, res = 10), field = "nccpi3corn"),
-                  fasterize(sf = i, raster = raster(i, res = 10), field = "droughty"),
-                  fasterize(sf = i, raster = raster(i, res = 10), field = "SSURGO_sandtotal_r"),
-                  fasterize(sf = i, raster = raster(i, res = 10), field = "SSURGO_silttotal_r"),
-                  fasterize(sf = i, raster = raster(i, res = 10), field = "SSURGO_claytotal_r"),
-                  fasterize(sf = i, raster = raster(i, res = 10), field = "SSURGO_taxorder"))
+  temp.raster <- raster::stack(fasterize(sf = i, raster = irast, field = "soc"),
+                               fasterize(sf = i, raster = irast, field = "clay"),
+                               fasterize(sf = i, raster = irast, field = "sand"),
+                               fasterize(sf = i, raster = irast, field = "silt"),
+                               fasterize(sf = i, raster = irast, field = "om"),
+                               fasterize(sf = i, raster = irast, field = "awc"),
+                               fasterize(sf = i, raster = irast, field = "aws"),
+                               fasterize(sf = i, raster = irast, field = "fifteenbar"),
+                               fasterize(sf = i, raster = irast, field = "cec"),
+                               fasterize(sf = i, raster = irast, field = "ph"),
+                               fasterize(sf = i, raster = irast, field = "droughty"),
+                               fasterize(sf = i, raster = irast, field = "order"))
+  
   
   # Rename layers in the raster stack
-  names(temp.raster) <- c("SSURGO_soc0_30",
-                          "SSURGO_aws0_30",
-                          "SSURGO_nccpi3corn",
-                          "SSURGO_droughty",
-                          "SSURGO_sandtotal_r",
-                          "SSURGO_silttotal_r",
-                          "SSURGO_claytotal_r",
-                          "SSURGO_taxorder")
+  names(temp.raster) <-
+    c("soc",
+      "clay",
+      "sand",
+      "silt",
+      "om",
+      "awc",
+      "aws",
+      "fifteenbar",
+      "cec",
+      "ph",
+      "droughty",
+      "order")
   
-  # Mask raster stack with corresponding corn cells mask
-  temp.raster <- mask(resample(temp.raster, corn_mask_by_county[[temp.GEOID]]), corn_mask_by_county[[temp.GEOID]])
+  # Mask temp.raster to just the corn cells in the county
+  temp.raster <- mask(temp.raster, mask = imask)
   
   # Summarize soils data for each county
   soil.stats.temp <- cbind(temp.GEOID,
-                           as.data.frame(t(cellStats(subset(temp.raster, c(1:3,5:7)), 'mean'))) %>%
-                                  rename_all(function(.) paste(.,"mean", sep = "_")),
-                           as.data.frame(t(cellStats(subset(temp.raster, c(1:3,5:7)), 'sd'))) %>%
-                             rename_all(function(.) paste(.,"sd", sep = "_")),
-                           as.data.frame(t(cellStats(subset(temp.raster, c(4,8)), mode))) %>%
+                           as.data.frame(t(cellStats(subset(temp.raster, c(1:10)), 'mean'))) %>%
+                             rename_all(function(.) paste(.,"mean", sep = "_")),
+                           as.data.frame(t(cellStats(subset(temp.raster, c(1:10)), 'median'))) %>%
+                             rename_all(function(.) paste(.,"median", sep = "_")),
+                           as.data.frame(t(cellStats(subset(temp.raster, c(11:12)), mode))) %>%
                              rename_all(function(.) paste(.,"mode", sep = "_")))
   
   # Return
   return(soil.stats.temp)
+  gc()
 }
 
-# call in raster for masking soil data by corn cells in each county
-corn_mask_by_county <- readRDS("data/soil/corn_mask_by_county.rds")
-
-# create list of filenames with gSSURGO polygon data
-all_counties_rds_list <- list.files("data/soil/gssurgo_2019/all_counties_rds/", full.names = T)
-
 # run soil.stats.gather function on each list
-soil_stats_1 <- mclapply(mc.cores = 10, readRDS(all_counties_rds_list[[1]]), function(data){
-    soil.stats.gather(i = data)
+gssurgo.soil.stats <- mclapply(mc.cores = 20, all_counties_rds_list, function(x){
+    soil.stats.gather(i = read_rds(x))
   })
-gc()
-
-soil_stats_2 <- mclapply(mc.cores = 10, readRDS(all_counties_rds_list[[2]]), function(data){
-  soil.stats.gather(i = data)
-})
-gc()
-
-soil_stats_3 <- mclapply(mc.cores = 10, readRDS(all_counties_rds_list[[3]]), function(data){
-  soil.stats.gather(i = data)
-})
-gc()
-
-soil_stats_4 <- mclapply(mc.cores = 10, readRDS(all_counties_rds_list[[4]]), function(data){
-  soil.stats.gather(i = data)
-})
-gc()
-
-soil_stats_5 <- mclapply(mc.cores = 10, readRDS(all_counties_rds_list[[5]]), function(data){
-  soil.stats.gather(i = data)
-})
-gc()
 
 # Merge stats dfs and write to the hard drive
-gssurgo.soil.stats <- plyr::ldply(do.call("list", mget(ls(pattern = "soil_stats"))), function(x) plyr::ldply(x)) %>%
-  dplyr::select(-.id) %>%
-  rename("GEOID" = temp.GEOID)
+gssurgo.soil.stats <- plyr::ldply(gssurgo.soil.stats) %>%
+  rename("GEOID" = temp.GEOID) %>%
+  rename_at(.vars = vars(2:23), .funs = function(x) paste("ssurgo", x, sep = "_")) %>%
+  mutate(ssurgo_order_mode = as.character(ssurgo_order_mode),
+         ssurgo_order_mode = dplyr::recode(ssurgo_order_mode, 
+                                           '1' = "Alfisol",
+                                           '2' = "Entisols",
+                                           '3' = "Histosols",
+                                           '4' = "Inceptisols",
+                                           '5' = "Mollisols",
+                                           '6' = "Spodosols",
+                                           '7' = "Ultisols",
+                                           '8' = "Vertisols",
+                                           '9' = "Aridisols"))
+  
 
 saveRDS(gssurgo.soil.stats, file = "data/soil/gssurgo.soil.stats.rds")
 
