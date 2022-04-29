@@ -110,17 +110,16 @@ all.drought2 <-all.data.stan %>%
 summary(all.drought)
 
 min(all_data$loss_cost)
-View(all_data %>% filter(loss_cost < 0))
 
-interactions::interact_plot(
-  model = all.drought,
-  pred = ssurgo_om_mean,
-  modx = ssurgo_clay_mean,
-  modx.values = quantile(all.data.stan$ssurgo_clay_mean),
-  mod2 = ssurgo_h,
-  mod2.values = quantile(all.data.stan$ssurgo_h),
-  partial.residuals = T
-)
+# interactions::interact_plot(
+#   model = all.drought,
+#   pred = ssurgo_om_mean,
+#   modx = ssurgo_clay_mean,
+#   modx.values = quantile(all.data.stan$ssurgo_clay_mean),
+#   mod2 = ssurgo_h,
+#   mod2.values = quantile(all.data.stan$ssurgo_h),
+#   partial.residuals = T
+# )
 
 
 all.data.stan %>%
@@ -139,31 +138,33 @@ all.data.stan %>%
   geom_point() 
 
 vsvr.dat <- all.data.stan %>%
-  filter(spei.cut == "Very severe", !(ssurgo_h <= -0.25 & state_ansi == 19)) %>%
+  filter(spei.cut == "Very severe") %>%
+  #filter(!(ssurgo_h <= -0.25 & state_ansi == 19)) %>%
   plm::pdata.frame(x = ., c("state_alpha"))
 
 
 test <- all_data %>%
-  filter(spei.cut == "Very severe", ssurgo_h <= quantile(.$ssurgo_h)[2]) %>%
+  filter(spei.cut == "Very severe") %>%
+  #filter(ssurgo_h <= quantile(.$ssurgo_h)[2]) %>%
   lmerTest::lmer(data = ., loss_cost ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h+(1|state_alpha)) 
 
   
 summary(test)
 
-interactions::interact_plot(
-  model = test,
-  pred = ssurgo_om_mean,
-  modx = ssurgo_clay_mean,
-  modx.values = c(-0.5, 0, 0.5),
-  mod2 = ssurgo_h,
-  mod2.values = c( 0, 0.5, 1),
-  plot.points = T
-)
+# interactions::interact_plot(
+#   model = test,
+#   pred = ssurgo_om_mean,
+#   modx = ssurgo_clay_mean,
+#   modx.values = c(-0.5, 0, 0.5),
+#   mod2 = ssurgo_h,
+#   mod2.values = c( 0, 0.5, 1),
+#   plot.points = T
+# )
 
 
 
 very_svr <- vsvr.dat %>%
-  censReg( loss_cost ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h, data = .)
+  censReg( loss_cost ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h, left = 0, data = .)
 
 summary(very_svr)
 
@@ -177,7 +178,8 @@ all.data.stan %>%
   ggplot(data = ., aes(x = ssurgo_h, y = loss_cost)) + geom_point() 
   
 severe.dat <- all.data.stan %>%
-  filter(spei.cut == "Severe", !(ssurgo_h>0 & ssurgo_om_mean > 1 & loss_cost == 0)) %>%
+  filter(spei.cut == "Severe") %>%
+  #filter(!(ssurgo_h>0 & ssurgo_om_mean > 1 & loss_cost == 0)) %>%
   plm::pdata.frame(x = ., c("state_alpha"))
 
   
@@ -214,10 +216,11 @@ all.data.stan %>%
   ggplot(data = ., aes(x = ssurgo_om_mean, y = loss_cost)) + geom_point() 
 
 moderate.dat <- all.data.stan %>%
-  filter(spei.cut == "Moderate", !(ssurgo_h < -0.25 & ssurgo_om_mean < -0.36 )) %>%
+  filter(spei.cut == "Moderate") %>%
+  #filter(!(ssurgo_h < -0.25 & ssurgo_om_mean < -0.36 )) %>%
   plm::pdata.frame(x = ., c("state_alpha"))
 
-View(all.data.stan %>%
+(all.data.stan %>%
   filter(spei.cut == "Moderate", (ssurgo_h < -0.25 & ssurgo_om_mean < -0.36 )) %>%
   plm::pdata.frame(x = ., c("state_alpha")))
   
@@ -261,8 +264,28 @@ normal.dat <- all.data.stan %>%
 normal <- normal.dat %>%
   censReg( loss_cost ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h, data = .)
 
-test <- summary(normal)
-test$estimate
+
+
+```
+
+
+```{r}
+
+vs_0 <- vsvr.dat %>%
+  censReg( loss_cost ~ 1, data = .)
+1 - as.vector(logLik(very_svr)/logLik(vs_0))
+
+s_0 <- severe.dat %>%
+  censReg( loss_cost ~ 1, data = .)
+1 - as.vector(logLik(severe)/logLik(s_0))
+
+m_0 <- moderate.dat %>%
+  censReg( loss_cost ~ 1, data = .)
+1 - as.vector(logLik(moderate)/logLik(m_0))
+
+n_0 <- normal.dat %>%
+  censReg( loss_cost ~ 1, data = .)
+1 - as.vector(logLik(normal)/logLik(n_0))
 
 
 ```

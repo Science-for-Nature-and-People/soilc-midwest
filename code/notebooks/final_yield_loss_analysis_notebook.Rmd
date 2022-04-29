@@ -260,6 +260,18 @@ summary(normal)
 
 
 ```
+
+```{r}
+
+MuMIn::r.squaredGLMM(very_svr)
+MuMIn::r.squaredGLMM(severe)
+MuMIn::r.squaredGLMM(moderate)
+MuMIn::r.squaredGLMM(normal)
+
+```
+
+
+
 ```{r}
 
 mod <- function(df){

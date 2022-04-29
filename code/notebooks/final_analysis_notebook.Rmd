@@ -212,6 +212,7 @@ very_svr <- all.data.stan %>%
   lmerTest::lmer(data = ., formula = Yield_decomp_add ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h+(1|state_alpha))
 
 summary(very_svr)
+MuMIn::r.squaredGLMM(very_svr)
 
 
 ```
@@ -224,8 +225,9 @@ all.data.stan %>%
   
 severe <- all.data.stan %>%
   filter(spei.cut == "Severe",
-         #!(ssurgo_clay_mean > 0 & ssurgo_om_mean > 1),
-         #!(ssurgo_clay_mean <= -.25 & ssurgo_om_mean > 1)
+         # !(ssurgo_clay_mean > 0 & ssurgo_om_mean > 1),
+         # !(ssurgo_clay_mean <= -.25 & ssurgo_om_mean > 1)
+         !(ssurgo_h > 0 & ssurgo_om_mean >1)
          ) %>%
   lmerTest::lmer(
     data = .,
@@ -234,6 +236,8 @@ severe <- all.data.stan %>%
   )
 
 summary(severe)
+MuMIn::r.squaredGLMM(severe)
+car::vif(severe)
 
 1537
 
@@ -242,8 +246,8 @@ interactions::interact_plot(
   pred = ssurgo_om_mean,
   modx = ssurgo_clay_mean,
   modx.values = c(-0.5,-0.25, 0, 0.25),
-  # mod2 = ssurgo_h,
-  # mod2.values = c(-0.5,-0.25, 0, 0.25,1),
+  mod2 = ssurgo_h,
+  mod2.values = c(-0.5,-0.25, 0, 0.25,1),
   plot.points = T
 )
 
@@ -255,18 +259,19 @@ interactions::interact_plot(
 # Moderate drought, SPEI > -0.4264771, < 0.1208768
 
 all.data.stan %>%
-  #mutate(hfct = cut(ssurgo_h, breaks = quantile(all.data.stan$ssurgo_h))) %>%
+  mutate(hfct = cut(ssurgo_h, breaks = quantile(all.data.stan$ssurgo_h))) %>%
   mutate(hfct = cut(ssurgo_om_mean, breaks = c(-3, -1, -0.5,0, 0.5, 1, 3.2))) %>%
   filter(spei.cut == "Moderate") %>%
   ggplot(data = ., aes(x = ssurgo_h, y = Yield_decomp_add)) + geom_point() + geom_smooth(method = "lm") + facet_wrap("hfct")
   
 moderate <- all.data.stan %>%
   filter(spei.cut == "Moderate",
-         #!(ssurgo_h > 0 & ssurgo_om_mean >1)
+         !(ssurgo_h > 0 & ssurgo_om_mean >1)
          ) %>%
   lmerTest::lmer(data = ., formula = Yield_decomp_add ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h+(1|state_alpha))
 
 summary(moderate)
+MuMIn::r.squaredGLMM(moderate)
 
 3998 -3956
 
@@ -290,6 +295,7 @@ normal <- all.data.stan %>%
   lmerTest::lmer(data = ., formula = Yield_decomp_add ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h+(1|state_alpha))
 
 summary(normal)
+MuMIn::r.squaredGLMM(normal)
 
 interactions::interact_plot(
   model = normal,
@@ -354,30 +360,157 @@ test2 <- test %>%
   select(ssurgo_om_mean, Normal, Moderate, Severe, 'Very severe') %>%
   pivot_longer(-ssurgo_om_mean, names_to = "spei.cut", values_to = "predicted.yield")
 
-ggplot(test2, aes(x=om_descale, y=pred))+
-  geom_smooth(method = "lm")
+test2$spei.cut_f = factor(test2$spei.cut, levels=c("Normal","Moderate","Severe","Very severe"))
 
+# ggplot(test2, aes(x=om_descale, y=pred))+
+#   geom_smooth(method = "lm")
+
+
+all_data$spei.cut_f = factor(all_data$spei.cut, levels=c("Normal","Moderate","Severe","Very severe"))
 
 
 
 yield.plot <- all_data %>%
-  mutate(spei.cut=factor(spei.cut,levels=c("Normal","Moderate","Severe","Very severe"))) %>%
-  arrange(spei.cut) %>%
-  ggplot(data = .) + 
-  scale_color_manual(values = c("#49A942","#A0C04D",
-                                "#23487A","#0096D6",
-                                "#90214A","#C5351C",
-                                "#F3901D"))+
-  geom_jitter(aes(x = ssurgo_om_mean, y = Yield_decomp_add, color = ssurgo_order_mode), alpha = 0.2, size = 1)+
-  geom_smooth(data = test2, aes(x = ssurgo_om_mean, y = predicted.yield), method = "lm", color = "black")+
-  facet_wrap(facets = "spei.cut", ncol = 4)+
-  labs(x = "SOM (%)", y = expression(Yield~Mg~ha^-1))+
-  theme(legend.title = element_blank(), legend.position = "bottom")+
-  theme(axis.title = element_text(size=12), axis.text.y = element_text(size=10),
-          axis.text.x = element_text(size=10), legend.text = element_text(size = 10))
+  mutate(ssurgo_order_mode = factor(
+    ssurgo_order_mode,
+    levels = c(
+      "Alfisol",
+      "Mollisols",
+      "Entisols",
+      "Inceptisols",
+      "Spodosols",
+      "Ultisols",
+      "Vertisols"
+    )
+  )) %>%
+  # mutate(spei.cut=factor(spei.cut,levels=c("Normal","Moderate","Severe","Very severe"))) %>%
+  # arrange(spei.cut) %>%
+  ggplot(data = .) +
+  scale_color_manual(values = c(
+    "#004949",
+    "#009292",
+    "#ff6db6",
+    "#ffb6db",
+    "#490092",
+    "#006ddb",
+    "#b66dff"
+  )) +
+  geom_jitter(
+    aes(x = ssurgo_om_mean, y = Yield_decomp_add, color = ssurgo_order_mode),
+    alpha = 0.4,
+    size = 1
+  ) +
+  geom_smooth(
+    data = test2,
+    aes(x = ssurgo_om_mean, y = predicted.yield),
+    method = "lm",
+    color = "black"
+  ) +
+  facet_grid(. ~ spei.cut_f) +
+  labs(x = "SOM (%)", y = expression(Yield ~ Mg ~ ha ^ -1)) +
+  ylim(0, 15) +
+  theme(legend.title = element_blank(), legend.position = "bottom") +
+  theme(
+    axis.title = element_text(size = 12),
+    axis.text.y = element_text(size = 9),
+    axis.text.x = element_text(
+      size = 9,
+      angle = 45,
+      hjust = 1
+    ),
+    legend.text = element_text(size = 10)
+  ) + 
+  guides(colour = guide_legend(override.aes = list(size=5, alpha = 0.8)))
+
+dat_text <- data.frame(
+  spei.cut = c("Normal","Moderate","Severe","Very severe"),
+  slope = c(0.73, 0.76, 1.18, 2.2)
+)
+
+dat_text$spei.cut_f = factor(dat_text$spei.cut, levels=c("Normal","Moderate","Severe","Very severe"))
+
+
+yield.plot <- yield.plot + geom_text(
+  size = 3.25,
+  data    = dat_text,
+  mapping = aes(x = 9.5, y = 14.25, label = slope),
+  hjust   = "right",
+  vjust   = "top"
+)
 
 ggsave(yield.plot, filename = "~/yield.jpg", width = 8, height = 4, units = "in")
 
+
+```
+```{r}
+
+yield_loss_plot <- all_data %>%
+  mutate(ssurgo_order_mode = factor(
+    ssurgo_order_mode,
+    levels = c(
+      "Alfisol",
+      "Mollisols",
+      "Entisols",
+      "Inceptisols",
+      "Spodosols",
+      "Ultisols",
+      "Vertisols"
+    )
+  )) %>%
+  # mutate(spei.cut=factor(spei.cut,levels=c("Normal","Moderate","Severe","Very severe"))) %>%
+  # arrange(spei.cut) %>%
+  ggplot(data = .) +
+  scale_color_manual(values = c(
+    "#004949",
+    "#009292",
+    "#ff6db6",
+    "#ffb6db",
+    "#490092",
+    "#006ddb",
+    "#b66dff"
+  )) +
+  geom_jitter(
+    aes(x = ssurgo_om_mean, y = Yield_decomp_mult, color = ssurgo_order_mode),
+    alpha = 0.4,
+    size = 1
+  ) +
+  # geom_smooth(
+  #   data = test2,
+  #   aes(x = ssurgo_om_mean, y = predicted.yield),
+  #   method = "lm",
+  #   color = "black"
+  # ) +
+  facet_grid(. ~ spei.cut_f) +
+  labs(x = "SOM (%)", y = "Proportion expected yield") +
+  theme(legend.title = element_blank(), legend.position = "bottom") +
+  theme(
+    axis.title = element_text(size = 12),
+    axis.text.y = element_text(size = 9),
+    axis.text.x = element_text(
+      size = 9,
+      angle = 45,
+      hjust = 1
+    ),
+    legend.text = element_text(size = 10)
+  ) + 
+  guides(colour = guide_legend(override.aes = list(size=5, alpha = 0.8))) + 
+  geom_hline(yintercept = 1, color = "grey")
+
+dat_text <- data.frame(
+  spei.cut = c("Normal","Moderate","Severe","Very severe"),
+  slope = c(0.73, 0.76, 1.18, 2.2)
+)
+
+dat_text$spei.cut_f = factor(dat_text$spei.cut, levels=c("Normal","Moderate","Severe","Very severe"))
+
+
+yield.plot <- yield.plot + geom_text(
+  size = 3.25,
+  data    = dat_text,
+  mapping = aes(x = 9.5, y = 14.25, label = slope),
+  hjust   = "right",
+  vjust   = "top"
+)
 
 ```
 
@@ -421,6 +554,7 @@ coeff.table.clay <- tribble(
 
 
 ```
+
 ```{r}
 
 coeff.table.clay.som <- tribble(
