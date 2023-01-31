@@ -32,7 +32,7 @@ fips_codes
 fips_codes <- fips_codes %>%
   mutate(CH.GEOID = paste(state,county_code, sep = ""), 
          GEOID = paste(state_code,county_code, sep = "")) %>%
-  filter(GEOID %in% unique(read_rds("data/yield_08062020.rds")$GEOID)) %>%
+  filter(GEOID %in% unique(read_rds("data/yield_08062020.rds")$GEOID)) %>%  ## don't have this file
   mutate(county = str_remove(county, " County"))
 
 # Call in 'sacatalog' table from gSSURGO
