@@ -22,7 +22,7 @@ d <- plyr::ldply(years, function(x){
     util_practice_desc = "GRAIN",
     year = x,
     agg_level_desc = "COUNTY", 
-    source = "SURVEY",
+    source_desc = "SURVEY",  # change source to source_desc
     domain_desc = "TOTAL"
   )
   

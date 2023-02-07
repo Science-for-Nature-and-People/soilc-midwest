@@ -69,7 +69,9 @@ summary(full.main)
 
 ```
 
-VIFs are low now. Final variables will be SOM, Clay, and H+ concentration. 
+VIFs are low now. Final variables will be SOM, Clay, and H+ concentration.
+
+BM: GEOID is the county FIPS code and the random effect used by Dan in the above models. For P-SHEC we want to get to run regression on a sub-county spatial scale so that it is more relevant to an individual farm. However notice in the models below he uses state as the fixed effect rather than county, and state is what he reports using in the paper. How does the final model look if we go back to county?
 
 ```{r, Yield models with SPEI, echo = TRUE}
 
@@ -78,6 +80,8 @@ VIFs are low now. Final variables will be SOM, Clay, and H+ concentration.
 m.state <- all.data.stan %>%
   lmerTest::lmer(data = ., 
            formula = Yield_decomp_add ~ summer_spei*ssurgo_om_mean*ssurgo_h*ssurgo_clay_mean+(1|state_alpha))
+
+summary(m.state)
 
 broom.mixed::tidy(m.state) %>%
   mutate(p.value = round(p.value, digits = 5))
@@ -92,7 +96,45 @@ ggplot(data.frame(eta=predict(m.state,type="link"),pearson=residuals(m.state,typ
 ```
 
 
-Log likelihood ratio tests, anova, and conditional r-squared estimates indicate that the random effect of county improves model fit.
+Log likelihood ratio tests, anova, and conditional r-squared estimates indicate that the random effect of county improves model fit. 
+
+BM: However he uses state. Also where is the code showing these tests? Need a null model without county to compare. Below we run the same code chunk as above with GEOID (county) rather than state. And make a null model to compare.
+
+```{r, Yield models with SPEI, echo = TRUE}
+
+# SPEI as drought indicator
+
+m.county <- all.data.stan %>%
+  lmerTest::lmer(data = ., 
+           formula = Yield_decomp_add ~ summer_spei*ssurgo_om_mean*ssurgo_h*ssurgo_clay_mean+(1|GEOID))
+
+summary(m.county)
+
+broom.mixed::tidy(m.county) %>%
+  mutate(p.value = round(p.value, digits = 5))
+
+# Plot residuals and inspect
+ggplot(data.frame(eta=predict(m.county,type="link"), # link means predictions will be on the scale of the linear predictor rather than the response variable ("response" is the other option for type=)
+                  pearson=residuals(m.county,type="pearson")),
+       aes(x=eta,y=pearson)) +
+  geom_point() +
+  theme_bw()
+
+# Null model
+m.county.h0 <- all.data.stan %>%
+  lm(data = ., 
+           formula = Yield_decomp_add ~ summer_spei*ssurgo_om_mean*ssurgo_h*ssurgo_clay_mean)
+
+# Compare null model and model with random effect of county
+anova(m.county,m.county.h0)
+
+# compare conditional R-squared estimates 
+# about conditional vs. marginal R2 for mixed effects models see: https://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/
+MuMIn::r.squaredGLMM(m.county)
+MuMIn::r.squaredGLMM(m.county.h0)
+
+```
+BM: m.county model is significantly more parsimonious than the null model (both AIC and BIC are lower); has a higher log likelihood (better); residual deviance is lower; and the R2c (conditional R-squared) is higher (better fit). So, yes, county improves model fit. 
 
 Below we'll look at the coefficients. 
 
