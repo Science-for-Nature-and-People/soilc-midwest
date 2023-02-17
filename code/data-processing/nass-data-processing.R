@@ -8,7 +8,10 @@ library(caret)
 
 api_key <- as.character(read.csv("code/NASS_API_key.csv", header = F)[1,1])       # api key
 # Specify the range of years across which you want to collect data
-years <- as.list(2000:2016)
+years <- as.list(2000:2016)  # BM: Future self, when update with newer data: consider which years to use to minimize 
+# the confounding effect of improvements in maize genetics, i.e., shift the
+# 16 year window forward, drop oldest records.
+
 # Call in all corn yield data via NASS API ####
 
 nassqs_auth(key = api_key)
@@ -186,8 +189,8 @@ d <- d %>%
   group_by(GEOID) %>%
   mutate(County_avg_yield = mean(Yield_mg_ha)) %>%
   ungroup(.) %>%
-  mutate(Yield_decomp_add = County_avg_yield+Detrend_resids,
-         Yield_decomp_mult = Yield_mg_ha/Detrend_predictions)
+  mutate(Yield_decomp_add = County_avg_yield+Detrend_resids,  # de-trended yield 
+         Yield_decomp_mult = Yield_mg_ha/Detrend_predictions) # yield anomaly
 
 
 write_rds(d, path = "data/yield_08062020.rds")

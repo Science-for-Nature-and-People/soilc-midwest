@@ -21,7 +21,7 @@ all.data.stan <- readRDS("../../data/all_data_stan_2020.08.07.rds")
 
 ```
 
-To start we'll do a series of simple exploratory plots to see whether or not we choose to use soil data summarized using mean or geometric mean, and whether or not we choose to use SOC or SOM as our metric of choice. 
+To start we'll do a series of simple exploratory plots to see whether or not we choose to use soil data summarized using mean or geometric mean, and whether or not we choose to use SOC or SOM as our metric of choice. Yield_decomp_add is the de-trended yield data. I don't see geometric means in the data, data-processing code, or code below?
 
 ```{r, Plot yield by SOC}
 
@@ -35,13 +35,16 @@ ggplot(data = all_data, aes(x = ssurgo_h, y = Yield_decomp_add))+
 
 ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
   geom_jitter()+
-  geom_smooth()
-
+  # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
+  geom_smooth(method="lm")
+  
 ggplot(data = all_data, aes(x = ssurgo_clay_mean, y = Yield_decomp_add))+
   geom_jitter()+
-  geom_smooth()
+  geom_smooth()  # looks like it peaks then comes back down, like a normal curve (probability density function)
+
 ```
 Next, we'll develop simple linear mixed models to analyze the data. 
+BM: Why are we using linear models when the third plot above is exponential?
 
 ```{r}
 full.main <- all.data.stan %>%
@@ -92,13 +95,12 @@ ggplot(data.frame(eta=predict(m.state,type="link"),pearson=residuals(m.state,typ
   geom_point() +
   theme_bw()
 
-
 ```
-
 
 Log likelihood ratio tests, anova, and conditional r-squared estimates indicate that the random effect of county improves model fit. 
 
-BM: However he uses state. Also where is the code showing these tests? Need a null model without county to compare. Below we run the same code chunk as above with GEOID (county) rather than state. And make a null model to compare.
+BM: However he uses state. --in paper they argue that "since farms in same state are generally more likely to implement fert rates and management practices simimlar to other farms in their state than those out of their state, our model accounts to some degree for broad differences in management." This is because they were unable to account for differences in management in the data (not available for fertilizer rate, and tillage data only available recently in AgCensus, I'll also add,that not all respondents to the survey report tillage practices.)
+Also where is the code showing these tests? Need a null model without county to compare. Below we run the same code chunk as above with GEOID (county) rather than state. And make a null model to compare.
 
 ```{r, Yield models with SPEI, echo = TRUE}
 
@@ -350,7 +352,7 @@ plot.points = T)
 
 
 ```
-We ran models on different subsets of data to represent different levels of drought intensity. No matter the level of drought, SOC had a positive, significant effect on yields. At more intense levels of drought, that effect was more stronger, i.e. the coefficient was greater. Based on these data, we conclude that counties with higher SOC content per estimations in the gSSURGO database have greater resilence to yield losses in drought years.  
+We ran models on different subsets of data to represent different levels of drought intensity. No matter the level of drought, SOC had a positive, significant effect on yields. At more intense levels of drought, that effect was more stronger, i.e. the coefficient was greater. Based on these data, we conclude that counties with higher SOC content per estimations in the gSSURGO database have greater resilience to yield losses in drought years.  
 
 
 ```{r}
@@ -364,6 +366,8 @@ model_by_drought <- all.data.stan %>%
   nest() %>%
   mutate(model_by_drought = map(data, mod))
 
+# this table contains the slopes used in Fig. 1, caption reads "trendlines represent
+# predicted yields based on that marginal effect [of SOM]."
 coeff.table <- model_by_drought %>% 
   mutate(glance = map(model_by_drought, broom.mixed::tidy)) %>% 
   unnest(glance) %>%
@@ -379,7 +383,7 @@ coeff.table <- model_by_drought %>%
 ```{r, Presentation figures}
 
 
-test <-
+test <-   # Create a new dataframe to add predictions to
   plyr::ldply(unique(all.data.stan$state_alpha), function(x) {
     data.frame(
       state_alpha = x,
@@ -390,10 +394,10 @@ test <-
    
 som.rev <- function(x){
   (x*(2*sd(all_data$ssurgo_om_mean)))+mean(all_data$ssurgo_om_mean)
-}
+}  # this reverses the standardized SOM data, the formula for that was (x-mean(x))/(2*sd(x))
 
-test2 <- test %>%
-  mutate(Normal = predict(object = normal, newdata = .), 
+test2 <- test %>%  # Add predictions, these are used for fitting the smoothed line in the ggplot below
+  mutate(Normal = predict(object = normal, newdata = .),  # normal is an object in the environment, formal class lmerModLmerTest; The prediction intervals are for a single observation at each case in newdata (or by default, the data used for the fit)
          Moderate = predict(object = moderate, newdata = .),
          Severe = predict(object = severe, newdata = .),
          "Very severe" = predict(object = very_svr, newdata = .),
@@ -401,6 +405,7 @@ test2 <- test %>%
   filter(ssurgo_om_mean > 0, ssurgo_om_mean < 10) %>%
   select(ssurgo_om_mean, Normal, Moderate, Severe, 'Very severe') %>%
   pivot_longer(-ssurgo_om_mean, names_to = "spei.cut", values_to = "predicted.yield")
+
 
 test2$spei.cut_f = factor(test2$spei.cut, levels=c("Normal","Moderate","Severe","Very severe"))
 
@@ -466,7 +471,7 @@ yield.plot <- all_data %>%
 
 dat_text <- data.frame(
   spei.cut = c("Normal","Moderate","Severe","Very severe"),
-  slope = c(0.73, 0.76, 1.18, 2.2)
+  slope = c(0.73, 0.76, 1.18, 2.2)  # these come from coeff.table
 )
 
 dat_text$spei.cut_f = factor(dat_text$spei.cut, levels=c("Normal","Moderate","Severe","Very severe"))
@@ -545,7 +550,7 @@ dat_text <- data.frame(
 
 dat_text$spei.cut_f = factor(dat_text$spei.cut, levels=c("Normal","Moderate","Severe","Very severe"))
 
-
+# this creates Fig. 1
 yield.plot <- yield.plot + geom_text(
   size = 3.25,
   data    = dat_text,
@@ -577,7 +582,7 @@ ggsave(coeff.figure, filename = "yieldcoeff.jpg", width = 2, height = 3, units =
 
 ```{r}
 
-install.packages("ggpubr")
+# install.packages("ggpubr")
 
 ggpubr::ggarrange(yield.plot, coeff.figure, labels = c("A","B"), nrow = 2)
 
