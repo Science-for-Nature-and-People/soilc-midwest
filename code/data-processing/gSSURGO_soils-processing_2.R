@@ -20,6 +20,8 @@ mode <- function(x, na.rm = TRUE) {
 
 
 counties <- tigris::counties(year = 2017)
+# load the corn frequency raster from CropScape - reports how many years between 
+# 2008-2017 each pixel was used for mazie production.
 crop.freq <- brick("data/crop_frequency/crop_frequency_corn_2008-2017.img")
 
 
@@ -36,6 +38,9 @@ soil.stats.gather <- function(i){
   # Set boundary object for the county
   ibound <- spTransform(subset(counties,GEOID %in% temp.GEOID), CRSobj = crs(crop.freq))
   # Create reclassification matrix for converting crop frequency data into binary raster
+  # binary for had 2+ years of corn data or did not. to identify pixels from any field in
+  # which maize grown with relative consistency but not opportunistically 
+  # while also eliminating non-crop areas of counties
   rcl.m <- matrix(c(-Inf,2, NA,
                     2, Inf,1), 
                   ncol=3, 

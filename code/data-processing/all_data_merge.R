@@ -74,7 +74,7 @@ all_data <- all_data %>%
          ssurgo_h_square = (ssurgo_h^2))
 
 # Generate standardized dataframe ####
-
+# basically a z-score
 scale.2sd <- function(x){
   (x-mean(x))/(2*sd(x))
 }
