@@ -144,4 +144,122 @@ coeff.table <- model_by_drought %>%
   filter(effect == "fixed", 
          term != "(Intercept)") %>%
   arrange(spei.cut) %>%
-  select(-data, -model_by_drought, -effect, - group)
+  dplyr::select(-data, -model_by_drought, -effect, - group)
+
+coeff.table
+
+
+
+
+
+#ATR: Brought over from Dan's code from final_analysis_notebook, recreated the regression usin the m.county and ssurgo_om_mean_sqrt created by BM 
+
+#BM: However he uses state. --in paper they argue that "since farms in same state are generally more likely to implement fert rates and management practices simimlar to other farms in their state than those out of their state, our model accounts to some degree for broad differences in management." This is because they were unable to account for differences in management in the data (not available for fertilizer rate, and tillage data only available recently in AgCensus, I'll also add,that not all respondents to the survey report tillage practices.). Also where is the code showing these tests? Need a null model without county to compare. Below we run the same code chunk as above with GEOID (county) rather than state. And make a null model to compare.
+
+#ATR: recreated this # SPEI as drought indicator
+
+m.county <- all.data.stan %>%
+  lmerTest::lmer(data = ., 
+                 formula = Yield_decomp_add ~ summer_spei*ssurgo_om_mean_sqrt*ssurgo_h*ssurgo_clay_mean+(1|GEOID))
+
+summary(m.county)
+
+broom.mixed::tidy(m.county) %>%
+  mutate(p.value = round(p.value, digits = 5))
+
+# Plot residuals and inspect
+ggplot(data.frame(eta=predict(m.county,type="link"), # link means predictions will be on the scale of the linear predictor rather than the response variable ("response" is the other option for type=)
+                  pearson=residuals(m.county,type="pearson")),
+       aes(x=eta,y=pearson)) +
+  geom_point() +
+  theme_bw()
+
+# Null model
+m.county.h0 <- all.data.stan %>%
+  lm(data = ., 
+     formula = Yield_decomp_add ~ summer_spei*ssurgo_om_mean_sqrt*ssurgo_h*ssurgo_clay_mean)
+
+# Compare null model and model with random effect of county
+anova(m.county,m.county.h0)
+
+# compare conditional R-squared estimates 
+# about conditional vs. marginal R2 for mixed effects models see: https://jonlefcheck.net/2013/03/13/r2-for-linear-mixed-effects-models/
+MuMIn::r.squaredGLMM(m.county)
+MuMIn::r.squaredGLMM(m.county.h0)
+
+# BM: m.county model is significantly more parsimonious than the null model (both AIC and BIC are lower); has a higher log likelihood (better); residual deviance is lower; and the R2c (conditional R-squared) is higher (better fit). So, yes, county improves model fit. 
+
+
+# Start ATR stuff: Below we'll look at the coefficients. 
+
+summary(m.county)
+
+#ATR: This is the same as Dan's code. "There are just a few interaction effects with SPEI. We'll evaluate them here." Looking at where he is potentially finding the interactions it looks like county also has the same interaction so we will be using those as well.  
+
+interactions::interact_plot(
+  model = m.county,
+  pred = ssurgo_om_mean_sqrt,
+  modx = summer_spei,
+  modx.values = quantile(all.data.stan$summer_spei),
+  partial.residuals = T
+)
+
+#Dan: Clay:SOM:SPEI. Yields increase with SOM more strongly under drought. Clay amplifies this effect. This appears to be largely because of counties that are high clay, low SOM. 
+
+# ATR: This seems to also be true for county, although the clay does seem to amplify the effect even more with countries than with states.
+
+interactions::interact_plot(
+  model = m.county,
+  pred = ssurgo_om_mean_sqrt,
+  mod2 = summer_spei,
+  mod2.values = quantile(all.data.stan$summer_spei),
+  modx = ssurgo_h,
+  modx.values = quantile(all.data.stan$ssurgo_h)[3:5],
+  partial.residuals = T
+)
+
+#Dan: OM:SPEI:H+. Yields increase with SOM more strongly under drought. As drought severity decreases, SOM has a more strongly negative effect on yields when soils are also very high H+ concentrations. This also seems to be due to very few points that are high pH.
+
+#ATR: using the counties it seems that, as has been the case, there is a stronger effect between yield increase and SOM under drought. Also SOM has a more strongly negative effect on yields when soils are also very high H+ concentrations, but only at the 0% SPEI.
+
+
+#Dan: Interaction plots indicate that SOM interacts with SPEI to mitigate the effect of low SPEI (drought) on yields. SOM has a greater positive effect on yields under all conditions when clay content is high. Higher clay content suppresses yields under drought conditions. There are additional interaction effects with SOM and SPEI for H+ and clay. The interaction with clay simply enhances the same effect, whereas the one with H+ reverses the effect at very high H+ concentrations. 
+
+#Now we'll check if the same patterns hold when we use DSCI as the drought indicator instead of SPEI. 
+
+#ATR: We should change the state_alpha- changed to county_name
+
+# DSCI as drought indicator
+
+m.state.dsci <- all.data.stan %>%
+  lmerTest::lmer(data = ., 
+                 formula = Yield_decomp_add ~ DSCI.mean*ssurgo_om_mean_sqrt*ssurgo_h*ssurgo_clay_mean+(1|county_name))
+
+# View(broom.mixed::tidy(m.state.dsci) %>%
+#   mutate(p.value = round(p.value, digits = 5)))
+
+# Dan:They mostly agree. Directionality of coeffecients is the same, as are significance factors and size of coefficients. An additional three-way interaction with DSCI:CLAY:H+ emerges. Since that does not affect the main hypotheses, we're not concerned. Given agreement between DSCI and SPEI models, we'll elect to use SPEI going forward as it introduces fewer possible artefacts from observer bias and is more strongly tied to physcial metrics.
+
+#Next, we'll generate similar plots on the subset of observations below 0 SPEI given the interesting patterns revealed by the above figures.
+
+#ATR: we need to change the state_alpha here too
+
+# All drought, SPEI less than mean
+
+all.data.stan %>%
+  filter(spei.cut %in% c("Very severe", "Severe", "Moderate")) %>%
+  ggplot(data = ., aes(x = ssurgo_om_mean_sqrt, y = Yield_decomp_add))+ 
+  geom_point()
+
+all.drought <- all.data.stan %>%
+  filter(spei.cut %in% c("Very severe", "Severe", "Moderate")) %>%
+  lmerTest::lmer(data = ., formula = Yield_decomp_add ~ ssurgo_om_mean_sqrt*ssurgo_clay_mean*ssurgo_h+(1|county_name))
+
+
+plot(all.drought)
+summary(all.drought)
+
+head(all.data.stan)
+
+#ATR This is where I stopped. There is more that can go from here, but I didn't want to spend more time and effort if I'm not on the right track. 
+
