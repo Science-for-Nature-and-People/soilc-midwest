@@ -51,7 +51,12 @@ d <- plyr::ldply(years, function(x){
   )
 })
 
+#ATR addition: write the pulled nass data as it's own data file so we no longer have to pull it every time
+write_rds(d, path = "data/nass_03142023.rds")
 
+## ATR: From here we can start with read_rds("data/nass_03142023.rds")
+
+#Dan's code:
 ### Total acres
 
 census.years <- as.list(c(1997,2002,2007,2012))
@@ -89,7 +94,7 @@ d.acres.total <- plyr::ldply(census.years, function(x) {
   )
 })
 
-
+#ATR: The next three steps can be skipped if we are including the irrigated data. 
 ##### IRRIGATED ACRES
 
 d.acres.irrigated <- plyr::ldply(census.years, function(x) {
@@ -147,11 +152,12 @@ d.irrgiated.filter <- d.acres %>%
   filter(Mean.percent.irrigated <= 0.05) %>%
   filter(SD.percent.irrigated <= 0.01) 
 
+#We can probably replace d.irrgiated.filter with d.acres.total to run this filter
 d <- d %>%
   filter(GEOID %in% d.irrgiated.filter$GEOID) %>% #Filter to counties < 5% irrigated
   group_by(GEOID) %>%
   add_count(GEOID) %>%
-  filter(n >= 15) %>% # Filter to >=15 corn yield observations
+  filter(n >= 15) %>% # Filter to >=15 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
   ungroup(.) %>%
   select(-n)
 
