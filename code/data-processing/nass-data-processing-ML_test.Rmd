@@ -30,7 +30,7 @@ nassqs_auth(key = api_key)
 
 1. Specify years and pull yield data from nass 'SURVEY'
 
-```{yield}
+```{r yield}
 # Specify the range of years across which you want to collect data
 years <- as.list(2000:2022)  
 # ML: changed to 2000:2022 to include more data points
@@ -83,7 +83,7 @@ write_rds(d, path = "data/nass_03142023.rds")
 2. Calculate irrigation acres from census data and create a filter
 Note: we can skip this step if we'd like to keep data from irrigated land (Aysha)
 
-```{irrgation}
+```{r irrgation}
 #Dan's code:
 ### Total acres
 
@@ -187,7 +187,7 @@ d.irrgiated.filter <- d.acres %>%
 Note: the original analysis from Kane et al., was n=15
 ML: Irrigated land was not removed in this step
 
-```{r n}
+```{r filter}
 #We can probably replace d.irrgiated.filter with d.acres.total to run this filter (Aysha)
 # ML: check how many data points are removed using different number of years
 d.1 <- d %>%
