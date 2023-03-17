@@ -18,6 +18,7 @@ ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
   # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
   geom_smooth(method="lm")
 
+
 # conversation with Laila, she pointed out that having a linear slope 
 # for SOM might not make the most sense, based on looking at how the data look 
 # in Fig. 1, but also knowing that a farmer who already has 5% SOM who gets to
