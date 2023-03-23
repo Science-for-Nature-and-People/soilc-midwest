@@ -1,0 +1,401 @@
+---
+title: "ATR nass data modifications"
+output: html_document
+date: "2023-03-23"
+---
+
+
+ATR: I moved Dan's nass-data-processing code into a new file to include irrigated data. I am not manipulating years at this point 
+```{r}
+library(rnassqs)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(reshape2)
+library(caret)
+library(parallel)
+library(readr)
+library(tictoc)
+```
+
+ATR: I created a data file of the pulled corn yield nass data from 2022, so I did not include the pulling of data using the API key. 
+
+ATR revised: I added the nass api key code back in. He utilizes the nass API key again in later code. We do not have to run the Yield pulling code again though
+
+
+api_key <- as.character(read.csv("C:/Users/AyshaTappRoss/Github/soilc-midwest-DanKane/code/NASS_API_key.csv", header = F)[1,1])       # api key
+# Specify the range of years across which you want to collect data
+years <- as.list(2000:2016)  # BM: Future self, when update with newer data: consider which years to use to minimize 
+# the confounding effect of improvements in maize genetics, i.e., shift the
+# 16 year window forward, drop oldest records.
+
+# Call in all corn yield data via NASS API ####
+
+nassqs_auth(key = api_key)
+
+
+ATR: instead of using the nass data for 16 years from Dan's code I used the 22yr timeline from Meng's code 
+```{r}
+d <-read_rds("C:/Users/AyshaTappRoss/Github/soilc-midwest-DanKane/data/nass_22yr_03202023.rds")
+```
+
+ATR: At this point d has 38847 observations
+
+### Converting the data to Total acres. He pulls from the nass data using the api key again in this code. I added the key back into the code at the top. I don't think we need this step though. He uses this to create a percentage of irrigated acres of the total acres.
+
+census.years <- as.list(c(1997,2002,2007,2012))
+
+d.acres.total <- plyr::ldply(census.years, function(x) {
+  
+  params <- list(
+    commodity_desc = "CORN",
+    util_practice_desc = "GRAIN",
+    source_desc = "CENSUS",
+    year = x,
+    agg_level_desc = "COUNTY",
+    short_desc = "CORN, GRAIN - ACRES HARVESTED",
+    domain_desc = "TOTAL"
+  )
+  
+  return(
+    nassqs(params) %>%
+      filter(county_ansi != "") %>%
+      mutate(
+        GEOID = paste(state_ansi, county_ansi, sep = ""),
+        Acres_total = as.numeric(gsub(
+          Value, pattern = ",", replacement = ""
+        ))
+      ) %>%
+      select(
+        year,
+        GEOID,
+        state_alpha,
+        state_ansi,
+        county_ansi,
+        county_name,
+        Acres_total
+      )
+  )
+})
+
+ATR: I did not delete the steps he uses to filter out the irrigation, just in case we need them for reference, but I am not running d.acres.total (from the last section of code)in it's place
+
+##### IRRIGATED ACRES
+
+d.acres.irrigated <- plyr::ldply(census.years, function(x) {
+  
+  params <- list(
+    commodity_desc = "CORN",
+    util_practice_desc = "GRAIN",
+    source_desc = "CENSUS",
+    year = x,
+    agg_level_desc = "COUNTY",
+    short_desc = "CORN, GRAIN, IRRIGATED - ACRES HARVESTED",
+    domain_desc = "TOTAL"
+  )
+  
+  return(
+    nassqs(params) %>%
+      filter(county_ansi != "") %>%
+      mutate(
+        GEOID = paste(state_ansi, county_ansi, sep = ""),
+        Acres_irrigated = as.numeric(gsub(
+          Value, pattern = ",", replacement = ""
+        ))
+      ) %>%
+      select(
+        year,
+        GEOID,
+        state_alpha,
+        state_ansi,
+        county_ansi,
+        county_name,
+        Acres_irrigated
+      )
+  )
+})
+
+##
+
+d.acres <- d.acres.total %>%
+  left_join(d.acres.irrigated) %>%
+  filter(GEOID %in% d$GEOID,!is.na(Acres_total)) %>%
+  replace_na(list(Acres_irrigated = 0)) %>%
+  mutate(Percent_irrigated = Acres_irrigated / Acres_total) %>%
+  group_by(GEOID) %>%
+  summarize(
+    Mean.percent.irrigated = mean(Percent_irrigated),
+    SD.percent.irrigated = sd(Percent_irrigated)
+  )
+
+## FILTER BASED ON IRRIGATED ACRES DATA
+
+# Create filter to select counties that are 5 percent or less irrigated, 
+# choice of 5 percent based on dsitribution of percentages, vast majority of counties are 5 percent or less irrigated
+
+d.irrgiated.filter <- d.acres %>%
+  filter(Mean.percent.irrigated <= 0.05) %>%
+  filter(SD.percent.irrigated <= 0.01) 
+  
+d <- d %>%
+  filter(GEOID %in% d.irrgiated.filter$GEOID) %>% #Filter to counties < 5% irrigated
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 15) %>% # Filter to >=15 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+##############################################################
+End of Dan's unused irrigation code
+
+ATR: I origially started with n=13, but after Meng created the graphs we decided to run the data starting with n=9 and report out 
+
+  
+```{r}
+d9 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 9) %>% # Filter to >=9 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+
+aggregate(d9$state_ansi, by = list(d9$state_ansi), FUN = length)
+aggregate(d9$GEOID, by = list(d9$GEOID), FUN = length)
+``` 
+  
+```{r}
+d10 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 10) %>% # Filter to >=10 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+
+aggregate(d10$state_ansi, by = list(d10$state_ansi), FUN = length)
+aggregate(d10$GEOID, by = list(d10$GEOID), FUN = length)
+``` 
+
+
+  
+```{r}
+d11 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 11) %>% # Filter to >=11 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+
+aggregate(d11$state_ansi, by = list(d11$state_ansi), FUN = length)
+aggregate(d11$GEOID, by = list(d11$GEOID), FUN = length)
+``` 
+
+
+  
+```{r}
+d12 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 12) %>% # Filter to >=12 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+
+aggregate(d12$state_ansi, by = list(d12$state_ansi), FUN = length)
+aggregate(d12$GEOID, by = list(d12$GEOID), FUN = length)
+``` 
+
+
+
+```{r}
+d13 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 13) %>% # Filter to >=13 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+
+aggregate(d13$state_ansi, by = list(d13$state_ansi), FUN = length)
+aggregate(d13$GEOID, by = list(d13$GEOID), FUN = length)
+``` 
+
+ATR: This may be too liberal of a filter, but it gives us 35410 observations with 1744 counties in 37 states
+
+```{r}
+d14 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 14) %>% # Filter to >=14 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+
+aggregate(d14$state_ansi, by = list(d14$state_ansi), FUN = length)
+aggregate(d14$GEOID, by = list(d14$GEOID), FUN = length)
+```
+
+ATR: With n= 14 d now has 34773 observations with 1695 counties in 37 states
+
+```{r}
+d15 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 15) %>% # Filter to >=15 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+aggregate(d15$GEOID, by = list(d15$GEOID), FUN = length)
+aggregate(d15$state_ansi, by = list(d15$state_ansi), FUN = length)
+```
+
+ATR: With n= 15 d now has 34003 observations with 1640 counties in 36 states
+
+```{r}
+d16 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 16) %>% # Filter to >=16 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+aggregate(d16$GEOID, by = list(d16$GEOID), FUN = length)
+aggregate(d16$state_ansi, by = list(d16$state_ansi), FUN = length)
+```
+
+ATR: With n= 16 d now has 32878 observations with 1565 counties in 36 states
+
+```{r}
+d17 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 17) %>% # Filter to >=17 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+aggregate(d17$GEOID, by = list(d17$GEOID), FUN = length)
+aggregate(d17$state_ansi, by = list(d17$state_ansi), FUN = length)
+```
+
+ATR: With n= 17 d now has 31854 observations with 1501 counties in 36 states
+
+```{r}
+d18 <- d %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 18) %>% # Filter to >=18 corn yield observations
+  ungroup(.) %>%
+  select(-n)
+
+aggregate(d18$GEOID, by = list(d18$GEOID), FUN = length)
+aggregate(d18$state_ansi, by = list(d18$state_ansi), FUN = length)
+```
+
+ATR: With n= 18 d now has 30205 observations with 1404 counties in 31 states
+
+Here is where I stopped. In 5 years we lost 340 counties and 6 states
+
+n=9 1914 counties in 41 states 
+n=10 1858 counties in 40 states 
+n=11 1818 counties in 37 states 
+n=12 1782 counties in 37 states 
+n=13 1744 counties in 37 states 
+n=14 1695 counties in 37 states 
+n=15 1640 counties in 36 states
+n=16 1565 counties in 36 states
+n=17 1501 counties in 36 states
+n=18 1404 counties in 31 states 
+
+ATR: Stopped here, waiting to hear which data set we use. 
+
+
+```{r}
+mod <- function(df){
+  df <- df
+  
+  grid <- expand.grid(span = seq(0.3, 0.5, len = 5), degree = seq(0,1, len=2) )
+  
+  grid.control <- trainControl(
+    method = "repeatedcv",
+    number = 10,
+    repeats = 5,
+    search = "grid")
+  
+  train_loess <- train(Yield_mg_ha ~ year, 
+                       method = "gamLoess",
+                       tuneGrid=grid,
+                       trControl=grid.control,
+                       data = df)
+  
+  df$Detrend_resids <- as.numeric(residuals(train_loess))
+  df$Detrend_predictions <- as.numeric(predict(train_loess))
+  return(df)
+}
+
+```
+
+The next chuck was taken from Meng's nass-data-processing-ML_test. Replace the d with the filter years we decide. I chose to process with d17
+
+
+```{r}
+d18$year <- as.integer(d18$year) # year needs to be converted to integer to run the regression model in the train function above
+
+# Dan's code using mclapply function
+d_list <- split(d18, f = d18$GEOID) # ML: it creates a list based on county
+```
+
+
+```{r}
+#test_list <- d_list[1:2]
+
+tic()
+d_list <- mclapply(X = d_list,FUN = mod, mc.cores = 1) 
+# ML:seems like only one core can be used for windows 
+toc()
+# 4077.25 sec elapsed
+```
+
+
+```{r}
+d.1 <- dplyr::bind_rows(d_list)
+
+d.2 <- d.1 %>%
+  group_by(GEOID) %>%
+  mutate(County_avg_yield = mean(Yield_mg_ha)) %>%
+  ungroup(.) %>%
+  mutate(Yield_decomp_add = County_avg_yield+Detrend_resids,  # de-trended yield 
+         Yield_decomp_mult = Yield_mg_ha/Detrend_predictions) # yield anomaly
+
+```
+
+
+
+```{r}
+
+
+# saved the data to a rds file to be used for downstream processing
+library(readr)
+write_rds(d.2, file = "data/corn_yield_2000-2022_wo_irrigation.rds")
+
+
+```
+
+```{r}
+# ML: didn't run
+# ML: I also tried to use the purrr:map function to replicate the above mclappy function, and it was very slow; I then used furrr:future_map. This function is doing the same thing as purrr::map, but allows for running the script in parallel. 
+
+library(purrr)
+library(furrr) # this will allow the parallel computing of the purrr functions
+
+tic()
+data_list <- d17 %>%
+  group_by(GEOID) %>%
+  nest() %>%
+  mutate(data = future_map(data, .f = mod))
+toc()
+# even with parallel, this step is still very slow; probably better to run through server
+
+```
+
