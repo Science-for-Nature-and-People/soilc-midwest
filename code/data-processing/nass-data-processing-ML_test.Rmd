@@ -64,7 +64,7 @@ d <- plyr::ldply(years, function(x){
         GEOID = paste(state_ansi, county_ansi, sep = ""),
         Yield_mg_ha = as.numeric(Value) * 0.0628
       ) %>%
-      select(
+      dplyr::select(
         year,
         GEOID,
         state_alpha,
@@ -201,6 +201,26 @@ d.1 <- d %>%
 plot(d.1$ratio ~ d.1$n)
 # ML: use n=15 for 2000:2022 dataset, ~15% of data will be removed 
 
+d.2 <- d %>%
+  #filter(GEOID %in% d.irrgiated.filter$GEOID) %>% #Filter to counties < 5% irrigated
+  group_by(GEOID) %>%
+  #add_count(GEOID, name = 'n') %>% #counting the number of years each county has yield
+  group_by(state_alpha,GEOID) %>%
+  summarise(total_n =n()) 
+
+ggplot(d.2) +
+  geom_histogram(aes(x = total_n), binwidth = 1,fill="black", col="grey") +
+  scale_x_continuous(breaks = seq(1,23,1)) +
+  scale_y_continuous(breaks = c(0,50,100,200,300,400,500)) +
+  labs(x = 'Number of years', y = 'Number of counties')
+# ML: use n=15 for 2000:2022 dataset, ~15% of data will be removed 
+
+ggplot(d.2) +
+  geom_histogram(aes(x = total_n), binwidth = 1,fill="black", col="grey") +
+  scale_x_continuous(breaks = seq(1,23,5)) +
+  labs(x = 'Number of years', y = 'Number of counties') +
+  facet_wrap(~state_alpha)
+
 # ML: still used the n=15 filter. As a loess model was used in the following step to detrend the yield data, it may be good to have a relatively large n number.
 
 d <- d %>%
@@ -269,10 +289,12 @@ d.2 <- d.1 %>%
 # saved the data to a rds file to be used for downstream processing
 library(readr)
 write_rds(d.2, file = "data/corn_yield_2000-2022_w_irrigation.rds")
+```
 
 # ML: didn't run
 # ML: I also tried to use the purrr:map function to replicate the above mclappy function, and it was very slow; I then used furrr:future_map. This function is doing the same thing as purrr::map, but allows for running the script in parallel. 
 
+```{r furrr}
 library(purrr)
 library(furrr) # this will allow the parallel computing of the purrr functions
 
