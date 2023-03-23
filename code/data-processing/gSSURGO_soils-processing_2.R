@@ -21,7 +21,7 @@ mode <- function(x, na.rm = TRUE) {
 
 counties <- tigris::counties(year = 2017)
 # load the corn frequency raster from CropScape - reports how many years between 
-# 2008-2017 each pixel was used for mazie production.
+# 2008-2017 each pixel was used for maize production.
 crop.freq <- brick("data/crop_frequency/crop_frequency_corn_2008-2017.img")
 
 
