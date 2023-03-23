@@ -10,7 +10,7 @@ library(ggplot2)
 
 # data #####
 all_data <- readRDS("data/all_data_2020.08.07.rds")  # in R projects the default working directory is the project
-all.data.stan <- readRDS("data/all_data_stan_2020.08.07.rds")
+all.data.stan <- readRDS("data/all_data_stan_2020.08.07.rds") # the standardized data
 
 # plot the data
 ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
@@ -25,48 +25,8 @@ ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
 # 5.5% SOM will not see the same boost in yield as a farmer who starts at 1%
 # SOM and gets to 1.5% SOM.
 
-# try using square root of SOM to make the data more linear relationship
-all_data$ssurgo_om_mean_sqrt <- all_data$ssurgo_om_mean^(1/2)
-
-ggplot(data = all_data, aes(x = ssurgo_om_mean_sqrt, y = Yield_decomp_add))+
-  geom_jitter()+
-  geom_smooth(method = "lm")
-
-# model from the paper
-m.state <- all.data.stan %>%
-  lmerTest::lmer(data = ., 
-                 formula = Yield_decomp_add ~ summer_spei*ssurgo_om_mean*ssurgo_h*ssurgo_clay_mean+(1|state_alpha))
-
-# standardize the sqrt data so that when run lm all predictors on similar scales
-# standardize function from all_data_merge.R:  
-scale.2sd <- function(x){
-  (x-mean(x))/(2*sd(x))
-}
-
-# standardize and add to all.data.stan
-all.data.stan$ssurgo_om_mean_sqrt <- as.vector(mapply(FUN=function(x){
-  as.vector(scale.2sd(x))}, all_data[,"ssurgo_om_mean_sqrt"]))
-
-# try the new data in the model
-m.state.sqrt <- all.data.stan %>%
-  lmerTest::lmer(data = ., 
-                 formula = Yield_decomp_add ~ summer_spei*ssurgo_om_mean_sqrt*ssurgo_h*ssurgo_clay_mean+(1|state_alpha))
-
-summary(m.state.sqrt)
-
-broom.mixed::tidy(m.state.sqrt) %>%
-  mutate(p.value = round(p.value, digits = 5))
-
-# Plot residuals and inspect
-ggplot(data.frame(eta=predict(m.state.sqrt,type="link"),pearson=residuals(m.state.sqrt,type="pearson")),
-       aes(x=eta,y=pearson)) +
-  geom_point() +
-  theme_bw()
-
-# Compare models using raw om and sqrt om 
-anova(m.state, m.state.sqrt) # note anova does not exactly work because models have same number of predictors, but we can look at the AIC and BIC and logLik, all of which suggest m.state.sqrt is slightly better.
-MuMIn::r.squaredGLMM(m.state)
-MuMIn::r.squaredGLMM(m.state.sqrt)  # marginal and conditional R^2 slightly better for m.state.sqrt
+#### THIS QUESTION HAS BEEN RESOLVED, realizing that standardizing the data makes it no longer linear
+#### Figure 1 in the paper is confusing because it plots the regression on the un-standardized data, so it looks straight
 
 # next step is to look at separating out soil order or state as non-random effects in the model.
 # note these are categorical data so they will not get new slopes only intercepts.
@@ -263,4 +223,318 @@ summary(all.drought)
 head(all.data.stan)
 
 #ATR This is where I stopped. There is more that can go from here, but I didn't want to spend more time and effort if I'm not on the right track. 
+
+
+
+
+
+
+
+
+
+## BM assigning counties to USDA NASS Farm Resource REgions to group for regression
+## FRR county fips codes downloaded from https://www.ers.usda.gov/data-products/arms-farm-financial-and-crop-production-practices/documentation.aspx
+
+# read in region data
+frr <- readxl::read_excel("data/reglink.xls", skip=2)
+frr_key <- frr[1:9,7]
+frr <- frr[,1:2]
+colnames(frr) <- c("GEOID", "region")
+# add leading zeros to match soil data fips, this also converts the fips codes
+# into character to allow us to merge it with the soil data
+frr$GEOID <- sprintf("%05d", frr$GEOID)
+
+
+# add region ID to soil data
+all.data.stan <- left_join(all.data.stan, frr)
+
+# Redo regressions using region (copied and pasted from above, replacing state with region)
+
+# make region a factor, not numeric
+all.data.stan$region <- factor(as.character(all.data.stan$region))
+
+# Model using region as a fixed effect instead of random
+# these models might get dinged for being over-parameterized
+m.region <- all.data.stan %>%
+  lm(data = ., 
+     formula = Yield_decomp_add ~ summer_spei*ssurgo_om_mean*ssurgo_h*ssurgo_clay_mean*region )
+
+summary(m.region)
+
+# base level (intercept) is region1, other region estimates (that are significant) are added to the intercept 
+# all regions significant
+
+print(broom.mixed::tidy(m.region) %>%
+        mutate(p.value = round(p.value, digits = 5)), n=100)
+
+x <- data.frame(eta=predict(m.region,interval="confidence")[,1],pearson=residuals(m.region,type="pearson"))
+
+# open a window for our plots
+windows(xpinch=200, ypinch=200, width=5, height=5)
+
+# Check model assumptions - compare predictions to residuals
+ggplot(data.frame(eta=predict(m.region,interval="confidence", terms="fit")[,1], 
+                  pearson=residuals(m.region,type="pearson")),
+       aes(x=eta,y=pearson)) +
+  geom_point() +
+  theme_bw()
+# recall with residual plots we are looking for 
+# (1) they’re pretty symmetrically distributed, tending to cluster towards the middle of the plot.
+# (2) they’re clustered around the lower single digits of the y-axis (e.g., 0.5 or 1.5, not 30 or 150).
+# (3) in general, there aren’t any clear patterns.
+# this is because the error term in the model should be uncorrelated with the X covariates, 
+# so the predicted values, dependent on those covariates, should also be uncorrelated
+# with the error term (residuals) and should look random.
+
+resids <- resid(m.region)
+
+plot(resids)
+hist(resids)
+plot(density(resids))
+qqnorm(resids)
+# these all look pretty good
+
+# interaction plots
+# first, what is an interact_plot?
+# way to detect and understand interaction effects between two factors
+# fitted values of response variable on the Y axis and values of the first factor on the X axis.
+# lines represent the values of the second factor of interest.
+
+
+# is there a 2-way interaction between OM*SPEI?
+# below, response on the y (yield), OM on the x, and second factor, summer_spei, as lines
+# recall that As SPEI decreases, drought severity increases. 
+interactions::interact_plot(
+  model = m.region, 
+  pred = ssurgo_om_mean,  # factor 1
+  modx = summer_spei,  # factor 2
+  modx.values = quantile(all.data.stan$summer_spei),
+  partial.residuals = T,
+  point.alpha=0.2, # make the points lighter so we can see the lines more clearly
+  point.size=0.6,
+  line.thickness=1.5
+)
+# The slope of the lines in these plots is more steep with more severe drought,
+# stronger effect of OM on yield during drought.
+# In general if the lines on the interaction plot intersect, then there is likely an interaction.
+
+
+# is there a 3-way interaction for OM*SPEI*clay?
+interactions::interact_plot(
+  model = m.region,
+  pred = ssurgo_om_mean,
+  mod2 = summer_spei,
+  mod2.values = quantile(all.data.stan$summer_spei),
+  modx = ssurgo_clay_mean,  # this time the lines are for clay
+  modx.values = quantile(all.data.stan$ssurgo_clay_mean), # facets split into clay's quantiles
+  partial.residuals = T,
+  point.alpha=0.2,
+  point.size=0.6,
+  line.thickness=1.5
+)
+# yes there is a 3 way interaction (lines are intersecting in the facets)
+
+# is there a 3-way interaction for OM*SPEI*H+?
+interactions::interact_plot(
+  model = m.region,
+  pred = ssurgo_om_mean,
+  mod2 = summer_spei,
+  mod2.values = quantile(all.data.stan$summer_spei),
+  modx = ssurgo_h,
+  modx.values = quantile(all.data.stan$ssurgo_h)[3:5],
+  partial.residuals = T,
+  point.alpha=0.1,
+  point.size=0.6,
+  line.thickness=1.5
+)
+# yes at more severe drought, not so much at less severe drought.
+# From Dan's notebook: OM:SPEI:H+. Yields increase with SOM more strongly 
+# under drought. As drought severity decreases, SOM has a more strongly negative 
+# effect on yields when soils are also very high H+ concentrations. This also 
+# seems to be due to very few points that are high pH.
+
+
+# the coeff.table contains the slopes used in Fig. 1, caption reads "trendlines represent
+# predicted yields based on that marginal effect [of SOM]."
+
+mod <- function(df){
+  lm(data = df, Yield_decomp_add ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h+ region)
+}
+
+model_by_drought <- all.data.stan %>%
+  group_by(spei.cut) %>% # separate data out by spei groups
+  nest() %>% # creates a list of the spei group dataframes
+  mutate(model_by_drought = map(data, mod))  # I think this is calling purrr::map, which is applying the mod function to each of the data in the list
+# A list of 4 dataframes, one for each category of drought
+
+coeff.table <- model_by_drought %>% 
+  mutate(glance = map(model_by_drought, broom.mixed::tidy)) %>% 
+  unnest(glance) %>%
+  mutate(p.value = round(p.value, digits = 5)) %>%
+  # filter(effect == "fixed",    # we no longer have random effects
+  #        term != "(Intercept)") %>%  # I think we want to see intercepts
+  arrange(spei.cut) %>%
+  select(-data, -model_by_drought, -spei.cut) # use names(coeff.table) to see what we can select
+
+
+# make plot of data by region 
+windows(xpinch=200, ypinch=200, width=5, height=5)
+
+# how many states by region and regions do we have?
+counts_states <- aggregate(summer_spei~state_alpha + region, dat=all.data.stan, FUN="length")
+counts_regions <- aggregate(summer_spei~region, dat=all.data.stan, FUN="length")
+
+lbls <- c("1"="Heartland", 
+          "2"="Northern Crescent", 
+          "3"="Northern Great Plains",
+          "4"="Prairie Gateway", 
+          "5"="Eastern Uplands", 
+          "6"="Southern Seaboard",
+          "7"="Fruitful Rim", 
+          "8"="Basin and Range",
+          "9"="Mississippi Portal") 
+# there's probably a way to do this manipulating the strings with code
+# but after 20 min. of failing at that, I did it this way! :)
+
+xom <- rep(1.8, nrow(counts_regions))
+yyield <- rep(2, nrow(counts_regions))
+lab <- counts_regions$summer_spei
+geomtext <- data.frame(region=counts_regions$region, xom, yyield, lab)
+geomtext$n <- rep("n", nrow(geomtext))
+geomtext$ntext <- paste0(geomtext$n, "=", geomtext$lab)
+
+
+ggplot(data=all.data.stan[all.data.stan$spei.cut %in% "Normal",], aes(x=ssurgo_om_mean, y=Yield_decomp_add)) +
+  geom_point(aes(col=state_alpha), size=0.8, alpha=0.7) +
+  facet_wrap(vars(region),
+             labeller = as_labeller(lbls)) +
+  geom_text(data=geomtext, mapping=aes(x=xom, y=yyield, label=ntext)) +
+  theme(
+      panel.grid.minor=element_blank(), 
+      panel.grid.major=element_blank() ,
+      panel.background = element_rect(fill = 'white')
+  )
+
+
+
+
+
+
+
+
+# split the northern crescent "2" states into east and west
+all.data.stan$region2 <- all.data.stan$region
+all.data.stan$region2 <- ifelse(all.data.stan$region=="2",
+                                (ifelse(all.data.stan$state_alpha %in% c("MN", "WI", "MI", "OH"), "2W", "2E")),
+                                 all.data.stan$region)
+
+# check
+# all.data.stan[all.data.stan$state_alpha=="MI",c(3,49:50)]
+
+# update the facet labels
+lbls2 <- c("1"="Heartland", 
+           "2E"="Northern Crescent-E", 
+           "2W"="Northern Crescent-W", 
+           "3"="Northern Great Plains",
+           "4"="Prairie Gateway", 
+           "5"="Eastern Uplands", 
+           "6"="Southern Seaboard",
+           "7"="Fruitful Rim", 
+           "8"="Basin and Range",
+           "9"="Mississippi Portal") 
+
+counts_regions2 <- aggregate(summer_spei~region2, dat=all.data.stan, FUN="length")
+xom2 <- rep(1.8, nrow(counts_regions2))
+yyield2 <- rep(2, nrow(counts_regions2))
+lab2 <- counts_regions2$summer_spei
+geomtext2 <- data.frame(region2=counts_regions2$region2, xom2, yyield2, lab2)
+geomtext2$n <- rep("n", nrow(geomtext2))
+geomtext2$ntext <- paste0(geomtext2$n, "=", geomtext2$lab)
+
+ggplot(data=all.data.stan[all.data.stan$spei.cut %in% "Normal",], aes(x=ssurgo_om_mean, y=Yield_decomp_add)) +
+  geom_point(aes(col=state_alpha), size=0.8, alpha=0.7) +
+  facet_wrap(vars(region2),
+             labeller = as_labeller(lbls2)) +
+  geom_text(data=geomtext2, mapping=aes(x=xom2, y=yyield2, label=ntext)) +
+  theme(
+    panel.grid.minor=element_blank(), 
+    panel.grid.major=element_blank() ,
+    panel.background = element_rect(fill = 'white')
+  )
+
+# dir.create("code/plots")
+
+ggsave("code/plots/facets_NCrescent_split.png")
+
+
+
+
+## add Eastern Uplands "5" to Northern Crescent East "2E"
+all.data.stan$region3 <- all.data.stan$region2
+all.data.stan$region3 <- ifelse(all.data.stan$region2=="5", "2E", all.data.stan$region2)
+
+# check
+# all.data.stan[all.data.stan$state_alpha=="MI",c(3,49:50)]
+
+# update the facet labels
+lbls3 <- c("1"="Heartland", 
+           "2E"="N Crescent-E + E Uplands", 
+           "2W"="Northern Crescent-W", 
+           "3"="Northern Great Plains",
+           "4"="Prairie Gateway", 
+           # "5"="Eastern Uplands", 
+           "6"="Southern Seaboard",
+           "7"="Fruitful Rim", 
+           "8"="Basin and Range",
+           "9"="Mississippi Portal") 
+
+counts_regions3 <- aggregate(summer_spei~region3, dat=all.data.stan, FUN="length")
+xom3 <- rep(1.8, nrow(counts_regions3))
+yyield3 <- rep(2, nrow(counts_regions3))
+lab3 <- counts_regions3$summer_spei
+geomtext3 <- data.frame(region3=counts_regions3$region3, xom3, yyield3, lab3)
+geomtext3$n <- rep("n", nrow(geomtext3))
+geomtext3$ntext <- paste0(geomtext3$n, "=", geomtext3$lab)
+
+max_sreg <- aggregate(Yield_decomp_add~state_alpha + region3, dat=all.data.stan, FUN="max")
+
+ggplot(data=all.data.stan[all.data.stan$spei.cut %in% "Normal",], aes(x=ssurgo_om_mean, y=Yield_decomp_add)) +
+  geom_point(aes(col=state_alpha), size=0.8, alpha=0.7) +
+  facet_wrap(vars(region3),
+             labeller = as_labeller(lbls3)) +
+  geom_text(data=geomtext3, mapping=aes(x=xom3, y=yyield3, label=ntext)) +
+  theme(
+    panel.grid.minor=element_blank(), 
+    panel.grid.major=element_blank() ,
+    panel.background = element_rect(fill = 'white')
+  )
+
+# dir.create("code/plots")
+
+ggsave("code/plots/facets_NCrescE+EUplands.png")
+
+
+
+
+# is the N Crescent E and E uplands actually going down 
+# or is that because of the combination of states?
+
+sub <- all.data.stan[all.data.stan$region3=="2E",]
+
+counts_sub <- aggregate(summer_spei~state_alpha, dat=sub, FUN="length")
+xomsub <- rep(1.3, nrow(counts_sub))
+yyieldsub <- rep(2, nrow(counts_sub))
+labsub <- counts_sub$summer_spei
+geomtextsub <- data.frame(state_alpha=counts_sub$state_alpha, xomsub, yyieldsub, labsub)
+geomtextsub$n <- rep("n", nrow(geomtextsub))
+geomtextsub$ntext <- paste0(geomtextsub$n, "=", geomtextsub$lab)
+
+
+ggplot(sub, aes(x=ssurgo_om_mean, y=Yield_decomp_add)) +
+  geom_point(size=0.7, alpha=0.5) +
+  facet_wrap(vars(state_alpha)) +
+  geom_smooth(method="lm") +
+  geom_text(data=geomtextsub, mapping=aes(x=xomsub, y=yyieldsub, label=ntext)) 
+
+ggsave("code/plots/facets_NCrescE+EUplands_bystate.png")
 

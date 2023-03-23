@@ -86,6 +86,9 @@ m.state <- all.data.stan %>%
 
 summary(m.state)
 
+ranef(m.state) # add ranef for state to intercept fixed effect below to get estimate for state
+fixef(m.state)
+
 broom.mixed::tidy(m.state) %>%
   mutate(p.value = round(p.value, digits = 5))
 
@@ -360,6 +363,8 @@ We ran models on different subsets of data to represent different levels of drou
 mod <- function(df){
   lmerTest::lmer(data = df, Yield_decomp_add ~ ssurgo_om_mean*ssurgo_clay_mean*ssurgo_h+(1|state_alpha))
 }
+
+
 
 model_by_drought <- all.data.stan %>%
   group_by(spei.cut) %>%
