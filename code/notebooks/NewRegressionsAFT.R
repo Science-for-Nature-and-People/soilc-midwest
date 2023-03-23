@@ -6,6 +6,7 @@
 library(tidyverse)
 library(lme4)
 library(ggplot2)
+library (ggthemes)
 
 
 # data #####
@@ -18,6 +19,68 @@ ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
   # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
   geom_smooth(method="lm")
 
+
+# plot the data with some facets 
+#by state
+ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
+  geom_jitter()+ 
+  # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
+  geom_smooth(method="lm") + theme_bw()+
+  theme(text = element_text(size = 13), axis.text = element_text(size = 12))+
+  ylab("Corn yield (Mg/ha)")+ ylim(0,20) +
+  xlab("Organic matter (%)")+ xlim (0,10)+
+  ggtitle("Yield by state")+
+  facet_wrap(~state_alpha)
+
+#by soil order
+#note NY with OM 10%?
+ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add, color = ssurgo_order_mode))+
+  geom_jitter()+ 
+  # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
+  geom_smooth(method="lm") + theme_bw()+
+  theme(text = element_text(size = 13), axis.text = element_text(size = 12))+
+  ylab("Corn yield (Mg/ha)")+ ylim(0,20) +
+  xlab("Organic matter (%)")+ xlim (0,10)+
+  ggtitle("Yield vs OM by soil order")+
+  facet_wrap(~state_alpha)
+
+#by soil order
+#note NY with OM 10%?
+ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add, color = ssurgo_order_mode))+
+  geom_jitter()+ 
+  # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
+  geom_smooth(method="lm") + theme_bw()+
+  theme(text = element_text(size = 13), axis.text = element_text(size = 12))+
+  ylab("Corn yield (Mg/ha)")+ ylim(0,20) +
+  xlab("Organic matter (%)")+ xlim (0,10)+
+  ggtitle("Yield vs OM by soil order")+
+  facet_wrap(~state_alpha)
+
+#by year
+ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add, color = ssurgo_sand_median))+
+  geom_jitter()+ 
+  # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
+  #geom_smooth(method="lm") +
+  theme_bw()+
+  theme(text = element_text(size = 13), axis.text = element_text(size = 12))+
+  ylab("Corn yield (Mg/ha)")+ ylim(0,20) +
+  xlab("Organic matter (%)")+ xlim (0,10)+
+  ggtitle("Yield by year ")+
+  facet_wrap(~year)
+
+#by midwest region
+
+all_data %>%
+  mutate (region =  ifelse(state_alpha %in% c('IA', 'IL', 'IN', 'KS', 'MO', 'MN', 'NE', 'MI', 'OH'),
+                           'Midwest', 'Other')) %>%
+  ggplot(aes(x = ssurgo_om_mean, y = Yield_decomp_add, color = state_alpha))+
+  geom_jitter()+ 
+  theme_bw()+
+  theme(text = element_text(size = 13), axis.text = element_text(size = 12))+
+  ylab("Corn yield (Mg/ha)")+ ylim(0,20) +
+  xlab("Organic matter (%)")+ xlim (0,10)+
+  ggtitle("Yield by region ")+
+  facet_wrap(~region)
 
 # conversation with Laila, she pointed out that having a linear slope 
 # for SOM might not make the most sense, based on looking at how the data look 
