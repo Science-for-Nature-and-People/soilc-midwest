@@ -82,6 +82,18 @@ all_data %>%
   ggtitle("Yield by region ")+
   facet_wrap(~region)
 
+#plot of OM and clay
+all_data %>%
+  ggplot(aes(x = ssurgo_om_mean, y = ssurgo_clay_median , color = state_alpha))+
+  geom_jitter()+ 
+  #theme_bw()+
+  theme(text = element_text(size = 13), axis.text = element_text(size = 12))+
+  #ylab("Corn yield (Mg/ha)")+ ylim(0,20) +
+  #xlab("Organic matter (%)")+ xlim (0,10)+
+ # ggtitle("Yield by region ")+
+ facet_wrap(~ state_alpha)
+
+
 # conversation with Laila, she pointed out that having a linear slope 
 # for SOM might not make the most sense, based on looking at how the data look 
 # in Fig. 1, but also knowing that a farmer who already has 5% SOM who gets to
