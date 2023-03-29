@@ -17,7 +17,7 @@ library(tidyr)
 library(reshape2)
 library(caret)
 library(parallel)
-
+library(readr)
 api_key <- as.character(read.csv("code/NASS_API_key.csv", header = F)[1,1])       # api key
 
 # Call in all corn yield data via NASS API ####
@@ -26,7 +26,7 @@ nassqs_auth(key = api_key)
 
 ```
 
-# Pull data from NASS 
+# Pull data from NASS   ##### OR YOU CAN SKIP THIS AND GO TO LINE 200 "d.1 <- read_rds(...)" ##### as of 3/29/23
 
 1. Specify years and pull yield data from nass 'SURVEY'
 
@@ -195,6 +195,18 @@ d.1 <- d %>%
   group_by(state_alpha,GEOID,irrigated) %>%
   summarise(total_n =n()) 
 
+# save d.1
+# write_rds(d.1, file="data/d1.rds")
+d.1 <- read_rds("data/d1.rds")
+# open a graphics window
+windows(xpinch=200, ypinch=200, width=5, height=5)
+
+# re-level so that not irrigated is on the bottom, irrigated on the top
+d.1$irrigated <- factor(d.1$irrigated)
+levels(d.1$irrigated)
+d.1$irrigated <- relevel(d.1$irrigated, "Y")
+levels(d.1$irrigated)
+
 # plot all data together
 ggplot(d.1, aes(x = total_n,fill= irrigated)) +
   geom_histogram( binwidth = 1,col="grey",position = "stack") +
@@ -202,13 +214,59 @@ ggplot(d.1, aes(x = total_n,fill= irrigated)) +
   scale_y_continuous(breaks = c(0,50,100,200,300,400,500)) +
   labs(x = 'Number of years', y = 'Number of counties') 
 
-# plot data by states
+# plot data by states - just rainfed
 ggplot(d.1,aes(x = total_n,fill= irrigated)) +
-  geom_histogram(position = "stack",binwidth = 1, col="grey") +
+  geom_histogram(position = "stack",binwidth = 1) +
   scale_x_continuous(breaks = seq(1,23,5)) +
+  scale_fill_manual(values=c("#00000000", "#e1be6a"),   # make irrigated invisible for now, using a colorblind friendly color scheme 
+                    breaks=c("Y", "N"),
+                    labels=c("Irrigated", "Rainfed"),
+                    name="Key") +
   labs(x = 'Number of years', y = 'Number of counties') +
-  facet_wrap(~state_alpha)
+  facet_wrap(~state_alpha) +
+  theme(panel.grid.minor=element_blank(), 
+        panel.grid.major=element_blank() ,
+        panel.background = element_rect(fill = NA) ,
+        panel.border=element_rect(color="grey50", fill=NA, linewidth=0.5),
+        strip.text=element_text(size=rel(1), face="bold", vjust=-2),
+        strip.background = element_rect(fill=NA),
+        panel.margin=unit(0, "lines"),
+        panel.spacing.y=unit(-1, "points"),
+        legend.text=element_text(size=14),
+        legend.title=element_text(size=14)
+        # legend.title=element_text(size=12, face="bold"),
+        # plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")
+        
+  )	
 
+ggsave("code/plots/filters_years_rainfed_only.png")
+
+# plot data by states - rainfed and irrigated
+ggplot(d.1,aes(x = total_n,fill= irrigated)) +
+  geom_histogram(position = "stack",binwidth = 1) +
+  scale_x_continuous(breaks = seq(1,23,5)) +
+  scale_fill_manual(values=c("#40b0a6", "#e1be6a"),  # using a colorblind friendly color scheme 
+                    breaks=c("Y", "N"),
+                    labels=c("Irrigated", "Rainfed"),
+                    name="Key") +
+  labs(x = 'Number of years', y = 'Number of counties') +
+  facet_wrap(~state_alpha) +
+  theme(panel.grid.minor=element_blank(), 
+        panel.grid.major=element_blank() ,
+        panel.background = element_rect(fill = NA) ,
+        panel.border=element_rect(color="grey50", fill=NA, linewidth=0.5),
+        strip.text=element_text(size=rel(1), face="bold", vjust=-2),
+        strip.background = element_rect(fill=NA),
+        panel.margin=unit(0, "lines"),
+        panel.spacing.y=unit(-1, "points"),
+        legend.text=element_text(size=14),
+        legend.title=element_text(size=14)
+        # legend.title=element_text(size=12, face="bold"),
+        # plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")
+        
+  )	 
+
+ggsave("code/plots/filters_years_rainfed_and_irr.png")
 # --------------apply filters--------------#
 d.new <- d %>%
   mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
@@ -227,6 +285,7 @@ Note: used gamloess method to model the relationship between yield and year.
 The model was run for different counties
 
 ```{r detrend}
+# install.packages("tictoc")
 library(tictoc) # this is to record the running time
 
 mod <- function(df){
@@ -275,7 +334,6 @@ d.2 <- d.1 %>%
          Yield_decomp_mult = Yield_mg_ha/Detrend_predictions) # yield anomaly
 
 # saved the data to a rds file to be used for downstream processing
-library(readr)
 write_rds(d.2, file = "data/corn_yield_2000-2022_w_irrigation.rds")
 ```
 
