@@ -36,14 +36,32 @@ nassqs_auth(key = api_key)
 
 ATR: instead of using the nass data for 16 years from Dan's code I used the 22yr timeline from Meng's code 
 ```{r}
-d <-read_rds("C:/Users/AyshaTappRoss/Github/soilc-midwest-DanKane/data/nass_22yr_03202023.rds")
+d <-read_rds("data/nass_22yr_03202023.rds")
 ```
 
 ATR: At this point d has 38847 observations
 
 ### Converting the data to Total acres. He pulls from the nass data using the api key again in this code. I added the key back into the code at the top. I don't think we need this step though. He uses this to create a percentage of irrigated acres of the total acres.
 
-census.years <- as.list(c(1997,2002,2007,2012))
+```{r}
+api_key <- as.character(read.csv("code/NASS_API_key.csv", header = F)[1,1])       # api key
+# Specify the range of years across which you want to collect data
+years <- as.list(2000:2022)  #We chose to extend the years to the latest year that would be available. this is the same as the RDS file being called above
+
+# Call in all corn yield data via NASS API ####
+
+nassqs_auth(key = api_key)
+
+```
+##The next block is from Meng's nass_data_processing_ML_test file
+
+2. Calculate irrigation acres from census data and create a filter
+Note: we can skip this step if we'd like to keep data from irrigated land (Aysha)
+Meng: I added the 2017 new census year
+
+```{r irrgation}
+### Total acres
+census.years <- as.list(c(1997,2002,2007,2012, 2017))
 
 d.acres.total <- plyr::ldply(census.years, function(x) {
   
@@ -66,7 +84,7 @@ d.acres.total <- plyr::ldply(census.years, function(x) {
           Value, pattern = ",", replacement = ""
         ))
       ) %>%
-      select(
+      dplyr::select(
         year,
         GEOID,
         state_alpha,
@@ -77,8 +95,6 @@ d.acres.total <- plyr::ldply(census.years, function(x) {
       )
   )
 })
-
-ATR: I did not delete the steps he uses to filter out the irrigation, just in case we need them for reference, but I am not running d.acres.total (from the last section of code)in it's place
 
 ##### IRRIGATED ACRES
 
@@ -103,7 +119,7 @@ d.acres.irrigated <- plyr::ldply(census.years, function(x) {
           Value, pattern = ",", replacement = ""
         ))
       ) %>%
-      select(
+      dplyr::select(
         year,
         GEOID,
         state_alpha,
@@ -136,19 +152,54 @@ d.acres <- d.acres.total %>%
 d.irrgiated.filter <- d.acres %>%
   filter(Mean.percent.irrigated <= 0.05) %>%
   filter(SD.percent.irrigated <= 0.01) 
-  
-d <- d %>%
-  filter(GEOID %in% d.irrgiated.filter$GEOID) %>% #Filter to counties < 5% irrigated
+
+
+```
+
+3. filter yield data based on the availability of year numbers
+ML: Instead of removing data from irrigated land, a new variable 'irrigated' was created:
+irrigated == Y means more than 95% of acres of a county were irrigated
+irrigated == N means less than 5% of acres of a county were irrigated
+
+```{r filter}
+# ML: check how many data points are removed using different number of years
+d.1 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  add_count(irrigated) %>%  # irrigated 18111; non-irrigated 20736
+  group_by(state_alpha,GEOID,irrigated) %>%
+  summarise(total_n =n()) 
+
+# plot all data together
+ggplot(d.1, aes(x = total_n,fill= irrigated)) +
+  geom_histogram( binwidth = 1,col="grey",position = "stack") +
+  scale_x_continuous(breaks = seq(1,23,1)) +
+  scale_y_continuous(breaks = c(0,50,100,200,300,400,500)) +
+  labs(x = 'Number of years', y = 'Number of counties') 
+
+# plot data by states
+ggplot(d.1,aes(x = total_n,fill= irrigated)) +
+  geom_histogram(position = "stack",binwidth = 1, col="grey") +
+  scale_x_continuous(breaks = seq(1,23,5)) +
+  labs(x = 'Number of years', y = 'Number of counties') +
+  facet_wrap(~state_alpha)
+
+# --------------apply filters--------------#
+d.new <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
   group_by(GEOID) %>%
   add_count(GEOID) %>%
-  filter(n >= 15) %>% # Filter to >=15 corn yield observations
+  filter(n >= 15) %>% # Filter to >=15 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
   ungroup(.) %>%
-  select(-n)
+  dplyr::select(-n)
 
-##############################################################
-End of Dan's unused irrigation code
+```
 
-ATR: I origially started with n=13, but after Meng created the graphs we decided to run the data starting with n=9 and report out 
+
+ATR original: I origially started with n=13, but after Meng created the graphs we decided to run the data starting with n=9 and report out 
+
+ATR 3/28: Now I am going to take the data and assess each filtered year by total data point and irrigated/ non-irrigated data points. We will do this by replacing Dan's filtering code with Meng's new code
 
   
 ```{r}
@@ -157,12 +208,32 @@ d9 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 9) %>% # Filter to >=9 corn yield observations
   ungroup(.) %>%
-  select(-n)
+  dplyr::select(-n)
 
 
 aggregate(d9$state_ansi, by = list(d9$state_ansi), FUN = length)
 aggregate(d9$GEOID, by = list(d9$GEOID), FUN = length)
+
+#Meng's code
+d.new.9 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 9) %>% # Filter to >=9 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N9 <-subset(d.new.9, irrigated == 'N')
+d.new.Y9 <-subset(d.new.9, irrigated == 'Y')
+aggregate(d.new.N9$state_ansi, by = list(d.new.N9$state_ansi, d.new.N9$irrigated ), FUN = length)
+aggregate(d.new.N9$GEOID, by = list(d.new.N9$GEOID, d.new.N9$irrigated), FUN = length)
+aggregate(d.new.Y9$state_ansi, by = list(d.new.Y9$state_ansi, d.new.Y9$irrigated ), FUN = length)
+aggregate(d.new.Y9$GEOID, by = list(d.new.Y9$GEOID, d.new.Y9$irrigated), FUN = length)
+
 ``` 
+  9= 41 States and 1914 counties 
+  29 states, 1012 counties = N; 40 states, 902 counties = Y
   
 ```{r}
 d10 <- d %>%
@@ -170,13 +241,32 @@ d10 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 10) %>% # Filter to >=10 corn yield observations
   ungroup(.) %>%
-  select(-n)
+  dplyr::select(-n)
 
 
 aggregate(d10$state_ansi, by = list(d10$state_ansi), FUN = length)
 aggregate(d10$GEOID, by = list(d10$GEOID), FUN = length)
-``` 
 
+#Meng's code
+d.new.10 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 10) %>% # Filter to >=10 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N10 <-subset(d.new.10, irrigated == 'N')
+d.new.Y10 <-subset(d.new.10, irrigated == 'Y')
+aggregate(d.new.N10$state_ansi, by = list(d.new.N10$state_ansi, d.new.N10$irrigated ), FUN = length)
+aggregate(d.new.N10$GEOID, by = list(d.new.N10$GEOID, d.new.N10$irrigated), FUN = length)
+aggregate(d.new.Y10$state_ansi, by = list(d.new.Y10$state_ansi, d.new.Y10$irrigated ), FUN = length)
+aggregate(d.new.Y10$GEOID, by = list(d.new.Y10$GEOID, d.new.Y10$irrigated), FUN = length)
+``` 
+10: 40 states, 1848 counties
+29 states, 985 counties = N
+39 states, 873 counties = Y
 
   
 ```{r}
@@ -185,14 +275,32 @@ d11 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 11) %>% # Filter to >=11 corn yield observations
   ungroup(.) %>%
-  select(-n)
+   dplyr::select(-n)
 
 
 aggregate(d11$state_ansi, by = list(d11$state_ansi), FUN = length)
 aggregate(d11$GEOID, by = list(d11$GEOID), FUN = length)
+
+#Meng's code
+d.new.11 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 11) %>% # Filter to >=11 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N11 <-subset(d.new.11, irrigated == 'N')
+d.new.Y11 <-subset(d.new.11, irrigated == 'Y')
+aggregate(d.new.N11$state_ansi, by = list(d.new.N11$state_ansi, d.new.N11$irrigated ), FUN = length)
+aggregate(d.new.N11$GEOID, by = list(d.new.N11$GEOID, d.new.N11$irrigated), FUN = length)
+aggregate(d.new.Y11$state_ansi, by = list(d.new.Y11$state_ansi, d.new.Y11$irrigated ), FUN = length)
+aggregate(d.new.Y11$GEOID, by = list(d.new.Y11$GEOID, d.new.Y11$irrigated), FUN = length)
 ``` 
 
-
+11: 37 states, 1818 counties
+28 states, 969 counties= N; 36 states, 849 counties = Y
   
 ```{r}
 d12 <- d %>%
@@ -200,14 +308,33 @@ d12 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 12) %>% # Filter to >=12 corn yield observations
   ungroup(.) %>%
-  select(-n)
+  dplyr::select(-n)
 
 
 aggregate(d12$state_ansi, by = list(d12$state_ansi), FUN = length)
 aggregate(d12$GEOID, by = list(d12$GEOID), FUN = length)
+
+#Meng's code
+d.new.12 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 12) %>% # Filter to >=12 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N12 <-subset(d.new.12, irrigated == 'N')
+d.new.Y12 <-subset(d.new.12, irrigated == 'Y')
+aggregate(d.new.N12$state_ansi, by = list(d.new.N12$state_ansi, d.new.N12$irrigated ), FUN = length)
+aggregate(d.new.N12$GEOID, by = list(d.new.N12$GEOID, d.new.N12$irrigated), FUN = length)
+aggregate(d.new.Y12$state_ansi, by = list(d.new.Y12$state_ansi, d.new.Y12$irrigated ), FUN = length)
+aggregate(d.new.Y12$GEOID, by = list(d.new.Y12$GEOID, d.new.Y12$irrigated), FUN = length)
 ``` 
 
-
+12: 37 states, 1782 counties
+28 states, 951 counties = N
+36 states, 831 counties = Y
 
 ```{r}
 d13 <- d %>%
@@ -215,14 +342,34 @@ d13 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 13) %>% # Filter to >=13 corn yield observations
   ungroup(.) %>%
-  select(-n)
+  dplyr::select(-n)
 
 
 aggregate(d13$state_ansi, by = list(d13$state_ansi), FUN = length)
 aggregate(d13$GEOID, by = list(d13$GEOID), FUN = length)
+
+#Meng's code
+d.new.13 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 13) %>% # Filter to >=13 corn yield observations #ATR: This is where he resricts the acres to 13 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N13 <-subset(d.new.13, irrigated == 'N')
+d.new.Y13 <-subset(d.new.13, irrigated == 'Y')
+aggregate(d.new.N13$state_ansi, by = list(d.new.N13$state_ansi, d.new.N13$irrigated ), FUN = length)
+aggregate(d.new.N13$GEOID, by = list(d.new.N13$GEOID, d.new.N13$irrigated), FUN = length)
+aggregate(d.new.Y13$state_ansi, by = list(d.new.Y13$state_ansi, d.new.Y13$irrigated ), FUN = length)
+aggregate(d.new.Y13$GEOID, by = list(d.new.Y13$GEOID, d.new.Y13$irrigated), FUN = length)
 ``` 
 
 ATR: This may be too liberal of a filter, but it gives us 35410 observations with 1744 counties in 37 states
+
+28 states, 933 counties = N
+36 states, 811 counties = Y
 
 ```{r}
 d14 <- d %>%
@@ -230,14 +377,33 @@ d14 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 14) %>% # Filter to >=14 corn yield observations
   ungroup(.) %>%
-  select(-n)
+   dplyr::select(-n)
 
 
 aggregate(d14$state_ansi, by = list(d14$state_ansi), FUN = length)
 aggregate(d14$GEOID, by = list(d14$GEOID), FUN = length)
+
+#Meng's code
+d.new.14 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 14) %>% # Filter to >=14 corn yield observations #ATR: This is where he resricts the acres to 14 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N14 <-subset(d.new.14, irrigated == 'N')
+d.new.Y14 <-subset(d.new.14, irrigated == 'Y')
+aggregate(d.new.N14$state_ansi, by = list(d.new.N14$state_ansi, d.new.N14$irrigated ), FUN = length)
+aggregate(d.new.N14$GEOID, by = list(d.new.N14$GEOID, d.new.N14$irrigated), FUN = length)
+aggregate(d.new.Y14$state_ansi, by = list(d.new.Y14$state_ansi, d.new.Y14$irrigated ), FUN = length)
+aggregate(d.new.Y14$GEOID, by = list(d.new.Y14$GEOID, d.new.Y14$irrigated), FUN = length)
 ```
 
 ATR: With n= 14 d now has 34773 observations with 1695 counties in 37 states
+28 states, 909 counties = N
+36 states, 786 counties = Y
 
 ```{r}
 d15 <- d %>%
@@ -245,13 +411,32 @@ d15 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 15) %>% # Filter to >=15 corn yield observations
   ungroup(.) %>%
-  select(-n)
+   dplyr::select(-n)
 
 aggregate(d15$GEOID, by = list(d15$GEOID), FUN = length)
 aggregate(d15$state_ansi, by = list(d15$state_ansi), FUN = length)
+
+#Meng's code
+d.new.15 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 15) %>% # Filter to >=15 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N15 <-subset(d.new.15, irrigated == 'N')
+d.new.Y15 <-subset(d.new.15, irrigated == 'Y')
+aggregate(d.new.N15$state_ansi, by = list(d.new.N15$state_ansi, d.new.N15$irrigated ), FUN = length)
+aggregate(d.new.N15$GEOID, by = list(d.new.N15$GEOID, d.new.N15$irrigated), FUN = length)
+aggregate(d.new.Y15$state_ansi, by = list(d.new.Y15$state_ansi, d.new.Y15$irrigated ), FUN = length)
+aggregate(d.new.Y15$GEOID, by = list(d.new.Y15$GEOID, d.new.Y15$irrigated), FUN = length)
 ```
 
 ATR: With n= 15 d now has 34003 observations with 1640 counties in 36 states
+27 states, 881 counties = N
+35 states, 759 counties = Y
 
 ```{r}
 d16 <- d %>%
@@ -259,13 +444,32 @@ d16 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 16) %>% # Filter to >=16 corn yield observations
   ungroup(.) %>%
-  select(-n)
+   dplyr::select(-n)
 
 aggregate(d16$GEOID, by = list(d16$GEOID), FUN = length)
 aggregate(d16$state_ansi, by = list(d16$state_ansi), FUN = length)
+
+#Meng's code
+d.new.16 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 16) %>% # Filter to >=16 corn yield observations #ATR: This is where he resricts the acres to 16 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N16 <-subset(d.new.16, irrigated == 'N')
+d.new.Y16 <-subset(d.new.16, irrigated == 'Y')
+aggregate(d.new.N16$state_ansi, by = list(d.new.N16$state_ansi, d.new.N16$irrigated ), FUN = length)
+aggregate(d.new.N16$GEOID, by = list(d.new.N16$GEOID, d.new.N16$irrigated), FUN = length)
+aggregate(d.new.Y16$state_ansi, by = list(d.new.Y16$state_ansi, d.new.Y16$irrigated ), FUN = length)
+aggregate(d.new.Y16$GEOID, by = list(d.new.Y16$GEOID, d.new.Y16$irrigated), FUN = length)
 ```
 
 ATR: With n= 16 d now has 32878 observations with 1565 counties in 36 states
+27 states, 841 counties = N
+35 states, 724 counties = Y
 
 ```{r}
 d17 <- d %>%
@@ -273,13 +477,32 @@ d17 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 17) %>% # Filter to >=17 corn yield observations
   ungroup(.) %>%
-  select(-n)
+   dplyr::select(-n)
 
 aggregate(d17$GEOID, by = list(d17$GEOID), FUN = length)
 aggregate(d17$state_ansi, by = list(d17$state_ansi), FUN = length)
+
+#Meng's code
+d.new.17 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 17) %>% # Filter to >=17 corn yield observations #ATR: This is where he resricts the acres to 17 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N17 <-subset(d.new.17, irrigated == 'N')
+d.new.Y17 <-subset(d.new.17, irrigated == 'Y')
+aggregate(d.new.N17$state_ansi, by = list(d.new.N17$state_ansi, d.new.N17$irrigated ), FUN = length)
+aggregate(d.new.N17$GEOID, by = list(d.new.N17$GEOID, d.new.N17$irrigated), FUN = length)
+aggregate(d.new.Y17$state_ansi, by = list(d.new.Y17$state_ansi, d.new.Y17$irrigated ), FUN = length)
+aggregate(d.new.Y17$GEOID, by = list(d.new.Y17$GEOID, d.new.Y17$irrigated), FUN = length)
 ```
 
 ATR: With n= 17 d now has 31854 observations with 1501 counties in 36 states
+27 states, 808 counties = N
+35 states, 693 counties = Y
 
 ```{r}
 d18 <- d %>%
@@ -287,26 +510,45 @@ d18 <- d %>%
   add_count(GEOID) %>%
   filter(n >= 18) %>% # Filter to >=18 corn yield observations
   ungroup(.) %>%
-  select(-n)
+   dplyr::select(-n)
 
 aggregate(d18$GEOID, by = list(d18$GEOID), FUN = length)
 aggregate(d18$state_ansi, by = list(d18$state_ansi), FUN = length)
+
+#Meng's code
+d.new.18 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
+                               TRUE ~ 'Y')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 18) %>% # Filter to >=18 corn yield observations #ATR: This is where he resricts the acres to 18 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n)
+
+d.new.N18 <-subset(d.new.18, irrigated == 'N')
+d.new.Y18 <-subset(d.new.18, irrigated == 'Y')
+aggregate(d.new.N18$state_ansi, by = list(d.new.N18$state_ansi, d.new.N18$irrigated ), FUN = length)
+aggregate(d.new.N18$GEOID, by = list(d.new.N18$GEOID, d.new.N18$irrigated), FUN = length)
+aggregate(d.new.Y18$state_ansi, by = list(d.new.Y18$state_ansi, d.new.Y18$irrigated ), FUN = length)
+aggregate(d.new.Y18$GEOID, by = list(d.new.Y18$GEOID, d.new.Y18$irrigated), FUN = length)
 ```
 
 ATR: With n= 18 d now has 30205 observations with 1404 counties in 31 states
 
 Here is where I stopped. In 5 years we lost 340 counties and 6 states
 
-n=9 1914 counties in 41 states 
-n=10 1858 counties in 40 states 
-n=11 1818 counties in 37 states 
-n=12 1782 counties in 37 states 
-n=13 1744 counties in 37 states 
-n=14 1695 counties in 37 states 
-n=15 1640 counties in 36 states
-n=16 1565 counties in 36 states
-n=17 1501 counties in 36 states
-n=18 1404 counties in 31 states 
+```{r}
+df <- data.frame(N = c(9, 10, 11, 12, 13, 14, 15, 16, 17, 18),
+                 States = c(41, 40, 37, 37, 37, 37, 36, 36, 36, 31),
+                 N_States = c(29, 29, 28, 28, 28, 28, 27, 27, 27, 25),
+                 Y_States = c(40, 39, 36, 36, 36, 36, 35, 35, 35, 31), 
+                 Counties = c(1914, 1858, 1818, 1782, 1744, 1695, 1640, 1565, 1501, 1404),
+                 N_Counties = c(1012, 985, 969, 951, 933, 909, 881, 841, 808, 767), 
+                 Y_Counties = c(902, 873, 849, 831, 811, 786, 759, 724, 693, 637)
+                 )
+df
+```
+
 
 ATR: Stopped here, waiting to hear which data set we use. 
 
@@ -336,7 +578,7 @@ mod <- function(df){
 
 ```
 
-The next chuck was taken from Meng's nass-data-processing-ML_test. Replace the d with the filter years we decide. I chose to process with d17
+ATR: Tried running it with d18 but didn't get far. 
 
 
 ```{r}
