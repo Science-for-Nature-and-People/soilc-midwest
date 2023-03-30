@@ -208,14 +208,64 @@ d.1$irrigated <- relevel(d.1$irrigated, "Y")
 levels(d.1$irrigated)
 
 # plot all data together
-ggplot(d.1, aes(x = total_n,fill= irrigated)) +
+# need this to be a named object, p1, to make cumulative plot below
+p1 <- ggplot(d.1, aes(x = total_n,fill= irrigated)) +
   geom_histogram( binwidth = 1,col="grey",position = "stack") +
   scale_x_continuous(breaks = seq(1,23,1)) +
   scale_y_continuous(breaks = c(0,50,100,200,300,400,500)) +
   labs(x = 'Number of years', y = 'Number of counties') 
 
+p1 
+
+### make histogram-like chart showing how filter by year affects amount of data
+# need to show that if we set the filter to minimum 1 year, you have all the counties with 
+# 1 to 23 years of corn yield data s(biggest bar)
+# if minimum set to 23 years all you have is counties with 23 years (smallest bar)
+
+p1.d <- ggplot_build(p1)$data[[1]][, c(3:4,12)] %>%   # extract data from p1 above
+# $x is filter for these many years
+# $group is irrigated, 1=no, 2=yes
+# we want to make new column that, within groups, sums the years before it
+        group_by(group) %>%   # group by rainfed/irrigated
+        map_df(rev) %>%       # reverse the order of the rows so that the cumulative sums in next step do what we want
+        mutate(cum.count=cumsum(count)) %>%  # cumulative sums
+        map_df(rev)   # put the x's back in the right order for plotting
+
+p1.d$group <- relevel(factor(p1.d$group), "2")
+
+# cumulative plot (all states together, no facets)
+ggplot(p1.d,aes(x = x, 
+                y = cum.count, 
+                fill = group)) +
+  geom_bar(stat="identity", position = "stack") +
+  scale_x_continuous(breaks = seq(1,23,1), expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_manual(values=c("#40b0a6", "#e1be6a"),  # using a colorblind friendly color scheme
+                    breaks=c("2", "1"),
+                    labels=c("Irrigated", "Rainfed"),
+                    name="Key") +
+  labs(x = 'Filter: County minimum number of corn years', y = 'Number of county-years') +
+  theme(panel.grid.minor=element_blank(), 
+        panel.grid.major=element_blank() ,
+        panel.background = element_rect(fill = NA) ,
+        panel.border=element_rect(color="grey50", fill=NA, linewidth=0.5),
+        strip.text=element_text(size=rel(1), face="bold", vjust=-2),
+        strip.background = element_rect(fill=NA),
+        panel.margin=unit(0, "lines"),
+        panel.spacing.y=unit(-1, "points"),
+        legend.text=element_text(size=14),
+        legend.title=element_text(size=14),
+        axis.title.x = element_text(margin=margin(8, 0,0,0)),
+        axis.title.y = element_text(margin=margin(0, 8,0,0))                        
+        # legend.title=element_text(size=12, face="bold"),
+        # plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")
+  )	
+
+ggsave("code/plots/filters_cumulative_years.png")
+
+
 # plot data by states - just rainfed
-ggplot(d.1,aes(x = total_n,fill= irrigated)) +
+p2 <- ggplot(d.1,aes(x = total_n,fill= irrigated)) +  # naming object to extract data for cumulative plot below
   geom_histogram(position = "stack",binwidth = 1) +
   scale_x_continuous(breaks = seq(1,23,5)) +
   scale_fill_manual(values=c("#00000000", "#e1be6a"),   # make irrigated invisible for now, using a colorblind friendly color scheme 
@@ -230,7 +280,7 @@ ggplot(d.1,aes(x = total_n,fill= irrigated)) +
         panel.border=element_rect(color="grey50", fill=NA, linewidth=0.5),
         strip.text=element_text(size=rel(1), face="bold", vjust=-2),
         strip.background = element_rect(fill=NA),
-        panel.margin=unit(0, "lines"),
+        panel.spacing.x=unit(0, "lines"),
         panel.spacing.y=unit(-1, "points"),
         legend.text=element_text(size=14),
         legend.title=element_text(size=14)
@@ -238,6 +288,8 @@ ggplot(d.1,aes(x = total_n,fill= irrigated)) +
         # plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")
         
   )	
+
+p2
 
 ggsave("code/plots/filters_years_rainfed_only.png")
 
@@ -267,6 +319,101 @@ ggplot(d.1,aes(x = total_n,fill= irrigated)) +
   )	 
 
 ggsave("code/plots/filters_years_rainfed_and_irr.png")
+
+
+### arrange the data to make cumulative plots by state --
+### this creates the text used in the mutate() step below, only needed once
+# states <- unique(d.1$state_alpha)
+# panel <- seq(1,41,1)
+# states_key <- data.frame(states=states, panel=panel)
+# states_key$panel <- as.character(states_key$panel)
+# # make the string we'll use in relevel. Note \" within " " tells R that you 
+# # want to show the double quotes in the string
+# states_key$key <- paste0("\"",states_key$panel, "\"=\"", states_key$states, "\"")
+# # check our work
+# key <- stringr::str_flatten_comma(states_key$key)
+# cat(key)
+
+p2.d <- ggplot_build(p2)$data[[1]][, c(3:4,11,12)] %>%   # extract data from p1 above
+# $x is filter for these many years
+# $group is irrigated, 1=yes, 2=no ---why is it opposite here than in p1.d??? IDK
+# $panel is state
+# we want to make new column that, within groups, sums the years before it
+        mutate(state=recode_factor(PANEL, "1"="AL", "2"="AR", "3"="AZ", "4"="CA", "5"="CO", "6"="DE", "7"="FL", "8"="GA", "9"="IA", "10"="ID", "11"="IL", "12"="IN", "13"="KS", "14"="KY", "15"="LA", "16"="MD", "17"="MI", "18"="MN", "19"="MO", "20"="MS", "21"="MT", "22"="NC", "23"="ND", "24"="NE", "25"="NJ", "26"="NM", "27"="NY", "28"="OH", "29"="OK", "30"="OR", "31"="PA", "32"="SC", "33"="SD", "34"="TN", "35"="TX", "36"="UT", "37"="VA", "38"="WA", "39"="WI", "40"="WV", "41"="WY")) %>%
+        mutate(irr=recode_factor(group, "1"="Irrigated", "2"="Rainfed")) %>%
+        group_by(state,irr) %>% # group by rainfed/irrigated
+        arrange(desc(x), .by_group=T) %>%       # reverse the order of the rows so that the cumulative sums in next step do what we want
+        mutate(cum.count=cumsum(count)) %>%  # cumulative sums
+        arrange(x, .by_group=T)   # put the x's back in the right order for plotting
+
+p2.d$irr <- relevel(factor(p2.d$irr), "Irrigated")
+
+
+
+# plot cumulative data by states - just rainfed
+ggplot(p2.d,aes(x = x, 
+                y = cum.count, 
+                fill = irr)) +
+  geom_bar(stat="identity", position = "stack", width=0.2) +
+  scale_x_continuous(breaks = seq(0,23,5), expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_manual(values=c("#00000000", "#e1be6a"),  # make irrigated invisible for now, using a colorblind friendly color scheme 
+                    name="Key") +
+  facet_wrap(~state) +
+  labs(x = 'Filter: County minimum number of corn years', y = 'Number of county-years') +
+  theme(panel.grid.minor=element_blank(), 
+        panel.grid.major=element_blank() ,
+        panel.background = element_rect(fill = NA) ,
+        panel.border=element_rect(color="grey50", fill=NA, linewidth=0.5),
+        strip.text=element_text(size=rel(1), face="bold", vjust=-2),
+        strip.background = element_rect(fill=NA),
+        panel.margin=unit(0, "lines"),
+        panel.spacing.y=unit(-1, "points"),
+        legend.text=element_text(size=14),
+        legend.title=element_text(size=14),
+        axis.title.x = element_text(margin=margin(8, 0,0,0)),
+        axis.title.y = element_text(margin=margin(0, 8,0,0))                        
+        # legend.title=element_text(size=12, face="bold"),
+        # plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")
+  )	
+
+ggsave("code/plots/filters_years_cumulative_rainfed_only.png")
+
+
+# plot cumulative data by states - rainfed and irrigated
+ggplot(p2.d,aes(x = x, 
+                y = cum.count, 
+                fill = irr)) +
+  geom_bar(stat="identity", position = "stack", width=0.2) +
+  scale_x_continuous(breaks = seq(0,23,5), expand=c(0,0)) +
+  scale_y_continuous(expand=c(0,0)) +
+  scale_fill_manual(values=c("#40b0a6", "#e1be6a"), 
+                    name="Key") +
+  facet_wrap(~state) +
+  labs(x = 'Filter: County minimum number of corn years', y = 'Number of county-years') +
+  theme(panel.grid.minor=element_blank(), 
+        panel.grid.major=element_blank() ,
+        panel.background = element_rect(fill = NA) ,
+        panel.border=element_rect(color="grey50", fill=NA, linewidth=0.5),
+        strip.text=element_text(size=rel(1), face="bold", vjust=-2),
+        strip.background = element_rect(fill=NA),
+        panel.margin=unit(0, "lines"),
+        panel.spacing.y=unit(-1, "points"),
+        legend.text=element_text(size=14),
+        legend.title=element_text(size=14),
+        axis.title.x = element_text(margin=margin(8, 0,0,0)),
+        axis.title.y = element_text(margin=margin(0, 8,0,0))                        
+        # legend.title=element_text(size=12, face="bold"),
+        # plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")
+  )	
+
+ggsave("code/plots/filters_years_cumulative_rainfed_and_irr.png")
+
+
+
+
+
+
 # --------------apply filters--------------#
 d.new <- d %>%
   mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
