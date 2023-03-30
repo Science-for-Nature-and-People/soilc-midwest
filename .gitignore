@@ -1,9 +1,9 @@
 .Rproj.user
-/data
 /KBS
 /.RData
 /.Rhistory
 /figures
 *.html
 *.jpg
-
+.DS_Store
+/data/soil
