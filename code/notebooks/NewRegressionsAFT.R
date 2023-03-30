@@ -6,6 +6,7 @@
 library(tidyverse)
 library(lme4)
 library(ggplot2)
+# install.packages("ggthemes")
 library (ggthemes)
 
 
@@ -14,6 +15,8 @@ all_data <- readRDS("data/all_data_2020.08.07.rds")  # in R projects the default
 all.data.stan <- readRDS("data/all_data_stan_2020.08.07.rds") # the standardized data
 
 # plot the data
+windows(xpinch=200, ypinch=200, width=5, height=5)
+
 ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
   geom_jitter()+
   # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
@@ -31,6 +34,31 @@ ggplot(data = all_data, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
   xlab("Organic matter (%)")+ xlim (0,10)+
   ggtitle("Yield by state")+
   facet_wrap(~state_alpha)
+
+ggplot(data = all.data.stan, aes(x = ssurgo_om_mean, y = Yield_decomp_add))+
+  geom_jitter(size=0.7, alpha=0.6, shape=20)+ 
+  # geom_smooth()   #looks like a saturation curve y=(x)^(1/2)
+  geom_smooth(method="lm") + 
+  # theme_bw()+
+  ylab("De-trended Corn yield (Mg/ha)")+ #ylim(0,20) +
+  xlab("Standardized SOM (%)")+ #xlim (0,10)+
+  # ggtitle("Yield by state")+
+  facet_wrap(~state_alpha) +
+  theme(panel.grid.minor=element_blank(), 
+        panel.grid.major=element_blank() ,
+        panel.background = element_rect(fill = NA) ,
+        panel.border=element_rect(color="grey50", fill=NA, linewidth=0.5),
+        strip.text=element_text(size=rel(1), face="bold", vjust=-2),
+        strip.background = element_rect(fill=NA),
+        panel.margin=unit(0, "lines"),
+        panel.spacing.y=unit(-1, "points"),
+        legend.text=element_text(size=14),
+        legend.title=element_text(size=14)
+        # legend.title=element_text(size=12, face="bold"),
+        # plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm")
+  )	
+
+ggsave("code/plots/OMxyield_by_state_originaldata.png")
 
 #by soil order
 #note NY with OM 10%?
