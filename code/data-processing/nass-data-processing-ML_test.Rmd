@@ -82,7 +82,7 @@ d <- plyr::ldply(years, function(x){
 
 2. Calculate irrigation acres from census data and create a filter
 Note: we can skip this step if we'd like to keep data from irrigated land (Aysha)
-Meng: I added the 2017 new census year
+Meng: added the 2017 new census year
 
 ```{r irrgation}
 ### Total acres
@@ -183,15 +183,17 @@ d.irrgiated.filter <- d.acres %>%
 
 3. filter yield data based on the availability of year numbers
 ML: Instead of removing data from irrigated land, a new variable 'irrigated' was created:
-irrigated == Y means more than 95% of acres of a county were irrigated
-irrigated == N means less than 5% of acres of a county were irrigated
+irrigated == 'irrigated' means more than 95% of acres of a county were irrigated
+irrigated == 'rainfed' means less than 5% of acres of a county were irrigated
+
+This step is just for testing different filters. Once the filters are chosen, this step can be skipped. 
 
 ```{r filter}
 # ML: check how many data points are removed using different number of years
 d.1 <- d %>%
-  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
-                               TRUE ~ 'Y')) %>%
-  add_count(irrigated) %>%  # irrigated 18111; non-irrigated 20736
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'rainfed',
+                               TRUE ~ 'irrigated')) %>%
+  add_count(irrigated) %>%  # irrigated 18111; rainfed 20736
   group_by(state_alpha,GEOID,irrigated) %>%
   summarise(total_n =n()) 
 
@@ -409,27 +411,46 @@ ggplot(p2.d,aes(x = x,
 
 ggsave("code/plots/filters_years_cumulative_rainfed_and_irr.png")
 
+```
 
 
+4. apply filters
 
+irrigated == 'irrigated' means more than 95% of acres of a county were irrigated
+irrigated == 'rainfed' means less than 5% of acres of a county were irrigated
 
+Tried two filters for number of years: 
 
-# --------------apply filters--------------#
-d.new <- d %>%
-  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'N',
-                               TRUE ~ 'Y')) %>%
+n = 15 (from Dan's code)
+n = 12 (half of years 2000-2022)
+
+```{r apply_filters}
+d.new.15 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'rainfed',
+                               TRUE ~ 'irrigated')) %>%
   group_by(GEOID) %>%
   add_count(GEOID) %>%
   filter(n >= 15) %>% # Filter to >=15 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
   ungroup(.) %>%
-  select(-n)
+  select(-n) #34003 obs
+
+d.new.12 <- d %>%
+  mutate(irrigated = case_when(GEOID %in% d.irrgiated.filter$GEOID ~ 'rainfed',
+                               TRUE ~ 'irrigated')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 12) %>% # Filter to >=15 corn yield observations #ATR: This is where he resricts the acres to 15 years of corn
+  ungroup(.) %>%
+  select(-n) #35866 obs
 
 ```
 
-4. extract de-trended yield
+5. extract de-trended yield
 
 Note: used gamloess method to model the relationship between yield and year. 
 The model was run for different counties
+
+This step was done on server
 
 ```{r detrend}
 # install.packages("tictoc")
@@ -457,23 +478,20 @@ mod <- function(df){
   return(df)
 }
 
-
-d$year <- as.integer(d$year) # year needs to be converted to integer to run the regression model in the train function above
+#---------------n = 15---------------#
+d.new.15$year <- as.integer(d.new.15$year) # year needs to be converted to integer to run the regression model in the train function above
 
 # Dan's code using mclapply function
-d_list <- split(d, f = d$GEOID) # ML: it creates a list based on county
-
-#test_list <- d_list[1:2]
+d_list_15 <- split(d.new.15, f = d.new.15$GEOID) # ML: it creates a list based on county
 
 tic()
-d_list <- mclapply(X = d_list,FUN = mod, mc.cores = 1) 
-# ML:seems like only one core can be used for windows 
+d_list_15.1 <- mclapply(X = d_list_15,FUN = mod, mc.cores = 20) 
 toc()
-# 4077.25 sec elapsed
+# 375.489 sec elapsed
 
-d.1 <- dplyr::bind_rows(d_list)
+d.15 <- dplyr::bind_rows(d_list_15.1)
 
-d.2 <- d.1 %>%
+d.15.1 <- d.15 %>%
   group_by(GEOID) %>%
   mutate(County_avg_yield = mean(Yield_mg_ha)) %>%
   ungroup(.) %>%
@@ -481,23 +499,29 @@ d.2 <- d.1 %>%
          Yield_decomp_mult = Yield_mg_ha/Detrend_predictions) # yield anomaly
 
 # saved the data to a rds file to be used for downstream processing
-write_rds(d.2, file = "data/corn_yield_2000-2022_w_irrigation.rds")
-```
+write_rds(d.15.1, file = "data/corn_yield_2000-2022_w_irrigation_n_15.rds")
 
-# ML: didn't run
-# ML: I also tried to use the purrr:map function to replicate the above mclappy function, and it was very slow; I then used furrr:future_map. This function is doing the same thing as purrr::map, but allows for running the script in parallel. 
+#---------------n = 12---------------#
+d.new.12$year <- as.integer(d.new.12$year) # year needs to be converted to integer to run the regression model in the train function above
 
-```{r furrr}
-library(purrr)
-library(furrr) # this will allow the parallel computing of the purrr functions
+# Dan's code using mclapply function
+d_list_12 <- split(d.new.12, f = d.new.12$GEOID) # ML: it creates a list based on county
 
 tic()
-data_list <- d %>%
-  group_by(GEOID) %>%
-  nest() %>%
-  mutate(data = future_map(data, .f = mod))
+d_list_12.1 <- mclapply(X = d_list_12,FUN = mod, mc.cores = 28) 
 toc()
-# even with parallel, this step is still very slow; probably better to run through server
 
+d.12 <- dplyr::bind_rows(d_list_12.1)
+
+d.12.1 <- d.12 %>%
+  group_by(GEOID) %>%
+  mutate(County_avg_yield = mean(Yield_mg_ha)) %>%
+  ungroup(.) %>%
+  mutate(Yield_decomp_add = County_avg_yield+Detrend_resids,  # de-trended yield 
+         Yield_decomp_mult = Yield_mg_ha/Detrend_predictions) # yield anomaly
+
+# saved the data to a rds file to be used for downstream processing
+write_rds(d.12.1, file = "data/corn_yield_2000-2022_w_irrigation_n_12.rds")
 ```
+
 
