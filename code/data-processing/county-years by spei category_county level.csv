@@ -1,0 +1,2532 @@
+"","spei.cut","county_name","state_alpha","county_years"
+"1","Very severe","CHEROKEE","AL",1
+"2","Severe","CHEROKEE","AL",4
+"3","Moderate","CHEROKEE","AL",5
+"4","Normal","CHEROKEE","AL",6
+"5","Very severe","CULLMAN","AL",2
+"6","Severe","CULLMAN","AL",2
+"7","Moderate","CULLMAN","AL",5
+"8","Normal","CULLMAN","AL",7
+"9","Severe","DE KALB","AL",4
+"10","Moderate","DE KALB","AL",7
+"11","Normal","DE KALB","AL",6
+"12","Very severe","FAYETTE","AL",2
+"13","Severe","FAYETTE","AL",3
+"14","Moderate","FAYETTE","AL",3
+"15","Normal","FAYETTE","AL",7
+"16","Very severe","JACKSON","AL",1
+"17","Severe","JACKSON","AL",3
+"18","Moderate","JACKSON","AL",3
+"19","Normal","JACKSON","AL",9
+"20","Severe","LAUDERDALE","AL",3
+"21","Moderate","LAUDERDALE","AL",6
+"22","Normal","LAUDERDALE","AL",8
+"23","Very severe","ADAIR","IA",1
+"24","Moderate","ADAIR","IA",7
+"25","Normal","ADAIR","IA",9
+"26","Severe","ADAMS","IA",1
+"27","Moderate","ADAMS","IA",7
+"28","Normal","ADAMS","IA",9
+"29","Severe","ALLAMAKEE","IA",2
+"30","Moderate","ALLAMAKEE","IA",5
+"31","Normal","ALLAMAKEE","IA",10
+"32","Very severe","APPANOOSE","IA",1
+"33","Severe","APPANOOSE","IA",1
+"34","Moderate","APPANOOSE","IA",6
+"35","Normal","APPANOOSE","IA",9
+"36","Severe","AUDUBON","IA",2
+"37","Moderate","AUDUBON","IA",5
+"38","Normal","AUDUBON","IA",10
+"39","Very severe","BENTON","IA",1
+"40","Moderate","BENTON","IA",5
+"41","Normal","BENTON","IA",11
+"42","Very severe","BLACK HAWK","IA",1
+"43","Moderate","BLACK HAWK","IA",4
+"44","Normal","BLACK HAWK","IA",12
+"45","Severe","BOONE","IA",1
+"46","Moderate","BOONE","IA",6
+"47","Normal","BOONE","IA",10
+"48","Very severe","BREMER","IA",1
+"49","Severe","BREMER","IA",2
+"50","Moderate","BREMER","IA",3
+"51","Normal","BREMER","IA",11
+"52","Very severe","BUCHANAN","IA",1
+"53","Moderate","BUCHANAN","IA",5
+"54","Normal","BUCHANAN","IA",11
+"55","Very severe","BUENA VISTA","IA",2
+"56","Moderate","BUENA VISTA","IA",10
+"57","Normal","BUENA VISTA","IA",5
+"58","Very severe","BUTLER","IA",1
+"59","Severe","BUTLER","IA",1
+"60","Moderate","BUTLER","IA",2
+"61","Normal","BUTLER","IA",13
+"62","Very severe","CALHOUN","IA",1
+"63","Severe","CALHOUN","IA",1
+"64","Moderate","CALHOUN","IA",5
+"65","Normal","CALHOUN","IA",10
+"66","Severe","CARROLL","IA",2
+"67","Moderate","CARROLL","IA",5
+"68","Normal","CARROLL","IA",10
+"69","Severe","CASS","IA",2
+"70","Moderate","CASS","IA",6
+"71","Normal","CASS","IA",9
+"72","Severe","CEDAR","IA",3
+"73","Moderate","CEDAR","IA",4
+"74","Normal","CEDAR","IA",10
+"75","Very severe","CERRO GORDO","IA",1
+"76","Severe","CERRO GORDO","IA",2
+"77","Moderate","CERRO GORDO","IA",3
+"78","Normal","CERRO GORDO","IA",11
+"79","Severe","CHEROKEE","IA",2
+"80","Moderate","CHEROKEE","IA",8
+"81","Normal","CHEROKEE","IA",7
+"82","Very severe","CHICKASAW","IA",1
+"83","Severe","CHICKASAW","IA",1
+"84","Moderate","CHICKASAW","IA",4
+"85","Normal","CHICKASAW","IA",11
+"86","Very severe","CLARKE","IA",1
+"87","Moderate","CLARKE","IA",7
+"88","Normal","CLARKE","IA",9
+"89","Severe","CLAY","IA",2
+"90","Moderate","CLAY","IA",9
+"91","Normal","CLAY","IA",6
+"92","Very severe","CLAYTON","IA",1
+"93","Moderate","CLAYTON","IA",5
+"94","Normal","CLAYTON","IA",11
+"95","Very severe","CLINTON","IA",1
+"96","Severe","CLINTON","IA",2
+"97","Moderate","CLINTON","IA",3
+"98","Normal","CLINTON","IA",11
+"99","Severe","CRAWFORD","IA",2
+"100","Moderate","CRAWFORD","IA",7
+"101","Normal","CRAWFORD","IA",8
+"102","Very severe","DALLAS","IA",1
+"103","Moderate","DALLAS","IA",6
+"104","Normal","DALLAS","IA",10
+"105","Severe","DAVIS","IA",1
+"106","Moderate","DAVIS","IA",8
+"107","Normal","DAVIS","IA",8
+"108","Severe","DECATUR","IA",1
+"109","Moderate","DECATUR","IA",7
+"110","Normal","DECATUR","IA",9
+"111","Very severe","DELAWARE","IA",1
+"112","Moderate","DELAWARE","IA",5
+"113","Normal","DELAWARE","IA",11
+"114","Severe","DES MOINES","IA",3
+"115","Moderate","DES MOINES","IA",4
+"116","Normal","DES MOINES","IA",10
+"117","Severe","DICKINSON","IA",2
+"118","Moderate","DICKINSON","IA",9
+"119","Normal","DICKINSON","IA",6
+"120","Very severe","DUBUQUE","IA",1
+"121","Severe","DUBUQUE","IA",1
+"122","Moderate","DUBUQUE","IA",3
+"123","Normal","DUBUQUE","IA",12
+"124","Severe","EMMET","IA",2
+"125","Moderate","EMMET","IA",9
+"126","Normal","EMMET","IA",6
+"127","Severe","FAYETTE","IA",1
+"128","Moderate","FAYETTE","IA",4
+"129","Normal","FAYETTE","IA",12
+"130","Very severe","FLOYD","IA",1
+"131","Severe","FLOYD","IA",2
+"132","Moderate","FLOYD","IA",2
+"133","Normal","FLOYD","IA",12
+"134","Very severe","FRANKLIN","IA",1
+"135","Severe","FRANKLIN","IA",1
+"136","Moderate","FRANKLIN","IA",2
+"137","Normal","FRANKLIN","IA",13
+"138","Very severe","GREENE","IA",1
+"139","Moderate","GREENE","IA",7
+"140","Normal","GREENE","IA",9
+"141","Very severe","GRUNDY","IA",1
+"142","Moderate","GRUNDY","IA",4
+"143","Normal","GRUNDY","IA",12
+"144","Severe","GUTHRIE","IA",1
+"145","Moderate","GUTHRIE","IA",6
+"146","Normal","GUTHRIE","IA",10
+"147","Severe","HAMILTON","IA",1
+"148","Moderate","HAMILTON","IA",5
+"149","Normal","HAMILTON","IA",11
+"150","Very severe","HANCOCK","IA",1
+"151","Severe","HANCOCK","IA",1
+"152","Moderate","HANCOCK","IA",2
+"153","Normal","HANCOCK","IA",13
+"154","Very severe","HARDIN","IA",1
+"155","Moderate","HARDIN","IA",4
+"156","Normal","HARDIN","IA",12
+"157","Severe","HENRY","IA",2
+"158","Moderate","HENRY","IA",5
+"159","Normal","HENRY","IA",10
+"160","Severe","HOWARD","IA",2
+"161","Moderate","HOWARD","IA",3
+"162","Normal","HOWARD","IA",12
+"163","Very severe","HUMBOLDT","IA",1
+"164","Severe","HUMBOLDT","IA",1
+"165","Moderate","HUMBOLDT","IA",6
+"166","Normal","HUMBOLDT","IA",9
+"167","Very severe","IDA","IA",1
+"168","Severe","IDA","IA",2
+"169","Moderate","IDA","IA",6
+"170","Normal","IDA","IA",8
+"171","Very severe","IOWA","IA",1
+"172","Severe","IOWA","IA",1
+"173","Moderate","IOWA","IA",5
+"174","Normal","IOWA","IA",10
+"175","Very severe","JACKSON","IA",1
+"176","Severe","JACKSON","IA",2
+"177","Moderate","JACKSON","IA",2
+"178","Normal","JACKSON","IA",12
+"179","Very severe","JASPER","IA",1
+"180","Moderate","JASPER","IA",6
+"181","Normal","JASPER","IA",10
+"182","Severe","JEFFERSON","IA",1
+"183","Moderate","JEFFERSON","IA",6
+"184","Normal","JEFFERSON","IA",10
+"185","Very severe","JOHNSON","IA",1
+"186","Severe","JOHNSON","IA",2
+"187","Moderate","JOHNSON","IA",4
+"188","Normal","JOHNSON","IA",10
+"189","Very severe","JONES","IA",1
+"190","Severe","JONES","IA",1
+"191","Moderate","JONES","IA",2
+"192","Normal","JONES","IA",13
+"193","Severe","KEOKUK","IA",2
+"194","Moderate","KEOKUK","IA",5
+"195","Normal","KEOKUK","IA",10
+"196","Very severe","KOSSUTH","IA",1
+"197","Severe","KOSSUTH","IA",1
+"198","Moderate","KOSSUTH","IA",8
+"199","Normal","KOSSUTH","IA",7
+"200","Severe","LEE","IA",3
+"201","Moderate","LEE","IA",4
+"202","Normal","LEE","IA",10
+"203","Very severe","LINN","IA",1
+"204","Moderate","LINN","IA",5
+"205","Normal","LINN","IA",11
+"206","Very severe","LUCAS","IA",1
+"207","Moderate","LUCAS","IA",6
+"208","Normal","LUCAS","IA",10
+"209","Very severe","LYON","IA",1
+"210","Severe","LYON","IA",2
+"211","Moderate","LYON","IA",7
+"212","Normal","LYON","IA",7
+"213","Very severe","MADISON","IA",1
+"214","Moderate","MADISON","IA",8
+"215","Normal","MADISON","IA",8
+"216","Very severe","MAHASKA","IA",1
+"217","Moderate","MAHASKA","IA",7
+"218","Normal","MAHASKA","IA",9
+"219","Very severe","MARION","IA",1
+"220","Moderate","MARION","IA",7
+"221","Normal","MARION","IA",9
+"222","Very severe","MARSHALL","IA",1
+"223","Moderate","MARSHALL","IA",5
+"224","Normal","MARSHALL","IA",11
+"225","Severe","MILLS","IA",2
+"226","Moderate","MILLS","IA",6
+"227","Normal","MILLS","IA",8
+"228","Severe","MITCHELL","IA",3
+"229","Moderate","MITCHELL","IA",2
+"230","Normal","MITCHELL","IA",12
+"231","Very severe","MONROE","IA",1
+"232","Severe","MONROE","IA",1
+"233","Moderate","MONROE","IA",4
+"234","Normal","MONROE","IA",10
+"235","Severe","MONTGOMERY","IA",2
+"236","Moderate","MONTGOMERY","IA",6
+"237","Normal","MONTGOMERY","IA",9
+"238","Severe","MUSCATINE","IA",2
+"239","Moderate","MUSCATINE","IA",4
+"240","Normal","MUSCATINE","IA",11
+"241","Severe","O BRIEN","IA",3
+"242","Moderate","O BRIEN","IA",9
+"243","Normal","O BRIEN","IA",5
+"244","Severe","OSCEOLA","IA",2
+"245","Moderate","OSCEOLA","IA",9
+"246","Normal","OSCEOLA","IA",6
+"247","Severe","PAGE","IA",1
+"248","Moderate","PAGE","IA",7
+"249","Normal","PAGE","IA",9
+"250","Severe","PALO ALTO","IA",2
+"251","Moderate","PALO ALTO","IA",8
+"252","Normal","PALO ALTO","IA",7
+"253","Very severe","PLYMOUTH","IA",1
+"254","Severe","PLYMOUTH","IA",1
+"255","Moderate","PLYMOUTH","IA",6
+"256","Normal","PLYMOUTH","IA",9
+"257","Severe","POCAHONTAS","IA",2
+"258","Moderate","POCAHONTAS","IA",6
+"259","Normal","POCAHONTAS","IA",9
+"260","Very severe","POLK","IA",1
+"261","Severe","POLK","IA",1
+"262","Moderate","POLK","IA",5
+"263","Normal","POLK","IA",10
+"264","Severe","POTTAWATTAMIE","IA",2
+"265","Moderate","POTTAWATTAMIE","IA",6
+"266","Normal","POTTAWATTAMIE","IA",9
+"267","Very severe","POWESHIEK","IA",1
+"268","Moderate","POWESHIEK","IA",7
+"269","Normal","POWESHIEK","IA",9
+"270","Severe","RINGGOLD","IA",2
+"271","Moderate","RINGGOLD","IA",6
+"272","Normal","RINGGOLD","IA",9
+"273","Very severe","SAC","IA",1
+"274","Severe","SAC","IA",2
+"275","Moderate","SAC","IA",5
+"276","Normal","SAC","IA",9
+"277","Very severe","SCOTT","IA",1
+"278","Severe","SCOTT","IA",1
+"279","Moderate","SCOTT","IA",4
+"280","Normal","SCOTT","IA",11
+"281","Severe","SHELBY","IA",3
+"282","Moderate","SHELBY","IA",5
+"283","Normal","SHELBY","IA",9
+"284","Very severe","SIOUX","IA",1
+"285","Severe","SIOUX","IA",2
+"286","Moderate","SIOUX","IA",8
+"287","Normal","SIOUX","IA",6
+"288","Severe","STORY","IA",1
+"289","Moderate","STORY","IA",6
+"290","Normal","STORY","IA",10
+"291","Very severe","TAMA","IA",1
+"292","Moderate","TAMA","IA",6
+"293","Normal","TAMA","IA",10
+"294","Severe","TAYLOR","IA",2
+"295","Moderate","TAYLOR","IA",5
+"296","Normal","TAYLOR","IA",9
+"297","Severe","UNION","IA",2
+"298","Moderate","UNION","IA",6
+"299","Normal","UNION","IA",8
+"300","Severe","VAN BUREN","IA",1
+"301","Moderate","VAN BUREN","IA",7
+"302","Normal","VAN BUREN","IA",9
+"303","Severe","WAPELLO","IA",2
+"304","Moderate","WAPELLO","IA",5
+"305","Normal","WAPELLO","IA",10
+"306","Very severe","WARREN","IA",1
+"307","Moderate","WARREN","IA",6
+"308","Normal","WARREN","IA",10
+"309","Severe","WASHINGTON","IA",2
+"310","Moderate","WASHINGTON","IA",5
+"311","Normal","WASHINGTON","IA",10
+"312","Very severe","WAYNE","IA",1
+"313","Moderate","WAYNE","IA",7
+"314","Normal","WAYNE","IA",9
+"315","Very severe","WEBSTER","IA",1
+"316","Severe","WEBSTER","IA",1
+"317","Moderate","WEBSTER","IA",4
+"318","Normal","WEBSTER","IA",11
+"319","Very severe","WINNEBAGO","IA",1
+"320","Severe","WINNEBAGO","IA",1
+"321","Moderate","WINNEBAGO","IA",5
+"322","Normal","WINNEBAGO","IA",10
+"323","Very severe","WINNESHIEK","IA",1
+"324","Severe","WINNESHIEK","IA",1
+"325","Moderate","WINNESHIEK","IA",3
+"326","Normal","WINNESHIEK","IA",12
+"327","Very severe","WORTH","IA",1
+"328","Severe","WORTH","IA",1
+"329","Moderate","WORTH","IA",5
+"330","Normal","WORTH","IA",10
+"331","Very severe","WRIGHT","IA",1
+"332","Severe","WRIGHT","IA",1
+"333","Moderate","WRIGHT","IA",3
+"334","Normal","WRIGHT","IA",12
+"335","Very severe","ADAMS","IL",1
+"336","Severe","ADAMS","IL",2
+"337","Moderate","ADAMS","IL",4
+"338","Normal","ADAMS","IL",10
+"339","Very severe","BOND","IL",1
+"340","Severe","BOND","IL",2
+"341","Moderate","BOND","IL",5
+"342","Normal","BOND","IL",7
+"343","Severe","BOONE","IL",1
+"344","Moderate","BOONE","IL",3
+"345","Normal","BOONE","IL",12
+"346","Very severe","BROWN","IL",1
+"347","Severe","BROWN","IL",2
+"348","Moderate","BROWN","IL",4
+"349","Normal","BROWN","IL",10
+"350","Very severe","BUREAU","IL",1
+"351","Severe","BUREAU","IL",1
+"352","Moderate","BUREAU","IL",3
+"353","Normal","BUREAU","IL",12
+"354","Very severe","CALHOUN","IL",1
+"355","Severe","CALHOUN","IL",2
+"356","Moderate","CALHOUN","IL",2
+"357","Normal","CALHOUN","IL",10
+"358","Very severe","CARROLL","IL",1
+"359","Severe","CARROLL","IL",3
+"360","Moderate","CARROLL","IL",3
+"361","Normal","CARROLL","IL",10
+"362","Very severe","CHRISTIAN","IL",1
+"363","Severe","CHRISTIAN","IL",2
+"364","Moderate","CHRISTIAN","IL",4
+"365","Normal","CHRISTIAN","IL",10
+"366","Very severe","CLARK","IL",1
+"367","Severe","CLARK","IL",1
+"368","Moderate","CLARK","IL",4
+"369","Normal","CLARK","IL",9
+"370","Severe","CLAY","IL",2
+"371","Moderate","CLAY","IL",3
+"372","Normal","CLAY","IL",11
+"373","Very severe","CLINTON","IL",2
+"374","Severe","CLINTON","IL",1
+"375","Moderate","CLINTON","IL",3
+"376","Normal","CLINTON","IL",11
+"377","Very severe","COLES","IL",1
+"378","Severe","COLES","IL",3
+"379","Moderate","COLES","IL",2
+"380","Normal","COLES","IL",10
+"381","Very severe","CRAWFORD","IL",1
+"382","Severe","CRAWFORD","IL",1
+"383","Moderate","CRAWFORD","IL",5
+"384","Normal","CRAWFORD","IL",9
+"385","Very severe","CUMBERLAND","IL",1
+"386","Severe","CUMBERLAND","IL",2
+"387","Moderate","CUMBERLAND","IL",4
+"388","Normal","CUMBERLAND","IL",10
+"389","Very severe","DE KALB","IL",1
+"390","Severe","DE KALB","IL",1
+"391","Moderate","DE KALB","IL",3
+"392","Normal","DE KALB","IL",12
+"393","Very severe","DE WITT","IL",1
+"394","Severe","DE WITT","IL",2
+"395","Moderate","DE WITT","IL",4
+"396","Normal","DE WITT","IL",9
+"397","Very severe","DOUGLAS","IL",1
+"398","Severe","DOUGLAS","IL",2
+"399","Moderate","DOUGLAS","IL",3
+"400","Normal","DOUGLAS","IL",11
+"401","Very severe","EDGAR","IL",1
+"402","Severe","EDGAR","IL",1
+"403","Moderate","EDGAR","IL",6
+"404","Normal","EDGAR","IL",9
+"405","Very severe","EDWARDS","IL",1
+"406","Severe","EDWARDS","IL",2
+"407","Moderate","EDWARDS","IL",4
+"408","Normal","EDWARDS","IL",8
+"409","Very severe","EFFINGHAM","IL",1
+"410","Severe","EFFINGHAM","IL",2
+"411","Moderate","EFFINGHAM","IL",4
+"412","Normal","EFFINGHAM","IL",10
+"413","Very severe","FAYETTE","IL",1
+"414","Severe","FAYETTE","IL",2
+"415","Moderate","FAYETTE","IL",3
+"416","Normal","FAYETTE","IL",11
+"417","Severe","FORD","IL",2
+"418","Moderate","FORD","IL",6
+"419","Normal","FORD","IL",9
+"420","Very severe","FRANKLIN","IL",1
+"421","Severe","FRANKLIN","IL",2
+"422","Moderate","FRANKLIN","IL",2
+"423","Normal","FRANKLIN","IL",12
+"424","Very severe","FULTON","IL",2
+"425","Moderate","FULTON","IL",3
+"426","Normal","FULTON","IL",12
+"427","Severe","GRUNDY","IL",2
+"428","Moderate","GRUNDY","IL",4
+"429","Normal","GRUNDY","IL",11
+"430","Very severe","HAMILTON","IL",1
+"431","Severe","HAMILTON","IL",2
+"432","Moderate","HAMILTON","IL",3
+"433","Normal","HAMILTON","IL",9
+"434","Severe","HANCOCK","IL",4
+"435","Moderate","HANCOCK","IL",3
+"436","Normal","HANCOCK","IL",10
+"437","Very severe","HENRY","IL",1
+"438","Severe","HENRY","IL",1
+"439","Moderate","HENRY","IL",5
+"440","Normal","HENRY","IL",10
+"441","Severe","IROQUOIS","IL",1
+"442","Moderate","IROQUOIS","IL",6
+"443","Normal","IROQUOIS","IL",10
+"444","Very severe","JACKSON","IL",1
+"445","Severe","JACKSON","IL",2
+"446","Moderate","JACKSON","IL",2
+"447","Normal","JACKSON","IL",11
+"448","Very severe","JASPER","IL",1
+"449","Severe","JASPER","IL",2
+"450","Moderate","JASPER","IL",2
+"451","Normal","JASPER","IL",12
+"452","Severe","JEFFERSON","IL",2
+"453","Moderate","JEFFERSON","IL",2
+"454","Normal","JEFFERSON","IL",12
+"455","Very severe","JERSEY","IL",1
+"456","Severe","JERSEY","IL",2
+"457","Moderate","JERSEY","IL",2
+"458","Normal","JERSEY","IL",12
+"459","Very severe","JO DAVIESS","IL",1
+"460","Severe","JO DAVIESS","IL",1
+"461","Moderate","JO DAVIESS","IL",5
+"462","Normal","JO DAVIESS","IL",10
+"463","Severe","JOHNSON","IL",2
+"464","Moderate","JOHNSON","IL",1
+"465","Normal","JOHNSON","IL",12
+"466","Very severe","KANE","IL",1
+"467","Severe","KANE","IL",1
+"468","Moderate","KANE","IL",3
+"469","Normal","KANE","IL",12
+"470","Severe","KANKAKEE","IL",1
+"471","Moderate","KANKAKEE","IL",4
+"472","Normal","KANKAKEE","IL",12
+"473","Severe","KENDALL","IL",2
+"474","Moderate","KENDALL","IL",5
+"475","Normal","KENDALL","IL",8
+"476","Very severe","KNOX","IL",1
+"477","Severe","KNOX","IL",1
+"478","Moderate","KNOX","IL",6
+"479","Normal","KNOX","IL",9
+"480","Very severe","LA SALLE","IL",1
+"481","Severe","LA SALLE","IL",1
+"482","Moderate","LA SALLE","IL",3
+"483","Normal","LA SALLE","IL",12
+"484","Very severe","LIVINGSTON","IL",1
+"485","Severe","LIVINGSTON","IL",1
+"486","Moderate","LIVINGSTON","IL",6
+"487","Normal","LIVINGSTON","IL",9
+"488","Very severe","LOGAN","IL",1
+"489","Severe","LOGAN","IL",3
+"490","Moderate","LOGAN","IL",3
+"491","Normal","LOGAN","IL",10
+"492","Very severe","MACON","IL",1
+"493","Severe","MACON","IL",3
+"494","Moderate","MACON","IL",2
+"495","Normal","MACON","IL",11
+"496","Very severe","MACOUPIN","IL",1
+"497","Severe","MACOUPIN","IL",2
+"498","Moderate","MACOUPIN","IL",3
+"499","Normal","MACOUPIN","IL",11
+"500","Very severe","MADISON","IL",1
+"501","Severe","MADISON","IL",2
+"502","Moderate","MADISON","IL",2
+"503","Normal","MADISON","IL",12
+"504","Very severe","MARION","IL",1
+"505","Severe","MARION","IL",3
+"506","Moderate","MARION","IL",1
+"507","Normal","MARION","IL",12
+"508","Very severe","MARSHALL","IL",1
+"509","Severe","MARSHALL","IL",1
+"510","Moderate","MARSHALL","IL",5
+"511","Normal","MARSHALL","IL",10
+"512","Severe","MCDONOUGH","IL",3
+"513","Moderate","MCDONOUGH","IL",5
+"514","Normal","MCDONOUGH","IL",9
+"515","Severe","MCLEAN","IL",3
+"516","Moderate","MCLEAN","IL",6
+"517","Normal","MCLEAN","IL",8
+"518","Very severe","MONTGOMERY","IL",1
+"519","Severe","MONTGOMERY","IL",2
+"520","Moderate","MONTGOMERY","IL",3
+"521","Normal","MONTGOMERY","IL",11
+"522","Very severe","MOULTRIE","IL",1
+"523","Severe","MOULTRIE","IL",3
+"524","Moderate","MOULTRIE","IL",3
+"525","Normal","MOULTRIE","IL",10
+"526","Very severe","OGLE","IL",1
+"527","Severe","OGLE","IL",2
+"528","Moderate","OGLE","IL",3
+"529","Normal","OGLE","IL",11
+"530","Very severe","PEORIA","IL",1
+"531","Severe","PEORIA","IL",1
+"532","Moderate","PEORIA","IL",6
+"533","Normal","PEORIA","IL",9
+"534","Very severe","PERRY","IL",1
+"535","Severe","PERRY","IL",2
+"536","Moderate","PERRY","IL",2
+"537","Normal","PERRY","IL",12
+"538","Very severe","PIATT","IL",1
+"539","Severe","PIATT","IL",3
+"540","Moderate","PIATT","IL",3
+"541","Normal","PIATT","IL",10
+"542","Very severe","PIKE","IL",1
+"543","Severe","PIKE","IL",2
+"544","Moderate","PIKE","IL",5
+"545","Normal","PIKE","IL",9
+"546","Very severe","PUTNAM","IL",1
+"547","Moderate","PUTNAM","IL",2
+"548","Normal","PUTNAM","IL",13
+"549","Very severe","RANDOLPH","IL",1
+"550","Severe","RANDOLPH","IL",1
+"551","Moderate","RANDOLPH","IL",4
+"552","Normal","RANDOLPH","IL",10
+"553","Very severe","RICHLAND","IL",1
+"554","Severe","RICHLAND","IL",1
+"555","Moderate","RICHLAND","IL",4
+"556","Normal","RICHLAND","IL",11
+"557","Very severe","SALINE","IL",1
+"558","Severe","SALINE","IL",2
+"559","Moderate","SALINE","IL",4
+"560","Normal","SALINE","IL",10
+"561","Very severe","SANGAMON","IL",1
+"562","Severe","SANGAMON","IL",2
+"563","Moderate","SANGAMON","IL",4
+"564","Normal","SANGAMON","IL",10
+"565","Very severe","SCHUYLER","IL",1
+"566","Severe","SCHUYLER","IL",3
+"567","Moderate","SCHUYLER","IL",2
+"568","Normal","SCHUYLER","IL",11
+"569","Very severe","SHELBY","IL",1
+"570","Severe","SHELBY","IL",2
+"571","Moderate","SHELBY","IL",4
+"572","Normal","SHELBY","IL",10
+"573","Very severe","ST CLAIR","IL",1
+"574","Severe","ST CLAIR","IL",2
+"575","Moderate","ST CLAIR","IL",5
+"576","Normal","ST CLAIR","IL",9
+"577","Very severe","STARK","IL",1
+"578","Severe","STARK","IL",1
+"579","Moderate","STARK","IL",6
+"580","Normal","STARK","IL",9
+"581","Very severe","STEPHENSON","IL",1
+"582","Severe","STEPHENSON","IL",1
+"583","Moderate","STEPHENSON","IL",5
+"584","Normal","STEPHENSON","IL",10
+"585","Very severe","UNION","IL",1
+"586","Severe","UNION","IL",2
+"587","Moderate","UNION","IL",2
+"588","Normal","UNION","IL",11
+"589","Severe","VERMILION","IL",2
+"590","Moderate","VERMILION","IL",3
+"591","Normal","VERMILION","IL",12
+"592","Very severe","WABASH","IL",1
+"593","Severe","WABASH","IL",2
+"594","Moderate","WABASH","IL",3
+"595","Normal","WABASH","IL",11
+"596","Very severe","WASHINGTON","IL",2
+"597","Moderate","WASHINGTON","IL",3
+"598","Normal","WASHINGTON","IL",12
+"599","Very severe","WAYNE","IL",1
+"600","Severe","WAYNE","IL",2
+"601","Moderate","WAYNE","IL",3
+"602","Normal","WAYNE","IL",9
+"603","Severe","WILL","IL",1
+"604","Moderate","WILL","IL",5
+"605","Normal","WILL","IL",10
+"606","Very severe","WILLIAMSON","IL",1
+"607","Severe","WILLIAMSON","IL",2
+"608","Moderate","WILLIAMSON","IL",2
+"609","Normal","WILLIAMSON","IL",12
+"610","Very severe","WINNEBAGO","IL",1
+"611","Severe","WINNEBAGO","IL",1
+"612","Moderate","WINNEBAGO","IL",4
+"613","Normal","WINNEBAGO","IL",11
+"614","Very severe","WOODFORD","IL",1
+"615","Severe","WOODFORD","IL",1
+"616","Moderate","WOODFORD","IL",5
+"617","Normal","WOODFORD","IL",10
+"618","Severe","ADAMS","IN",3
+"619","Moderate","ADAMS","IN",6
+"620","Normal","ADAMS","IN",8
+"621","Severe","ALLEN","IN",2
+"622","Moderate","ALLEN","IN",6
+"623","Normal","ALLEN","IN",9
+"624","Severe","BLACKFORD","IN",3
+"625","Moderate","BLACKFORD","IN",5
+"626","Normal","BLACKFORD","IN",9
+"627","Severe","BOONE","IN",2
+"628","Moderate","BOONE","IN",4
+"629","Normal","BOONE","IN",11
+"630","Severe","CARROLL","IN",1
+"631","Moderate","CARROLL","IN",5
+"632","Normal","CARROLL","IN",11
+"633","Severe","CASS","IN",1
+"634","Moderate","CASS","IN",4
+"635","Normal","CASS","IN",12
+"636","Severe","CLARK","IN",2
+"637","Moderate","CLARK","IN",2
+"638","Normal","CLARK","IN",13
+"639","Very severe","CLAY","IN",1
+"640","Severe","CLAY","IN",1
+"641","Moderate","CLAY","IN",6
+"642","Normal","CLAY","IN",8
+"643","Severe","CLINTON","IN",1
+"644","Moderate","CLINTON","IN",3
+"645","Normal","CLINTON","IN",13
+"646","Very severe","DE KALB","IN",1
+"647","Severe","DE KALB","IN",1
+"648","Moderate","DE KALB","IN",8
+"649","Normal","DE KALB","IN",6
+"650","Very severe","DEARBORN","IN",2
+"651","Moderate","DEARBORN","IN",4
+"652","Normal","DEARBORN","IN",11
+"653","Very severe","DECATUR","IN",2
+"654","Severe","DECATUR","IN",1
+"655","Moderate","DECATUR","IN",3
+"656","Normal","DECATUR","IN",11
+"657","Severe","DELAWARE","IN",2
+"658","Moderate","DELAWARE","IN",5
+"659","Normal","DELAWARE","IN",10
+"660","Very severe","DUBOIS","IN",2
+"661","Severe","DUBOIS","IN",1
+"662","Moderate","DUBOIS","IN",2
+"663","Normal","DUBOIS","IN",12
+"664","Very severe","FAYETTE","IN",2
+"665","Severe","FAYETTE","IN",2
+"666","Moderate","FAYETTE","IN",1
+"667","Normal","FAYETTE","IN",12
+"668","Severe","FOUNTAIN","IN",2
+"669","Moderate","FOUNTAIN","IN",4
+"670","Normal","FOUNTAIN","IN",11
+"671","Very severe","FRANKLIN","IN",1
+"672","Severe","FRANKLIN","IN",1
+"673","Moderate","FRANKLIN","IN",5
+"674","Normal","FRANKLIN","IN",10
+"675","Severe","HANCOCK","IN",3
+"676","Moderate","HANCOCK","IN",2
+"677","Normal","HANCOCK","IN",12
+"678","Severe","HARRISON","IN",2
+"679","Moderate","HARRISON","IN",7
+"680","Normal","HARRISON","IN",8
+"681","Very severe","HENDRICKS","IN",1
+"682","Severe","HENDRICKS","IN",2
+"683","Moderate","HENDRICKS","IN",4
+"684","Normal","HENDRICKS","IN",10
+"685","Severe","HENRY","IN",2
+"686","Moderate","HENRY","IN",2
+"687","Normal","HENRY","IN",12
+"688","Severe","HOWARD","IN",1
+"689","Moderate","HOWARD","IN",4
+"690","Normal","HOWARD","IN",11
+"691","Severe","HUNTINGTON","IN",2
+"692","Moderate","HUNTINGTON","IN",6
+"693","Normal","HUNTINGTON","IN",8
+"694","Severe","JAY","IN",5
+"695","Moderate","JAY","IN",2
+"696","Normal","JAY","IN",9
+"697","Very severe","JENNINGS","IN",1
+"698","Severe","JENNINGS","IN",1
+"699","Moderate","JENNINGS","IN",3
+"700","Normal","JENNINGS","IN",12
+"701","Very severe","JOHNSON","IN",2
+"702","Severe","JOHNSON","IN",2
+"703","Moderate","JOHNSON","IN",2
+"704","Normal","JOHNSON","IN",11
+"705","Severe","MADISON","IN",2
+"706","Moderate","MADISON","IN",4
+"707","Normal","MADISON","IN",11
+"708","Very severe","MARTIN","IN",1
+"709","Severe","MARTIN","IN",1
+"710","Moderate","MARTIN","IN",3
+"711","Normal","MARTIN","IN",11
+"712","Very severe","MONROE","IN",1
+"713","Severe","MONROE","IN",1
+"714","Moderate","MONROE","IN",4
+"715","Normal","MONROE","IN",11
+"716","Severe","MONTGOMERY","IN",3
+"717","Moderate","MONTGOMERY","IN",3
+"718","Normal","MONTGOMERY","IN",11
+"719","Very severe","MORGAN","IN",2
+"720","Severe","MORGAN","IN",1
+"721","Moderate","MORGAN","IN",3
+"722","Normal","MORGAN","IN",11
+"723","Very severe","ORANGE","IN",2
+"724","Moderate","ORANGE","IN",4
+"725","Normal","ORANGE","IN",11
+"726","Very severe","OWEN","IN",1
+"727","Severe","OWEN","IN",2
+"728","Moderate","OWEN","IN",3
+"729","Normal","OWEN","IN",10
+"730","Very severe","PIKE","IN",1
+"731","Severe","PIKE","IN",2
+"732","Moderate","PIKE","IN",4
+"733","Normal","PIKE","IN",8
+"734","Very severe","PUTNAM","IN",1
+"735","Severe","PUTNAM","IN",1
+"736","Moderate","PUTNAM","IN",3
+"737","Normal","PUTNAM","IN",11
+"738","Severe","RANDOLPH","IN",3
+"739","Moderate","RANDOLPH","IN",4
+"740","Normal","RANDOLPH","IN",10
+"741","Very severe","RIPLEY","IN",2
+"742","Moderate","RIPLEY","IN",5
+"743","Normal","RIPLEY","IN",10
+"744","Very severe","RUSH","IN",2
+"745","Severe","RUSH","IN",1
+"746","Moderate","RUSH","IN",3
+"747","Normal","RUSH","IN",11
+"748","Severe","SCOTT","IN",2
+"749","Moderate","SCOTT","IN",5
+"750","Normal","SCOTT","IN",10
+"751","Very severe","SHELBY","IN",2
+"752","Severe","SHELBY","IN",2
+"753","Moderate","SHELBY","IN",2
+"754","Normal","SHELBY","IN",11
+"755","Severe","SPENCER","IN",3
+"756","Moderate","SPENCER","IN",4
+"757","Normal","SPENCER","IN",10
+"758","Severe","TIPPECANOE","IN",1
+"759","Moderate","TIPPECANOE","IN",3
+"760","Normal","TIPPECANOE","IN",12
+"761","Severe","TIPTON","IN",2
+"762","Moderate","TIPTON","IN",3
+"763","Normal","TIPTON","IN",12
+"764","Very severe","UNION","IN",2
+"765","Severe","UNION","IN",2
+"766","Moderate","UNION","IN",2
+"767","Normal","UNION","IN",11
+"768","Very severe","VANDERBURGH","IN",2
+"769","Severe","VANDERBURGH","IN",2
+"770","Moderate","VANDERBURGH","IN",1
+"771","Normal","VANDERBURGH","IN",12
+"772","Very severe","VERMILLION","IN",1
+"773","Severe","VERMILLION","IN",1
+"774","Moderate","VERMILLION","IN",4
+"775","Normal","VERMILLION","IN",11
+"776","Severe","WABASH","IN",2
+"777","Moderate","WABASH","IN",5
+"778","Normal","WABASH","IN",9
+"779","Very severe","WARRICK","IN",2
+"780","Severe","WARRICK","IN",2
+"781","Moderate","WARRICK","IN",1
+"782","Normal","WARRICK","IN",12
+"783","Very severe","WASHINGTON","IN",1
+"784","Severe","WASHINGTON","IN",1
+"785","Moderate","WASHINGTON","IN",3
+"786","Normal","WASHINGTON","IN",12
+"787","Very severe","WAYNE","IN",1
+"788","Severe","WAYNE","IN",3
+"789","Moderate","WAYNE","IN",3
+"790","Normal","WAYNE","IN",10
+"791","Severe","WELLS","IN",2
+"792","Moderate","WELLS","IN",4
+"793","Normal","WELLS","IN",9
+"794","Severe","WHITE","IN",2
+"795","Moderate","WHITE","IN",2
+"796","Normal","WHITE","IN",13
+"797","Severe","WHITLEY","IN",2
+"798","Moderate","WHITLEY","IN",6
+"799","Normal","WHITLEY","IN",9
+"800","Very severe","ALLEN","KS",1
+"801","Severe","ALLEN","KS",3
+"802","Moderate","ALLEN","KS",3
+"803","Normal","ALLEN","KS",8
+"804","Very severe","ATCHISON","KS",1
+"805","Severe","ATCHISON","KS",2
+"806","Moderate","ATCHISON","KS",7
+"807","Normal","ATCHISON","KS",7
+"808","Very severe","BOURBON","KS",1
+"809","Severe","BOURBON","KS",3
+"810","Moderate","BOURBON","KS",4
+"811","Normal","BOURBON","KS",7
+"812","Severe","CHEROKEE","KS",3
+"813","Moderate","CHEROKEE","KS",8
+"814","Normal","CHEROKEE","KS",6
+"815","Very severe","COFFEY","KS",1
+"816","Severe","COFFEY","KS",3
+"817","Moderate","COFFEY","KS",3
+"818","Normal","COFFEY","KS",9
+"819","Very severe","DONIPHAN","KS",1
+"820","Severe","DONIPHAN","KS",3
+"821","Moderate","DONIPHAN","KS",3
+"822","Normal","DONIPHAN","KS",8
+"823","Severe","LYON","KS",3
+"824","Moderate","LYON","KS",4
+"825","Normal","LYON","KS",9
+"826","Very severe","MARSHALL","KS",1
+"827","Severe","MARSHALL","KS",3
+"828","Moderate","MARSHALL","KS",4
+"829","Normal","MARSHALL","KS",9
+"830","Very severe","MIAMI","KS",1
+"831","Severe","MIAMI","KS",2
+"832","Moderate","MIAMI","KS",5
+"833","Normal","MIAMI","KS",9
+"834","Very severe","NEMAHA","KS",1
+"835","Severe","NEMAHA","KS",1
+"836","Moderate","NEMAHA","KS",5
+"837","Normal","NEMAHA","KS",10
+"838","Severe","NEOSHO","KS",3
+"839","Moderate","NEOSHO","KS",4
+"840","Normal","NEOSHO","KS",9
+"841","Very severe","OSAGE","KS",1
+"842","Severe","OSAGE","KS",2
+"843","Moderate","OSAGE","KS",5
+"844","Normal","OSAGE","KS",9
+"845","Very severe","ADAIR","KY",1
+"846","Severe","ADAIR","KY",4
+"847","Moderate","ADAIR","KY",4
+"848","Normal","ADAIR","KY",7
+"849","Very severe","BALLARD","KY",1
+"850","Severe","BALLARD","KY",2
+"851","Moderate","BALLARD","KY",1
+"852","Normal","BALLARD","KY",12
+"853","Very severe","BARREN","KY",1
+"854","Severe","BARREN","KY",1
+"855","Moderate","BARREN","KY",6
+"856","Normal","BARREN","KY",9
+"857","Severe","BATH","KY",4
+"858","Moderate","BATH","KY",4
+"859","Normal","BATH","KY",9
+"860","Very severe","BOONE","KY",2
+"861","Severe","BOONE","KY",1
+"862","Moderate","BOONE","KY",3
+"863","Normal","BOONE","KY",10
+"864","Severe","BOURBON","KY",4
+"865","Moderate","BOURBON","KY",3
+"866","Normal","BOURBON","KY",10
+"867","Severe","BRECKINRIDGE","KY",3
+"868","Moderate","BRECKINRIDGE","KY",3
+"869","Normal","BRECKINRIDGE","KY",11
+"870","Severe","BULLITT","KY",1
+"871","Moderate","BULLITT","KY",7
+"872","Normal","BULLITT","KY",9
+"873","Severe","BUTLER","KY",1
+"874","Moderate","BUTLER","KY",6
+"875","Normal","BUTLER","KY",10
+"876","Very severe","CALLOWAY","KY",1
+"877","Severe","CALLOWAY","KY",1
+"878","Moderate","CALLOWAY","KY",6
+"879","Normal","CALLOWAY","KY",7
+"880","Very severe","CARLISLE","KY",1
+"881","Severe","CARLISLE","KY",2
+"882","Moderate","CARLISLE","KY",3
+"883","Normal","CARLISLE","KY",11
+"884","Very severe","CASEY","KY",1
+"885","Severe","CASEY","KY",3
+"886","Moderate","CASEY","KY",6
+"887","Normal","CASEY","KY",6
+"888","Very severe","CHRISTIAN","KY",1
+"889","Severe","CHRISTIAN","KY",1
+"890","Moderate","CHRISTIAN","KY",5
+"891","Normal","CHRISTIAN","KY",10
+"892","Severe","CLARK","KY",3
+"893","Moderate","CLARK","KY",6
+"894","Normal","CLARK","KY",8
+"895","Very severe","CLINTON","KY",1
+"896","Severe","CLINTON","KY",4
+"897","Moderate","CLINTON","KY",3
+"898","Normal","CLINTON","KY",8
+"899","Very severe","EDMONSON","KY",1
+"900","Moderate","EDMONSON","KY",7
+"901","Normal","EDMONSON","KY",7
+"902","Severe","ESTILL","KY",2
+"903","Moderate","ESTILL","KY",5
+"904","Normal","ESTILL","KY",9
+"905","Severe","FAYETTE","KY",4
+"906","Moderate","FAYETTE","KY",3
+"907","Normal","FAYETTE","KY",10
+"908","Very severe","FLEMING","KY",1
+"909","Severe","FLEMING","KY",2
+"910","Moderate","FLEMING","KY",3
+"911","Normal","FLEMING","KY",10
+"912","Very severe","GRAVES","KY",2
+"913","Severe","GRAVES","KY",1
+"914","Moderate","GRAVES","KY",4
+"915","Normal","GRAVES","KY",9
+"916","Severe","GRAYSON","KY",2
+"917","Moderate","GRAYSON","KY",5
+"918","Normal","GRAYSON","KY",9
+"919","Very severe","GREEN","KY",1
+"920","Severe","GREEN","KY",2
+"921","Moderate","GREEN","KY",5
+"922","Normal","GREEN","KY",9
+"923","Severe","HANCOCK","KY",3
+"924","Moderate","HANCOCK","KY",4
+"925","Normal","HANCOCK","KY",9
+"926","Severe","HARDIN","KY",1
+"927","Moderate","HARDIN","KY",6
+"928","Normal","HARDIN","KY",10
+"929","Very severe","HARRISON","KY",1
+"930","Severe","HARRISON","KY",3
+"931","Moderate","HARRISON","KY",2
+"932","Normal","HARRISON","KY",10
+"933","Severe","HART","KY",2
+"934","Moderate","HART","KY",5
+"935","Normal","HART","KY",10
+"936","Severe","HENRY","KY",3
+"937","Moderate","HENRY","KY",2
+"938","Normal","HENRY","KY",12
+"939","Very severe","KNOX","KY",1
+"940","Severe","KNOX","KY",2
+"941","Moderate","KNOX","KY",7
+"942","Normal","KNOX","KY",7
+"943","Very severe","LEWIS","KY",1
+"944","Severe","LEWIS","KY",2
+"945","Moderate","LEWIS","KY",4
+"946","Normal","LEWIS","KY",10
+"947","Very severe","LINCOLN","KY",1
+"948","Severe","LINCOLN","KY",4
+"949","Moderate","LINCOLN","KY",3
+"950","Normal","LINCOLN","KY",8
+"951","Severe","LIVINGSTON","KY",4
+"952","Moderate","LIVINGSTON","KY",2
+"953","Normal","LIVINGSTON","KY",9
+"954","Very severe","LOGAN","KY",1
+"955","Severe","LOGAN","KY",1
+"956","Moderate","LOGAN","KY",7
+"957","Normal","LOGAN","KY",8
+"958","Severe","MADISON","KY",4
+"959","Moderate","MADISON","KY",5
+"960","Normal","MADISON","KY",7
+"961","Severe","MARION","KY",2
+"962","Moderate","MARION","KY",6
+"963","Normal","MARION","KY",9
+"964","Very severe","MARSHALL","KY",2
+"965","Severe","MARSHALL","KY",1
+"966","Moderate","MARSHALL","KY",3
+"967","Normal","MARSHALL","KY",9
+"968","Very severe","MASON","KY",1
+"969","Severe","MASON","KY",2
+"970","Moderate","MASON","KY",4
+"971","Normal","MASON","KY",10
+"972","Very severe","MCCRACKEN","KY",1
+"973","Severe","MCCRACKEN","KY",2
+"974","Moderate","MCCRACKEN","KY",2
+"975","Normal","MCCRACKEN","KY",11
+"976","Severe","MEADE","KY",1
+"977","Moderate","MEADE","KY",8
+"978","Normal","MEADE","KY",8
+"979","Very severe","MERCER","KY",1
+"980","Severe","MERCER","KY",5
+"981","Moderate","MERCER","KY",2
+"982","Normal","MERCER","KY",8
+"983","Severe","MONROE","KY",4
+"984","Moderate","MONROE","KY",7
+"985","Normal","MONROE","KY",5
+"986","Severe","MONTGOMERY","KY",3
+"987","Moderate","MONTGOMERY","KY",6
+"988","Normal","MONTGOMERY","KY",6
+"989","Severe","OHIO","KY",2
+"990","Moderate","OHIO","KY",5
+"991","Normal","OHIO","KY",10
+"992","Severe","OLDHAM","KY",2
+"993","Moderate","OLDHAM","KY",4
+"994","Normal","OLDHAM","KY",11
+"995","Very severe","PULASKI","KY",1
+"996","Severe","PULASKI","KY",3
+"997","Moderate","PULASKI","KY",3
+"998","Normal","PULASKI","KY",10
+"999","Severe","ROWAN","KY",2
+"1000","Moderate","ROWAN","KY",5
+"1001","Normal","ROWAN","KY",9
+"1002","Very severe","RUSSELL","KY",1
+"1003","Severe","RUSSELL","KY",3
+"1004","Moderate","RUSSELL","KY",4
+"1005","Normal","RUSSELL","KY",9
+"1006","Severe","SHELBY","KY",3
+"1007","Moderate","SHELBY","KY",3
+"1008","Normal","SHELBY","KY",11
+"1009","Very severe","SIMPSON","KY",1
+"1010","Moderate","SIMPSON","KY",7
+"1011","Normal","SIMPSON","KY",9
+"1012","Severe","SPENCER","KY",4
+"1013","Moderate","SPENCER","KY",3
+"1014","Normal","SPENCER","KY",8
+"1015","Very severe","TAYLOR","KY",1
+"1016","Severe","TAYLOR","KY",1
+"1017","Moderate","TAYLOR","KY",7
+"1018","Normal","TAYLOR","KY",7
+"1019","Very severe","TODD","KY",1
+"1020","Moderate","TODD","KY",8
+"1021","Normal","TODD","KY",8
+"1022","Very severe","TRIGG","KY",1
+"1023","Severe","TRIGG","KY",1
+"1024","Moderate","TRIGG","KY",6
+"1025","Normal","TRIGG","KY",9
+"1026","Very severe","UNION","KY",1
+"1027","Severe","UNION","KY",3
+"1028","Moderate","UNION","KY",2
+"1029","Normal","UNION","KY",11
+"1030","Very severe","WARREN","KY",1
+"1031","Severe","WARREN","KY",1
+"1032","Moderate","WARREN","KY",7
+"1033","Normal","WARREN","KY",8
+"1034","Severe","WASHINGTON","KY",3
+"1035","Moderate","WASHINGTON","KY",5
+"1036","Normal","WASHINGTON","KY",7
+"1037","Very severe","WAYNE","KY",1
+"1038","Severe","WAYNE","KY",2
+"1039","Moderate","WAYNE","KY",4
+"1040","Normal","WAYNE","KY",10
+"1041","Severe","WEBSTER","KY",4
+"1042","Moderate","WEBSTER","KY",3
+"1043","Normal","WEBSTER","KY",10
+"1044","Very severe","POINTE COUPEE","LA",1
+"1045","Severe","POINTE COUPEE","LA",4
+"1046","Moderate","POINTE COUPEE","LA",7
+"1047","Normal","POINTE COUPEE","LA",5
+"1048","Severe","SAINT LANDRY","LA",5
+"1049","Moderate","SAINT LANDRY","LA",6
+"1050","Normal","SAINT LANDRY","LA",5
+"1051","Severe","ANNE ARUNDEL","MD",4
+"1052","Moderate","ANNE ARUNDEL","MD",4
+"1053","Normal","ANNE ARUNDEL","MD",9
+"1054","Severe","BALTIMORE","MD",4
+"1055","Moderate","BALTIMORE","MD",4
+"1056","Normal","BALTIMORE","MD",7
+"1057","Very severe","CALVERT","MD",1
+"1058","Severe","CALVERT","MD",3
+"1059","Moderate","CALVERT","MD",5
+"1060","Normal","CALVERT","MD",6
+"1061","Severe","CARROLL","MD",4
+"1062","Moderate","CARROLL","MD",7
+"1063","Normal","CARROLL","MD",6
+"1064","Severe","CECIL","MD",4
+"1065","Moderate","CECIL","MD",5
+"1066","Normal","CECIL","MD",6
+"1067","Severe","FREDERICK","MD",3
+"1068","Moderate","FREDERICK","MD",6
+"1069","Normal","FREDERICK","MD",8
+"1070","Severe","HARFORD","MD",2
+"1071","Moderate","HARFORD","MD",8
+"1072","Normal","HARFORD","MD",7
+"1073","Very severe","HOWARD","MD",1
+"1074","Severe","HOWARD","MD",3
+"1075","Moderate","HOWARD","MD",3
+"1076","Normal","HOWARD","MD",8
+"1077","Very severe","MONTGOMERY","MD",1
+"1078","Severe","MONTGOMERY","MD",3
+"1079","Moderate","MONTGOMERY","MD",4
+"1080","Normal","MONTGOMERY","MD",8
+"1081","Very severe","ST MARYS","MD",3
+"1082","Severe","ST MARYS","MD",2
+"1083","Moderate","ST MARYS","MD",2
+"1084","Normal","ST MARYS","MD",8
+"1085","Very severe","WASHINGTON","MD",1
+"1086","Severe","WASHINGTON","MD",3
+"1087","Moderate","WASHINGTON","MD",7
+"1088","Normal","WASHINGTON","MD",6
+"1089","Severe","ALPENA","MI",2
+"1090","Moderate","ALPENA","MI",7
+"1091","Normal","ALPENA","MI",7
+"1092","Severe","ARENAC","MI",1
+"1093","Moderate","ARENAC","MI",8
+"1094","Normal","ARENAC","MI",7
+"1095","Moderate","BAY","MI",5
+"1096","Normal","BAY","MI",11
+"1097","Severe","CHARLEVOIX","MI",1
+"1098","Moderate","CHARLEVOIX","MI",9
+"1099","Normal","CHARLEVOIX","MI",5
+"1100","Severe","CLINTON","MI",2
+"1101","Moderate","CLINTON","MI",6
+"1102","Normal","CLINTON","MI",9
+"1103","Severe","EATON","MI",2
+"1104","Moderate","EATON","MI",6
+"1105","Normal","EATON","MI",8
+"1106","Severe","GENESEE","MI",3
+"1107","Moderate","GENESEE","MI",3
+"1108","Normal","GENESEE","MI",10
+"1109","Moderate","GLADWIN","MI",5
+"1110","Normal","GLADWIN","MI",10
+"1111","Severe","HURON","MI",2
+"1112","Moderate","HURON","MI",7
+"1113","Normal","HURON","MI",8
+"1114","Severe","INGHAM","MI",2
+"1115","Moderate","INGHAM","MI",5
+"1116","Normal","INGHAM","MI",10
+"1117","Very severe","JACKSON","MI",1
+"1118","Severe","JACKSON","MI",1
+"1119","Moderate","JACKSON","MI",3
+"1120","Normal","JACKSON","MI",12
+"1121","Severe","LAPEER","MI",1
+"1122","Moderate","LAPEER","MI",7
+"1123","Normal","LAPEER","MI",9
+"1124","Very severe","LENAWEE","MI",1
+"1125","Severe","LENAWEE","MI",1
+"1126","Moderate","LENAWEE","MI",6
+"1127","Normal","LENAWEE","MI",9
+"1128","Severe","LIVINGSTON","MI",2
+"1129","Moderate","LIVINGSTON","MI",4
+"1130","Normal","LIVINGSTON","MI",11
+"1131","Severe","MACOMB","MI",3
+"1132","Moderate","MACOMB","MI",6
+"1133","Normal","MACOMB","MI",8
+"1134","Moderate","MIDLAND","MI",5
+"1135","Normal","MIDLAND","MI",12
+"1136","Severe","MONROE","MI",2
+"1137","Moderate","MONROE","MI",5
+"1138","Normal","MONROE","MI",10
+"1139","Severe","MONTMORENCY","MI",1
+"1140","Moderate","MONTMORENCY","MI",10
+"1141","Normal","MONTMORENCY","MI",4
+"1142","Moderate","OGEMAW","MI",7
+"1143","Normal","OGEMAW","MI",9
+"1144","Moderate","SAGINAW","MI",5
+"1145","Normal","SAGINAW","MI",12
+"1146","Severe","SANILAC","MI",2
+"1147","Moderate","SANILAC","MI",5
+"1148","Normal","SANILAC","MI",10
+"1149","Severe","SHIAWASSEE","MI",2
+"1150","Moderate","SHIAWASSEE","MI",6
+"1151","Normal","SHIAWASSEE","MI",9
+"1152","Severe","ST CLAIR","MI",2
+"1153","Moderate","ST CLAIR","MI",8
+"1154","Normal","ST CLAIR","MI",7
+"1155","Severe","TUSCOLA","MI",1
+"1156","Moderate","TUSCOLA","MI",6
+"1157","Normal","TUSCOLA","MI",10
+"1158","Very severe","WASHTENAW","MI",1
+"1159","Moderate","WASHTENAW","MI",6
+"1160","Normal","WASHTENAW","MI",10
+"1161","Moderate","WEXFORD","MI",7
+"1162","Normal","WEXFORD","MI",8
+"1163","Severe","ANOKA","MN",2
+"1164","Moderate","ANOKA","MN",7
+"1165","Normal","ANOKA","MN",8
+"1166","Severe","BIG STONE","MN",3
+"1167","Moderate","BIG STONE","MN",7
+"1168","Normal","BIG STONE","MN",7
+"1169","Severe","BLUE EARTH","MN",3
+"1170","Moderate","BLUE EARTH","MN",5
+"1171","Normal","BLUE EARTH","MN",9
+"1172","Moderate","BROWN","MN",9
+"1173","Normal","BROWN","MN",8
+"1174","Severe","CARVER","MN",3
+"1175","Moderate","CARVER","MN",4
+"1176","Normal","CARVER","MN",10
+"1177","Severe","CHIPPEWA","MN",4
+"1178","Moderate","CHIPPEWA","MN",4
+"1179","Normal","CHIPPEWA","MN",9
+"1180","Severe","CHISAGO","MN",3
+"1181","Moderate","CHISAGO","MN",6
+"1182","Normal","CHISAGO","MN",8
+"1183","Severe","COTTONWOOD","MN",2
+"1184","Moderate","COTTONWOOD","MN",7
+"1185","Normal","COTTONWOOD","MN",8
+"1186","Moderate","DODGE","MN",8
+"1187","Normal","DODGE","MN",9
+"1188","Severe","FARIBAULT","MN",2
+"1189","Moderate","FARIBAULT","MN",6
+"1190","Normal","FARIBAULT","MN",9
+"1191","Severe","FILLMORE","MN",2
+"1192","Moderate","FILLMORE","MN",3
+"1193","Normal","FILLMORE","MN",12
+"1194","Severe","FREEBORN","MN",1
+"1195","Moderate","FREEBORN","MN",6
+"1196","Normal","FREEBORN","MN",10
+"1197","Moderate","GOODHUE","MN",6
+"1198","Normal","GOODHUE","MN",11
+"1199","Severe","GRANT","MN",1
+"1200","Moderate","GRANT","MN",9
+"1201","Normal","GRANT","MN",7
+"1202","Severe","HOUSTON","MN",1
+"1203","Moderate","HOUSTON","MN",6
+"1204","Normal","HOUSTON","MN",10
+"1205","Severe","JACKSON","MN",2
+"1206","Moderate","JACKSON","MN",8
+"1207","Normal","JACKSON","MN",7
+"1208","Severe","LAC QUI PARLE","MN",3
+"1209","Moderate","LAC QUI PARLE","MN",7
+"1210","Normal","LAC QUI PARLE","MN",7
+"1211","Severe","LE SUEUR","MN",2
+"1212","Moderate","LE SUEUR","MN",8
+"1213","Normal","LE SUEUR","MN",7
+"1214","Severe","LINCOLN","MN",1
+"1215","Moderate","LINCOLN","MN",6
+"1216","Normal","LINCOLN","MN",10
+"1217","Severe","LYON","MN",2
+"1218","Moderate","LYON","MN",7
+"1219","Normal","LYON","MN",8
+"1220","Severe","MARSHALL","MN",3
+"1221","Moderate","MARSHALL","MN",5
+"1222","Normal","MARSHALL","MN",8
+"1223","Severe","MARTIN","MN",2
+"1224","Moderate","MARTIN","MN",8
+"1225","Normal","MARTIN","MN",7
+"1226","Severe","MCLEOD","MN",3
+"1227","Moderate","MCLEOD","MN",6
+"1228","Normal","MCLEOD","MN",8
+"1229","Severe","MILLE LACS","MN",2
+"1230","Moderate","MILLE LACS","MN",6
+"1231","Normal","MILLE LACS","MN",9
+"1232","Severe","MOWER","MN",1
+"1233","Moderate","MOWER","MN",6
+"1234","Normal","MOWER","MN",10
+"1235","Severe","MURRAY","MN",3
+"1236","Moderate","MURRAY","MN",7
+"1237","Normal","MURRAY","MN",7
+"1238","Severe","NICOLLET","MN",3
+"1239","Moderate","NICOLLET","MN",7
+"1240","Normal","NICOLLET","MN",7
+"1241","Severe","NOBLES","MN",2
+"1242","Moderate","NOBLES","MN",8
+"1243","Normal","NOBLES","MN",7
+"1244","Severe","NORMAN","MN",2
+"1245","Moderate","NORMAN","MN",5
+"1246","Normal","NORMAN","MN",10
+"1247","Severe","OLMSTED","MN",1
+"1248","Moderate","OLMSTED","MN",6
+"1249","Normal","OLMSTED","MN",10
+"1250","Severe","PIPESTONE","MN",5
+"1251","Moderate","PIPESTONE","MN",4
+"1252","Normal","PIPESTONE","MN",8
+"1253","Severe","POLK","MN",2
+"1254","Moderate","POLK","MN",6
+"1255","Normal","POLK","MN",8
+"1256","Severe","RED LAKE","MN",2
+"1257","Moderate","RED LAKE","MN",7
+"1258","Normal","RED LAKE","MN",6
+"1259","Severe","REDWOOD","MN",1
+"1260","Moderate","REDWOOD","MN",8
+"1261","Normal","REDWOOD","MN",8
+"1262","Severe","RENVILLE","MN",3
+"1263","Moderate","RENVILLE","MN",7
+"1264","Normal","RENVILLE","MN",7
+"1265","Moderate","RICE","MN",7
+"1266","Normal","RICE","MN",10
+"1267","Severe","ROCK","MN",4
+"1268","Moderate","ROCK","MN",6
+"1269","Normal","ROCK","MN",7
+"1270","Severe","SCOTT","MN",3
+"1271","Moderate","SCOTT","MN",5
+"1272","Normal","SCOTT","MN",9
+"1273","Severe","SIBLEY","MN",5
+"1274","Moderate","SIBLEY","MN",5
+"1275","Normal","SIBLEY","MN",7
+"1276","Moderate","STEELE","MN",6
+"1277","Normal","STEELE","MN",11
+"1278","Severe","TRAVERSE","MN",1
+"1279","Moderate","TRAVERSE","MN",9
+"1280","Normal","TRAVERSE","MN",7
+"1281","Severe","WABASHA","MN",1
+"1282","Moderate","WABASHA","MN",6
+"1283","Normal","WABASHA","MN",10
+"1284","Moderate","WASECA","MN",6
+"1285","Normal","WASECA","MN",11
+"1286","Severe","WATONWAN","MN",2
+"1287","Moderate","WATONWAN","MN",6
+"1288","Normal","WATONWAN","MN",9
+"1289","Severe","WILKIN","MN",2
+"1290","Moderate","WILKIN","MN",8
+"1291","Normal","WILKIN","MN",7
+"1292","Severe","WINONA","MN",2
+"1293","Moderate","WINONA","MN",5
+"1294","Normal","WINONA","MN",10
+"1295","Very severe","WRIGHT","MN",1
+"1296","Severe","WRIGHT","MN",2
+"1297","Moderate","WRIGHT","MN",5
+"1298","Normal","WRIGHT","MN",9
+"1299","Severe","YELLOW MEDICINE","MN",2
+"1300","Moderate","YELLOW MEDICINE","MN",7
+"1301","Normal","YELLOW MEDICINE","MN",8
+"1302","Very severe","ADAIR","MO",1
+"1303","Moderate","ADAIR","MO",7
+"1304","Normal","ADAIR","MO",9
+"1305","Very severe","ANDREW","MO",1
+"1306","Severe","ANDREW","MO",1
+"1307","Moderate","ANDREW","MO",5
+"1308","Normal","ANDREW","MO",8
+"1309","Very severe","BARRY","MO",1
+"1310","Severe","BARRY","MO",3
+"1311","Moderate","BARRY","MO",5
+"1312","Normal","BARRY","MO",6
+"1313","Very severe","BENTON","MO",1
+"1314","Severe","BENTON","MO",1
+"1315","Moderate","BENTON","MO",6
+"1316","Normal","BENTON","MO",7
+"1317","Very severe","BUCHANAN","MO",1
+"1318","Severe","BUCHANAN","MO",2
+"1319","Moderate","BUCHANAN","MO",5
+"1320","Normal","BUCHANAN","MO",8
+"1321","Very severe","CALDWELL","MO",1
+"1322","Moderate","CALDWELL","MO",7
+"1323","Normal","CALDWELL","MO",9
+"1324","Very severe","CARROLL","MO",1
+"1325","Moderate","CARROLL","MO",6
+"1326","Normal","CARROLL","MO",9
+"1327","Very severe","CHARITON","MO",1
+"1328","Moderate","CHARITON","MO",6
+"1329","Normal","CHARITON","MO",9
+"1330","Very severe","CLAY","MO",1
+"1331","Severe","CLAY","MO",2
+"1332","Moderate","CLAY","MO",7
+"1333","Normal","CLAY","MO",7
+"1334","Very severe","CLINTON","MO",1
+"1335","Severe","CLINTON","MO",1
+"1336","Moderate","CLINTON","MO",7
+"1337","Normal","CLINTON","MO",8
+"1338","Very severe","GASCONADE","MO",1
+"1339","Severe","GASCONADE","MO",1
+"1340","Moderate","GASCONADE","MO",4
+"1341","Normal","GASCONADE","MO",11
+"1342","Very severe","HENRY","MO",1
+"1343","Severe","HENRY","MO",2
+"1344","Moderate","HENRY","MO",6
+"1345","Normal","HENRY","MO",7
+"1346","Very severe","JACKSON","MO",1
+"1347","Severe","JACKSON","MO",1
+"1348","Moderate","JACKSON","MO",6
+"1349","Normal","JACKSON","MO",7
+"1350","Very severe","JEFFERSON","MO",1
+"1351","Severe","JEFFERSON","MO",2
+"1352","Moderate","JEFFERSON","MO",6
+"1353","Normal","JEFFERSON","MO",8
+"1354","Very severe","LACLEDE","MO",1
+"1355","Severe","LACLEDE","MO",2
+"1356","Moderate","LACLEDE","MO",4
+"1357","Normal","LACLEDE","MO",8
+"1358","Very severe","LAFAYETTE","MO",1
+"1359","Severe","LAFAYETTE","MO",1
+"1360","Moderate","LAFAYETTE","MO",7
+"1361","Normal","LAFAYETTE","MO",8
+"1362","Very severe","LIVINGSTON","MO",1
+"1363","Moderate","LIVINGSTON","MO",7
+"1364","Normal","LIVINGSTON","MO",8
+"1365","Very severe","MARIES","MO",1
+"1366","Moderate","MARIES","MO",6
+"1367","Normal","MARIES","MO",8
+"1368","Very severe","MILLER","MO",1
+"1369","Severe","MILLER","MO",1
+"1370","Moderate","MILLER","MO",7
+"1371","Normal","MILLER","MO",8
+"1372","Very severe","MORGAN","MO",1
+"1373","Severe","MORGAN","MO",1
+"1374","Moderate","MORGAN","MO",6
+"1375","Normal","MORGAN","MO",9
+"1376","Severe","NODAWAY","MO",3
+"1377","Moderate","NODAWAY","MO",7
+"1378","Normal","NODAWAY","MO",7
+"1379","Very severe","PERRY","MO",1
+"1380","Severe","PERRY","MO",2
+"1381","Moderate","PERRY","MO",3
+"1382","Normal","PERRY","MO",10
+"1383","Very severe","PETTIS","MO",1
+"1384","Severe","PETTIS","MO",1
+"1385","Moderate","PETTIS","MO",6
+"1386","Normal","PETTIS","MO",9
+"1387","Very severe","PIKE","MO",1
+"1388","Severe","PIKE","MO",2
+"1389","Moderate","PIKE","MO",3
+"1390","Normal","PIKE","MO",11
+"1391","Very severe","RALLS","MO",1
+"1392","Severe","RALLS","MO",3
+"1393","Moderate","RALLS","MO",3
+"1394","Normal","RALLS","MO",9
+"1395","Very severe","RANDOLPH","MO",1
+"1396","Moderate","RANDOLPH","MO",5
+"1397","Normal","RANDOLPH","MO",10
+"1398","Very severe","SALINE","MO",1
+"1399","Moderate","SALINE","MO",7
+"1400","Normal","SALINE","MO",9
+"1401","Very severe","SHELBY","MO",1
+"1402","Severe","SHELBY","MO",1
+"1403","Moderate","SHELBY","MO",5
+"1404","Normal","SHELBY","MO",9
+"1405","Very severe","ST CHARLES","MO",1
+"1406","Severe","ST CHARLES","MO",2
+"1407","Moderate","ST CHARLES","MO",3
+"1408","Normal","ST CHARLES","MO",11
+"1409","Very severe","STE GENEVIEVE","MO",1
+"1410","Severe","STE GENEVIEVE","MO",1
+"1411","Moderate","STE GENEVIEVE","MO",6
+"1412","Normal","STE GENEVIEVE","MO",9
+"1413","Very severe","SULLIVAN","MO",1
+"1414","Severe","SULLIVAN","MO",1
+"1415","Moderate","SULLIVAN","MO",6
+"1416","Normal","SULLIVAN","MO",8
+"1417","Severe","WORTH","MO",3
+"1418","Moderate","WORTH","MO",5
+"1419","Normal","WORTH","MO",9
+"1420","Very severe","ALCORN","MS",1
+"1421","Severe","ALCORN","MS",2
+"1422","Moderate","ALCORN","MS",4
+"1423","Normal","ALCORN","MS",8
+"1424","Very severe","BENTON","MS",1
+"1425","Severe","BENTON","MS",3
+"1426","Moderate","BENTON","MS",4
+"1427","Normal","BENTON","MS",8
+"1428","Very severe","HINDS","MS",2
+"1429","Severe","HINDS","MS",1
+"1430","Moderate","HINDS","MS",6
+"1431","Normal","HINDS","MS",7
+"1432","Very severe","LEE","MS",1
+"1433","Severe","LEE","MS",3
+"1434","Moderate","LEE","MS",4
+"1435","Normal","LEE","MS",8
+"1436","Very severe","MADISON","MS",1
+"1437","Severe","MADISON","MS",3
+"1438","Moderate","MADISON","MS",2
+"1439","Normal","MADISON","MS",10
+"1440","Very severe","MONROE","MS",1
+"1441","Severe","MONROE","MS",4
+"1442","Moderate","MONROE","MS",3
+"1443","Normal","MONROE","MS",9
+"1444","Very severe","MONTGOMERY","MS",1
+"1445","Severe","MONTGOMERY","MS",3
+"1446","Moderate","MONTGOMERY","MS",3
+"1447","Normal","MONTGOMERY","MS",9
+"1448","Very severe","WEBSTER","MS",1
+"1449","Severe","WEBSTER","MS",1
+"1450","Moderate","WEBSTER","MS",4
+"1451","Normal","WEBSTER","MS",9
+"1452","Very severe","ANSON","NC",1
+"1453","Severe","ANSON","NC",4
+"1454","Moderate","ANSON","NC",7
+"1455","Normal","ANSON","NC",4
+"1456","Very severe","BRUNSWICK","NC",1
+"1457","Severe","BRUNSWICK","NC",1
+"1458","Moderate","BRUNSWICK","NC",12
+"1459","Normal","BRUNSWICK","NC",3
+"1460","Very severe","BURKE","NC",1
+"1461","Severe","BURKE","NC",5
+"1462","Moderate","BURKE","NC",7
+"1463","Normal","BURKE","NC",4
+"1464","Very severe","CABARRUS","NC",1
+"1465","Severe","CABARRUS","NC",4
+"1466","Moderate","CABARRUS","NC",7
+"1467","Normal","CABARRUS","NC",5
+"1468","Very severe","CAMDEN","NC",1
+"1469","Severe","CAMDEN","NC",3
+"1470","Moderate","CAMDEN","NC",7
+"1471","Normal","CAMDEN","NC",6
+"1472","Very severe","CATAWBA","NC",1
+"1473","Severe","CATAWBA","NC",3
+"1474","Moderate","CATAWBA","NC",8
+"1475","Normal","CATAWBA","NC",5
+"1476","Very severe","CHATHAM","NC",1
+"1477","Severe","CHATHAM","NC",3
+"1478","Moderate","CHATHAM","NC",6
+"1479","Normal","CHATHAM","NC",5
+"1480","Very severe","CHEROKEE","NC",1
+"1481","Severe","CHEROKEE","NC",3
+"1482","Moderate","CHEROKEE","NC",6
+"1483","Normal","CHEROKEE","NC",6
+"1484","Very severe","CLEVELAND","NC",2
+"1485","Severe","CLEVELAND","NC",4
+"1486","Moderate","CLEVELAND","NC",6
+"1487","Normal","CLEVELAND","NC",3
+"1488","Very severe","COLUMBUS","NC",1
+"1489","Severe","COLUMBUS","NC",3
+"1490","Moderate","COLUMBUS","NC",6
+"1491","Normal","COLUMBUS","NC",6
+"1492","Very severe","CRAVEN","NC",1
+"1493","Severe","CRAVEN","NC",3
+"1494","Moderate","CRAVEN","NC",7
+"1495","Normal","CRAVEN","NC",6
+"1496","Very severe","CURRITUCK","NC",1
+"1497","Severe","CURRITUCK","NC",3
+"1498","Moderate","CURRITUCK","NC",7
+"1499","Normal","CURRITUCK","NC",6
+"1500","Very severe","DAVIDSON","NC",1
+"1501","Severe","DAVIDSON","NC",4
+"1502","Moderate","DAVIDSON","NC",8
+"1503","Normal","DAVIDSON","NC",4
+"1504","Very severe","DAVIE","NC",1
+"1505","Severe","DAVIE","NC",3
+"1506","Moderate","DAVIE","NC",9
+"1507","Normal","DAVIE","NC",4
+"1508","Very severe","HOKE","NC",1
+"1509","Severe","HOKE","NC",4
+"1510","Moderate","HOKE","NC",5
+"1511","Normal","HOKE","NC",5
+"1512","Very severe","IREDELL","NC",1
+"1513","Severe","IREDELL","NC",3
+"1514","Moderate","IREDELL","NC",7
+"1515","Normal","IREDELL","NC",6
+"1516","Very severe","LINCOLN","NC",2
+"1517","Severe","LINCOLN","NC",3
+"1518","Moderate","LINCOLN","NC",6
+"1519","Normal","LINCOLN","NC",4
+"1520","Very severe","ONSLOW","NC",1
+"1521","Severe","ONSLOW","NC",2
+"1522","Moderate","ONSLOW","NC",10
+"1523","Normal","ONSLOW","NC",4
+"1524","Very severe","ORANGE","NC",1
+"1525","Severe","ORANGE","NC",3
+"1526","Moderate","ORANGE","NC",6
+"1527","Normal","ORANGE","NC",7
+"1528","Very severe","PERSON","NC",1
+"1529","Severe","PERSON","NC",4
+"1530","Moderate","PERSON","NC",4
+"1531","Normal","PERSON","NC",7
+"1532","Severe","PITT","NC",4
+"1533","Moderate","PITT","NC",5
+"1534","Normal","PITT","NC",8
+"1535","Very severe","RANDOLPH","NC",1
+"1536","Severe","RANDOLPH","NC",4
+"1537","Moderate","RANDOLPH","NC",10
+"1538","Normal","RANDOLPH","NC",2
+"1539","Very severe","ROWAN","NC",2
+"1540","Severe","ROWAN","NC",3
+"1541","Moderate","ROWAN","NC",8
+"1542","Normal","ROWAN","NC",4
+"1543","Very severe","UNION","NC",1
+"1544","Severe","UNION","NC",5
+"1545","Moderate","UNION","NC",7
+"1546","Normal","UNION","NC",4
+"1547","Very severe","WAYNE","NC",1
+"1548","Severe","WAYNE","NC",3
+"1549","Moderate","WAYNE","NC",6
+"1550","Normal","WAYNE","NC",7
+"1551","Very severe","WILSON","NC",1
+"1552","Severe","WILSON","NC",4
+"1553","Moderate","WILSON","NC",5
+"1554","Normal","WILSON","NC",7
+"1555","Very severe","YADKIN","NC",1
+"1556","Severe","YADKIN","NC",2
+"1557","Moderate","YADKIN","NC",7
+"1558","Normal","YADKIN","NC",7
+"1559","Severe","DUNN","ND",3
+"1560","Moderate","DUNN","ND",5
+"1561","Normal","DUNN","ND",7
+"1562","Severe","MCINTOSH","ND",2
+"1563","Moderate","MCINTOSH","ND",5
+"1564","Normal","MCINTOSH","ND",8
+"1565","Severe","RAMSEY","ND",1
+"1566","Moderate","RAMSEY","ND",2
+"1567","Normal","RAMSEY","ND",14
+"1568","Severe","RICHLAND","ND",2
+"1569","Moderate","RICHLAND","ND",8
+"1570","Normal","RICHLAND","ND",7
+"1571","Severe","TRAILL","ND",2
+"1572","Moderate","TRAILL","ND",2
+"1573","Normal","TRAILL","ND",13
+"1574","Very severe","WELLS","ND",1
+"1575","Moderate","WELLS","ND",4
+"1576","Normal","WELLS","ND",10
+"1577","Very severe","CASS","NE",1
+"1578","Severe","CASS","NE",2
+"1579","Moderate","CASS","NE",5
+"1580","Normal","CASS","NE",9
+"1581","Very severe","OTOE","NE",1
+"1582","Severe","OTOE","NE",1
+"1583","Moderate","OTOE","NE",6
+"1584","Normal","OTOE","NE",9
+"1585","Severe","HUNTERDON","NJ",3
+"1586","Moderate","HUNTERDON","NJ",6
+"1587","Normal","HUNTERDON","NJ",8
+"1588","Very severe","MERCER","NJ",1
+"1589","Severe","MERCER","NJ",2
+"1590","Moderate","MERCER","NJ",8
+"1591","Normal","MERCER","NJ",6
+"1592","Very severe","MORRIS","NJ",1
+"1593","Severe","MORRIS","NJ",1
+"1594","Moderate","MORRIS","NJ",6
+"1595","Normal","MORRIS","NJ",7
+"1596","Very severe","SUSSEX","NJ",1
+"1597","Severe","SUSSEX","NJ",1
+"1598","Moderate","SUSSEX","NJ",6
+"1599","Normal","SUSSEX","NJ",7
+"1600","Severe","WARREN","NJ",3
+"1601","Moderate","WARREN","NJ",7
+"1602","Normal","WARREN","NJ",7
+"1603","Severe","CAYUGA","NY",3
+"1604","Moderate","CAYUGA","NY",4
+"1605","Normal","CAYUGA","NY",10
+"1606","Severe","CHAUTAUQUA","NY",3
+"1607","Moderate","CHAUTAUQUA","NY",4
+"1608","Normal","CHAUTAUQUA","NY",8
+"1609","Severe","COLUMBIA","NY",4
+"1610","Moderate","COLUMBIA","NY",3
+"1611","Normal","COLUMBIA","NY",8
+"1612","Severe","CORTLAND","NY",2
+"1613","Moderate","CORTLAND","NY",6
+"1614","Normal","CORTLAND","NY",7
+"1615","Very severe","ERIE","NY",1
+"1616","Severe","ERIE","NY",3
+"1617","Moderate","ERIE","NY",3
+"1618","Normal","ERIE","NY",8
+"1619","Severe","GENESEE","NY",5
+"1620","Moderate","GENESEE","NY",2
+"1621","Normal","GENESEE","NY",9
+"1622","Severe","JEFFERSON","NY",4
+"1623","Moderate","JEFFERSON","NY",3
+"1624","Normal","JEFFERSON","NY",10
+"1625","Severe","LIVINGSTON","NY",3
+"1626","Moderate","LIVINGSTON","NY",3
+"1627","Normal","LIVINGSTON","NY",9
+"1628","Severe","MADISON","NY",2
+"1629","Moderate","MADISON","NY",4
+"1630","Normal","MADISON","NY",10
+"1631","Severe","MONROE","NY",4
+"1632","Moderate","MONROE","NY",3
+"1633","Normal","MONROE","NY",8
+"1634","Severe","MONTGOMERY","NY",1
+"1635","Moderate","MONTGOMERY","NY",4
+"1636","Normal","MONTGOMERY","NY",11
+"1637","Severe","ONEIDA","NY",2
+"1638","Moderate","ONEIDA","NY",5
+"1639","Normal","ONEIDA","NY",10
+"1640","Severe","ONONDAGA","NY",3
+"1641","Moderate","ONONDAGA","NY",2
+"1642","Normal","ONONDAGA","NY",12
+"1643","Severe","ONTARIO","NY",4
+"1644","Moderate","ONTARIO","NY",3
+"1645","Normal","ONTARIO","NY",9
+"1646","Severe","RENSSELAER","NY",2
+"1647","Moderate","RENSSELAER","NY",6
+"1648","Normal","RENSSELAER","NY",8
+"1649","Moderate","SARATOGA","NY",8
+"1650","Normal","SARATOGA","NY",8
+"1651","Severe","SCHUYLER","NY",4
+"1652","Moderate","SCHUYLER","NY",3
+"1653","Normal","SCHUYLER","NY",8
+"1654","Severe","SENECA","NY",2
+"1655","Moderate","SENECA","NY",5
+"1656","Normal","SENECA","NY",8
+"1657","Severe","ST LAWRENCE","NY",4
+"1658","Moderate","ST LAWRENCE","NY",4
+"1659","Normal","ST LAWRENCE","NY",8
+"1660","Severe","STEUBEN","NY",3
+"1661","Moderate","STEUBEN","NY",5
+"1662","Normal","STEUBEN","NY",9
+"1663","Moderate","WASHINGTON","NY",8
+"1664","Normal","WASHINGTON","NY",7
+"1665","Severe","WAYNE","NY",4
+"1666","Moderate","WAYNE","NY",2
+"1667","Normal","WAYNE","NY",11
+"1668","Severe","WYOMING","NY",3
+"1669","Moderate","WYOMING","NY",4
+"1670","Normal","WYOMING","NY",9
+"1671","Severe","YATES","NY",3
+"1672","Moderate","YATES","NY",3
+"1673","Normal","YATES","NY",10
+"1674","Very severe","ADAMS","OH",1
+"1675","Severe","ADAMS","OH",2
+"1676","Moderate","ADAMS","OH",4
+"1677","Normal","ADAMS","OH",10
+"1678","Severe","ALLEN","OH",2
+"1679","Moderate","ALLEN","OH",9
+"1680","Normal","ALLEN","OH",6
+"1681","Severe","ASHLAND","OH",4
+"1682","Moderate","ASHLAND","OH",4
+"1683","Normal","ASHLAND","OH",8
+"1684","Severe","ASHTABULA","OH",3
+"1685","Moderate","ASHTABULA","OH",5
+"1686","Normal","ASHTABULA","OH",9
+"1687","Severe","ATHENS","OH",3
+"1688","Moderate","ATHENS","OH",5
+"1689","Normal","ATHENS","OH",9
+"1690","Severe","AUGLAIZE","OH",2
+"1691","Moderate","AUGLAIZE","OH",7
+"1692","Normal","AUGLAIZE","OH",8
+"1693","Very severe","BROWN","OH",1
+"1694","Severe","BROWN","OH",2
+"1695","Moderate","BROWN","OH",4
+"1696","Normal","BROWN","OH",10
+"1697","Very severe","BUTLER","OH",1
+"1698","Severe","BUTLER","OH",1
+"1699","Moderate","BUTLER","OH",6
+"1700","Normal","BUTLER","OH",9
+"1701","Severe","CARROLL","OH",4
+"1702","Moderate","CARROLL","OH",6
+"1703","Normal","CARROLL","OH",6
+"1704","Severe","CHAMPAIGN","OH",2
+"1705","Moderate","CHAMPAIGN","OH",5
+"1706","Normal","CHAMPAIGN","OH",10
+"1707","Severe","CLARK","OH",2
+"1708","Moderate","CLARK","OH",6
+"1709","Normal","CLARK","OH",9
+"1710","Very severe","CLERMONT","OH",1
+"1711","Severe","CLERMONT","OH",2
+"1712","Moderate","CLERMONT","OH",6
+"1713","Normal","CLERMONT","OH",7
+"1714","Severe","CLINTON","OH",3
+"1715","Moderate","CLINTON","OH",6
+"1716","Normal","CLINTON","OH",8
+"1717","Severe","COLUMBIANA","OH",4
+"1718","Moderate","COLUMBIANA","OH",5
+"1719","Normal","COLUMBIANA","OH",8
+"1720","Very severe","COSHOCTON","OH",1
+"1721","Severe","COSHOCTON","OH",1
+"1722","Moderate","COSHOCTON","OH",8
+"1723","Normal","COSHOCTON","OH",7
+"1724","Severe","CRAWFORD","OH",3
+"1725","Moderate","CRAWFORD","OH",7
+"1726","Normal","CRAWFORD","OH",7
+"1727","Severe","DARKE","OH",4
+"1728","Moderate","DARKE","OH",4
+"1729","Normal","DARKE","OH",9
+"1730","Very severe","DEFIANCE","OH",1
+"1731","Severe","DEFIANCE","OH",2
+"1732","Moderate","DEFIANCE","OH",7
+"1733","Normal","DEFIANCE","OH",7
+"1734","Severe","DELAWARE","OH",1
+"1735","Moderate","DELAWARE","OH",6
+"1736","Normal","DELAWARE","OH",10
+"1737","Severe","ERIE","OH",2
+"1738","Moderate","ERIE","OH",6
+"1739","Normal","ERIE","OH",8
+"1740","Very severe","FAIRFIELD","OH",1
+"1741","Severe","FAIRFIELD","OH",2
+"1742","Moderate","FAIRFIELD","OH",2
+"1743","Normal","FAIRFIELD","OH",12
+"1744","Severe","FAYETTE","OH",3
+"1745","Moderate","FAYETTE","OH",6
+"1746","Normal","FAYETTE","OH",7
+"1747","Severe","FRANKLIN","OH",1
+"1748","Moderate","FRANKLIN","OH",4
+"1749","Normal","FRANKLIN","OH",10
+"1750","Severe","FULTON","OH",3
+"1751","Moderate","FULTON","OH",6
+"1752","Normal","FULTON","OH",8
+"1753","Severe","GEAUGA","OH",4
+"1754","Moderate","GEAUGA","OH",2
+"1755","Normal","GEAUGA","OH",9
+"1756","Severe","GREENE","OH",3
+"1757","Moderate","GREENE","OH",5
+"1758","Normal","GREENE","OH",9
+"1759","Severe","GUERNSEY","OH",4
+"1760","Moderate","GUERNSEY","OH",5
+"1761","Normal","GUERNSEY","OH",7
+"1762","Very severe","HAMILTON","OH",1
+"1763","Severe","HAMILTON","OH",2
+"1764","Moderate","HAMILTON","OH",5
+"1765","Normal","HAMILTON","OH",8
+"1766","Severe","HANCOCK","OH",3
+"1767","Moderate","HANCOCK","OH",7
+"1768","Normal","HANCOCK","OH",7
+"1769","Severe","HARDIN","OH",3
+"1770","Moderate","HARDIN","OH",6
+"1771","Normal","HARDIN","OH",8
+"1772","Severe","HARRISON","OH",2
+"1773","Moderate","HARRISON","OH",9
+"1774","Normal","HARRISON","OH",4
+"1775","Severe","HENRY","OH",3
+"1776","Moderate","HENRY","OH",6
+"1777","Normal","HENRY","OH",8
+"1778","Severe","HIGHLAND","OH",3
+"1779","Moderate","HIGHLAND","OH",5
+"1780","Normal","HIGHLAND","OH",9
+"1781","Severe","HOCKING","OH",3
+"1782","Moderate","HOCKING","OH",5
+"1783","Normal","HOCKING","OH",8
+"1784","Severe","HOLMES","OH",2
+"1785","Moderate","HOLMES","OH",7
+"1786","Normal","HOLMES","OH",8
+"1787","Severe","HURON","OH",3
+"1788","Moderate","HURON","OH",5
+"1789","Normal","HURON","OH",9
+"1790","Severe","KNOX","OH",2
+"1791","Moderate","KNOX","OH",9
+"1792","Normal","KNOX","OH",6
+"1793","Severe","LICKING","OH",2
+"1794","Moderate","LICKING","OH",8
+"1795","Normal","LICKING","OH",7
+"1796","Severe","LOGAN","OH",2
+"1797","Moderate","LOGAN","OH",6
+"1798","Normal","LOGAN","OH",9
+"1799","Severe","LORAIN","OH",2
+"1800","Moderate","LORAIN","OH",6
+"1801","Normal","LORAIN","OH",9
+"1802","Severe","LUCAS","OH",3
+"1803","Moderate","LUCAS","OH",6
+"1804","Normal","LUCAS","OH",8
+"1805","Severe","MADISON","OH",2
+"1806","Moderate","MADISON","OH",4
+"1807","Normal","MADISON","OH",11
+"1808","Severe","MAHONING","OH",3
+"1809","Moderate","MAHONING","OH",4
+"1810","Normal","MAHONING","OH",10
+"1811","Very severe","MARION","OH",1
+"1812","Severe","MARION","OH",2
+"1813","Moderate","MARION","OH",6
+"1814","Normal","MARION","OH",8
+"1815","Severe","MEDINA","OH",3
+"1816","Moderate","MEDINA","OH",4
+"1817","Normal","MEDINA","OH",10
+"1818","Severe","MEIGS","OH",2
+"1819","Moderate","MEIGS","OH",7
+"1820","Normal","MEIGS","OH",6
+"1821","Severe","MERCER","OH",4
+"1822","Moderate","MERCER","OH",5
+"1823","Normal","MERCER","OH",8
+"1824","Severe","MIAMI","OH",3
+"1825","Moderate","MIAMI","OH",5
+"1826","Normal","MIAMI","OH",9
+"1827","Very severe","MONTGOMERY","OH",2
+"1828","Moderate","MONTGOMERY","OH",4
+"1829","Normal","MONTGOMERY","OH",11
+"1830","Severe","MORGAN","OH",4
+"1831","Moderate","MORGAN","OH",4
+"1832","Normal","MORGAN","OH",9
+"1833","Severe","MORROW","OH",2
+"1834","Moderate","MORROW","OH",6
+"1835","Normal","MORROW","OH",9
+"1836","Severe","MUSKINGUM","OH",3
+"1837","Moderate","MUSKINGUM","OH",7
+"1838","Normal","MUSKINGUM","OH",7
+"1839","Severe","OTTAWA","OH",2
+"1840","Moderate","OTTAWA","OH",7
+"1841","Normal","OTTAWA","OH",8
+"1842","Severe","PAULDING","OH",3
+"1843","Moderate","PAULDING","OH",8
+"1844","Normal","PAULDING","OH",6
+"1845","Severe","PERRY","OH",2
+"1846","Moderate","PERRY","OH",6
+"1847","Normal","PERRY","OH",7
+"1848","Severe","PICKAWAY","OH",3
+"1849","Moderate","PICKAWAY","OH",7
+"1850","Normal","PICKAWAY","OH",7
+"1851","Severe","PORTAGE","OH",3
+"1852","Moderate","PORTAGE","OH",4
+"1853","Normal","PORTAGE","OH",9
+"1854","Very severe","PREBLE","OH",2
+"1855","Severe","PREBLE","OH",1
+"1856","Moderate","PREBLE","OH",4
+"1857","Normal","PREBLE","OH",10
+"1858","Severe","PUTNAM","OH",3
+"1859","Moderate","PUTNAM","OH",8
+"1860","Normal","PUTNAM","OH",6
+"1861","Severe","RICHLAND","OH",2
+"1862","Moderate","RICHLAND","OH",7
+"1863","Normal","RICHLAND","OH",8
+"1864","Severe","ROSS","OH",2
+"1865","Moderate","ROSS","OH",5
+"1866","Normal","ROSS","OH",9
+"1867","Severe","SANDUSKY","OH",2
+"1868","Moderate","SANDUSKY","OH",7
+"1869","Normal","SANDUSKY","OH",8
+"1870","Very severe","SCIOTO","OH",2
+"1871","Severe","SCIOTO","OH",2
+"1872","Moderate","SCIOTO","OH",6
+"1873","Normal","SCIOTO","OH",6
+"1874","Severe","SENECA","OH",3
+"1875","Moderate","SENECA","OH",6
+"1876","Normal","SENECA","OH",8
+"1877","Severe","SHELBY","OH",2
+"1878","Moderate","SHELBY","OH",6
+"1879","Normal","SHELBY","OH",9
+"1880","Severe","STARK","OH",4
+"1881","Moderate","STARK","OH",7
+"1882","Normal","STARK","OH",5
+"1883","Severe","TRUMBULL","OH",1
+"1884","Moderate","TRUMBULL","OH",6
+"1885","Normal","TRUMBULL","OH",10
+"1886","Severe","TUSCARAWAS","OH",3
+"1887","Moderate","TUSCARAWAS","OH",7
+"1888","Normal","TUSCARAWAS","OH",7
+"1889","Severe","UNION","OH",1
+"1890","Moderate","UNION","OH",7
+"1891","Normal","UNION","OH",9
+"1892","Severe","VAN WERT","OH",2
+"1893","Moderate","VAN WERT","OH",8
+"1894","Normal","VAN WERT","OH",7
+"1895","Very severe","WARREN","OH",1
+"1896","Severe","WARREN","OH",1
+"1897","Moderate","WARREN","OH",8
+"1898","Normal","WARREN","OH",7
+"1899","Severe","WASHINGTON","OH",4
+"1900","Moderate","WASHINGTON","OH",5
+"1901","Normal","WASHINGTON","OH",8
+"1902","Severe","WAYNE","OH",4
+"1903","Moderate","WAYNE","OH",2
+"1904","Normal","WAYNE","OH",11
+"1905","Very severe","WILLIAMS","OH",1
+"1906","Severe","WILLIAMS","OH",2
+"1907","Moderate","WILLIAMS","OH",5
+"1908","Normal","WILLIAMS","OH",9
+"1909","Severe","WOOD","OH",4
+"1910","Moderate","WOOD","OH",6
+"1911","Normal","WOOD","OH",7
+"1912","Very severe","WYANDOT","OH",1
+"1913","Severe","WYANDOT","OH",3
+"1914","Moderate","WYANDOT","OH",5
+"1915","Normal","WYANDOT","OH",8
+"1916","Severe","CRAIG","OK",2
+"1917","Moderate","CRAIG","OK",7
+"1918","Normal","CRAIG","OK",6
+"1919","Very severe","MAYES","OK",1
+"1920","Severe","MAYES","OK",1
+"1921","Moderate","MAYES","OK",7
+"1922","Normal","MAYES","OK",7
+"1923","Very severe","NOBLE","OK",2
+"1924","Severe","NOBLE","OK",2
+"1925","Moderate","NOBLE","OK",4
+"1926","Normal","NOBLE","OK",7
+"1927","Very severe","OTTAWA","OK",1
+"1928","Severe","OTTAWA","OK",2
+"1929","Moderate","OTTAWA","OK",7
+"1930","Normal","OTTAWA","OK",6
+"1931","Very severe","POTTAWATOMIE","OK",1
+"1932","Severe","POTTAWATOMIE","OK",2
+"1933","Moderate","POTTAWATOMIE","OK",6
+"1934","Normal","POTTAWATOMIE","OK",8
+"1935","Severe","ADAMS","PA",4
+"1936","Moderate","ADAMS","PA",7
+"1937","Normal","ADAMS","PA",6
+"1938","Severe","ARMSTRONG","PA",2
+"1939","Moderate","ARMSTRONG","PA",8
+"1940","Normal","ARMSTRONG","PA",7
+"1941","Severe","BEAVER","PA",3
+"1942","Moderate","BEAVER","PA",7
+"1943","Normal","BEAVER","PA",5
+"1944","Severe","BEDFORD","PA",1
+"1945","Moderate","BEDFORD","PA",8
+"1946","Normal","BEDFORD","PA",7
+"1947","Severe","BLAIR","PA",2
+"1948","Moderate","BLAIR","PA",10
+"1949","Normal","BLAIR","PA",5
+"1950","Very severe","BUCKS","PA",1
+"1951","Severe","BUCKS","PA",4
+"1952","Moderate","BUCKS","PA",5
+"1953","Normal","BUCKS","PA",7
+"1954","Severe","BUTLER","PA",2
+"1955","Moderate","BUTLER","PA",7
+"1956","Normal","BUTLER","PA",8
+"1957","Severe","CAMBRIA","PA",2
+"1958","Moderate","CAMBRIA","PA",8
+"1959","Normal","CAMBRIA","PA",6
+"1960","Severe","CENTRE","PA",1
+"1961","Moderate","CENTRE","PA",9
+"1962","Normal","CENTRE","PA",7
+"1963","Severe","CHESTER","PA",3
+"1964","Moderate","CHESTER","PA",8
+"1965","Normal","CHESTER","PA",6
+"1966","Severe","CLARION","PA",2
+"1967","Moderate","CLARION","PA",7
+"1968","Normal","CLARION","PA",6
+"1969","Severe","CLEARFIELD","PA",2
+"1970","Moderate","CLEARFIELD","PA",8
+"1971","Normal","CLEARFIELD","PA",5
+"1972","Severe","COLUMBIA","PA",5
+"1973","Moderate","COLUMBIA","PA",3
+"1974","Normal","COLUMBIA","PA",8
+"1975","Severe","CRAWFORD","PA",2
+"1976","Moderate","CRAWFORD","PA",6
+"1977","Normal","CRAWFORD","PA",8
+"1978","Severe","CUMBERLAND","PA",3
+"1979","Moderate","CUMBERLAND","PA",8
+"1980","Normal","CUMBERLAND","PA",6
+"1981","Severe","DAUPHIN","PA",3
+"1982","Moderate","DAUPHIN","PA",5
+"1983","Normal","DAUPHIN","PA",7
+"1984","Severe","ELK","PA",3
+"1985","Moderate","ELK","PA",7
+"1986","Normal","ELK","PA",5
+"1987","Severe","ERIE","PA",2
+"1988","Moderate","ERIE","PA",7
+"1989","Normal","ERIE","PA",6
+"1990","Severe","FAYETTE","PA",2
+"1991","Moderate","FAYETTE","PA",6
+"1992","Normal","FAYETTE","PA",7
+"1993","Severe","FRANKLIN","PA",5
+"1994","Moderate","FRANKLIN","PA",6
+"1995","Normal","FRANKLIN","PA",6
+"1996","Severe","FULTON","PA",3
+"1997","Moderate","FULTON","PA",6
+"1998","Normal","FULTON","PA",7
+"1999","Severe","HUNTINGDON","PA",2
+"2000","Moderate","HUNTINGDON","PA",11
+"2001","Normal","HUNTINGDON","PA",4
+"2002","Severe","INDIANA","PA",2
+"2003","Moderate","INDIANA","PA",8
+"2004","Normal","INDIANA","PA",7
+"2005","Severe","JEFFERSON","PA",2
+"2006","Moderate","JEFFERSON","PA",7
+"2007","Normal","JEFFERSON","PA",6
+"2008","Severe","JUNIATA","PA",5
+"2009","Moderate","JUNIATA","PA",5
+"2010","Normal","JUNIATA","PA",7
+"2011","Severe","LANCASTER","PA",3
+"2012","Moderate","LANCASTER","PA",9
+"2013","Normal","LANCASTER","PA",5
+"2014","Severe","LAWRENCE","PA",1
+"2015","Moderate","LAWRENCE","PA",7
+"2016","Normal","LAWRENCE","PA",9
+"2017","Severe","LEBANON","PA",2
+"2018","Moderate","LEBANON","PA",7
+"2019","Normal","LEBANON","PA",8
+"2020","Very severe","LEHIGH","PA",1
+"2021","Severe","LEHIGH","PA",2
+"2022","Moderate","LEHIGH","PA",6
+"2023","Normal","LEHIGH","PA",8
+"2024","Severe","LUZERNE","PA",2
+"2025","Moderate","LUZERNE","PA",7
+"2026","Normal","LUZERNE","PA",6
+"2027","Severe","MERCER","PA",1
+"2028","Moderate","MERCER","PA",7
+"2029","Normal","MERCER","PA",9
+"2030","Severe","MIFFLIN","PA",2
+"2031","Moderate","MIFFLIN","PA",8
+"2032","Normal","MIFFLIN","PA",7
+"2033","Severe","NORTHAMPTON","PA",4
+"2034","Moderate","NORTHAMPTON","PA",5
+"2035","Normal","NORTHAMPTON","PA",7
+"2036","Severe","NORTHUMBERLAND","PA",5
+"2037","Moderate","NORTHUMBERLAND","PA",3
+"2038","Normal","NORTHUMBERLAND","PA",7
+"2039","Severe","PERRY","PA",3
+"2040","Moderate","PERRY","PA",8
+"2041","Normal","PERRY","PA",6
+"2042","Severe","SCHUYLKILL","PA",5
+"2043","Moderate","SCHUYLKILL","PA",4
+"2044","Normal","SCHUYLKILL","PA",8
+"2045","Severe","SNYDER","PA",5
+"2046","Moderate","SNYDER","PA",3
+"2047","Normal","SNYDER","PA",8
+"2048","Severe","SOMERSET","PA",1
+"2049","Moderate","SOMERSET","PA",7
+"2050","Normal","SOMERSET","PA",8
+"2051","Severe","TIOGA","PA",2
+"2052","Moderate","TIOGA","PA",9
+"2053","Normal","TIOGA","PA",4
+"2054","Very severe","UNION","PA",1
+"2055","Severe","UNION","PA",4
+"2056","Moderate","UNION","PA",4
+"2057","Normal","UNION","PA",8
+"2058","Severe","VENANGO","PA",3
+"2059","Moderate","VENANGO","PA",6
+"2060","Normal","VENANGO","PA",7
+"2061","Severe","WESTMORELAND","PA",1
+"2062","Moderate","WESTMORELAND","PA",5
+"2063","Normal","WESTMORELAND","PA",10
+"2064","Severe","YORK","PA",3
+"2065","Moderate","YORK","PA",7
+"2066","Normal","YORK","PA",7
+"2067","Very severe","ANDERSON","SC",1
+"2068","Severe","ANDERSON","SC",5
+"2069","Moderate","ANDERSON","SC",6
+"2070","Normal","ANDERSON","SC",4
+"2071","Very severe","CHESTERFIELD","SC",1
+"2072","Severe","CHESTERFIELD","SC",3
+"2073","Moderate","CHESTERFIELD","SC",6
+"2074","Normal","CHESTERFIELD","SC",6
+"2075","Severe","SALUDA","SC",7
+"2076","Moderate","SALUDA","SC",4
+"2077","Normal","SALUDA","SC",4
+"2078","Very severe","SPARTANBURG","SC",1
+"2079","Severe","SPARTANBURG","SC",4
+"2080","Moderate","SPARTANBURG","SC",5
+"2081","Normal","SPARTANBURG","SC",5
+"2082","Very severe","AURORA","SD",1
+"2083","Severe","AURORA","SD",3
+"2084","Moderate","AURORA","SD",4
+"2085","Normal","AURORA","SD",8
+"2086","Severe","BROWN","SD",2
+"2087","Moderate","BROWN","SD",6
+"2088","Normal","BROWN","SD",9
+"2089","Severe","DEUEL","SD",2
+"2090","Moderate","DEUEL","SD",8
+"2091","Normal","DEUEL","SD",5
+"2092","Very severe","DOUGLAS","SD",1
+"2093","Severe","DOUGLAS","SD",3
+"2094","Moderate","DOUGLAS","SD",5
+"2095","Normal","DOUGLAS","SD",8
+"2096","Severe","EDMUNDS","SD",2
+"2097","Moderate","EDMUNDS","SD",6
+"2098","Normal","EDMUNDS","SD",7
+"2099","Severe","FAULK","SD",2
+"2100","Moderate","FAULK","SD",7
+"2101","Normal","FAULK","SD",8
+"2102","Severe","GRANT","SD",3
+"2103","Moderate","GRANT","SD",7
+"2104","Normal","GRANT","SD",7
+"2105","Very severe","HAAKON","SD",2
+"2106","Severe","HAAKON","SD",4
+"2107","Moderate","HAAKON","SD",2
+"2108","Normal","HAAKON","SD",7
+"2109","Severe","HAND","SD",3
+"2110","Moderate","HAND","SD",3
+"2111","Normal","HAND","SD",11
+"2112","Very severe","HUTCHINSON","SD",1
+"2113","Severe","HUTCHINSON","SD",1
+"2114","Moderate","HUTCHINSON","SD",8
+"2115","Normal","HUTCHINSON","SD",7
+"2116","Severe","KINGSBURY","SD",2
+"2117","Moderate","KINGSBURY","SD",8
+"2118","Normal","KINGSBURY","SD",7
+"2119","Severe","LAKE","SD",3
+"2120","Moderate","LAKE","SD",4
+"2121","Normal","LAKE","SD",10
+"2122","Very severe","LINCOLN","SD",1
+"2123","Severe","LINCOLN","SD",2
+"2124","Moderate","LINCOLN","SD",7
+"2125","Normal","LINCOLN","SD",7
+"2126","Severe","MARSHALL","SD",2
+"2127","Moderate","MARSHALL","SD",6
+"2128","Normal","MARSHALL","SD",8
+"2129","Very severe","MCCOOK","SD",1
+"2130","Severe","MCCOOK","SD",2
+"2131","Moderate","MCCOOK","SD",6
+"2132","Normal","MCCOOK","SD",8
+"2133","Severe","MINER","SD",3
+"2134","Moderate","MINER","SD",6
+"2135","Normal","MINER","SD",6
+"2136","Very severe","MINNEHAHA","SD",1
+"2137","Severe","MINNEHAHA","SD",2
+"2138","Moderate","MINNEHAHA","SD",7
+"2139","Normal","MINNEHAHA","SD",7
+"2140","Severe","MOODY","SD",3
+"2141","Moderate","MOODY","SD",4
+"2142","Normal","MOODY","SD",10
+"2143","Severe","ROBERTS","SD",2
+"2144","Moderate","ROBERTS","SD",8
+"2145","Normal","ROBERTS","SD",7
+"2146","Very severe","TRIPP","SD",2
+"2147","Severe","TRIPP","SD",2
+"2148","Moderate","TRIPP","SD",4
+"2149","Normal","TRIPP","SD",9
+"2150","Severe","ZIEBACH","SD",3
+"2151","Moderate","ZIEBACH","SD",3
+"2152","Normal","ZIEBACH","SD",9
+"2153","Severe","BEDFORD","TN",2
+"2154","Moderate","BEDFORD","TN",9
+"2155","Normal","BEDFORD","TN",4
+"2156","Very severe","BLOUNT","TN",2
+"2157","Severe","BLOUNT","TN",1
+"2158","Moderate","BLOUNT","TN",9
+"2159","Normal","BLOUNT","TN",5
+"2160","Very severe","CANNON","TN",1
+"2161","Severe","CANNON","TN",2
+"2162","Moderate","CANNON","TN",6
+"2163","Normal","CANNON","TN",8
+"2164","Very severe","COFFEE","TN",1
+"2165","Severe","COFFEE","TN",1
+"2166","Moderate","COFFEE","TN",9
+"2167","Normal","COFFEE","TN",6
+"2168","Very severe","CUMBERLAND","TN",1
+"2169","Severe","CUMBERLAND","TN",2
+"2170","Moderate","CUMBERLAND","TN",8
+"2171","Normal","CUMBERLAND","TN",4
+"2172","Severe","FRANKLIN","TN",2
+"2173","Moderate","FRANKLIN","TN",9
+"2174","Normal","FRANKLIN","TN",6
+"2175","Very severe","GRAINGER","TN",1
+"2176","Severe","GRAINGER","TN",6
+"2177","Moderate","GRAINGER","TN",3
+"2178","Normal","GRAINGER","TN",5
+"2179","Very severe","GREENE","TN",1
+"2180","Severe","GREENE","TN",2
+"2181","Moderate","GREENE","TN",7
+"2182","Normal","GREENE","TN",5
+"2183","Very severe","HENDERSON","TN",1
+"2184","Severe","HENDERSON","TN",1
+"2185","Moderate","HENDERSON","TN",4
+"2186","Normal","HENDERSON","TN",9
+"2187","Very severe","HUMPHREYS","TN",1
+"2188","Severe","HUMPHREYS","TN",1
+"2189","Moderate","HUMPHREYS","TN",5
+"2190","Normal","HUMPHREYS","TN",9
+"2191","Very severe","LAWRENCE","TN",1
+"2192","Severe","LAWRENCE","TN",3
+"2193","Moderate","LAWRENCE","TN",4
+"2194","Normal","LAWRENCE","TN",9
+"2195","Severe","MACON","TN",4
+"2196","Moderate","MACON","TN",6
+"2197","Normal","MACON","TN",7
+"2198","Very severe","MARION","TN",1
+"2199","Severe","MARION","TN",4
+"2200","Moderate","MARION","TN",3
+"2201","Normal","MARION","TN",9
+"2202","Very severe","MAURY","TN",1
+"2203","Severe","MAURY","TN",1
+"2204","Moderate","MAURY","TN",5
+"2205","Normal","MAURY","TN",9
+"2206","Very severe","MEIGS","TN",2
+"2207","Severe","MEIGS","TN",3
+"2208","Moderate","MEIGS","TN",6
+"2209","Normal","MEIGS","TN",5
+"2210","Very severe","MONTGOMERY","TN",1
+"2211","Moderate","MONTGOMERY","TN",8
+"2212","Normal","MONTGOMERY","TN",6
+"2213","Very severe","PERRY","TN",1
+"2214","Severe","PERRY","TN",1
+"2215","Moderate","PERRY","TN",6
+"2216","Normal","PERRY","TN",8
+"2217","Very severe","ROBERTSON","TN",1
+"2218","Moderate","ROBERTSON","TN",8
+"2219","Normal","ROBERTSON","TN",8
+"2220","Very severe","RUTHERFORD","TN",1
+"2221","Severe","RUTHERFORD","TN",1
+"2222","Moderate","RUTHERFORD","TN",6
+"2223","Normal","RUTHERFORD","TN",9
+"2224","Very severe","SHELBY","TN",1
+"2225","Severe","SHELBY","TN",2
+"2226","Moderate","SHELBY","TN",6
+"2227","Normal","SHELBY","TN",6
+"2228","Very severe","SUMNER","TN",1
+"2229","Moderate","SUMNER","TN",8
+"2230","Normal","SUMNER","TN",7
+"2231","Very severe","WARREN","TN",1
+"2232","Moderate","WARREN","TN",8
+"2233","Normal","WARREN","TN",6
+"2234","Very severe","WAYNE","TN",1
+"2235","Severe","WAYNE","TN",2
+"2236","Moderate","WAYNE","TN",4
+"2237","Normal","WAYNE","TN",8
+"2238","Very severe","WHITE","TN",1
+"2239","Severe","WHITE","TN",1
+"2240","Moderate","WHITE","TN",7
+"2241","Normal","WHITE","TN",7
+"2242","Very severe","BELL","TX",1
+"2243","Severe","BELL","TX",3
+"2244","Moderate","BELL","TX",5
+"2245","Normal","BELL","TX",8
+"2246","Very severe","CALDWELL","TX",1
+"2247","Moderate","CALDWELL","TX",9
+"2248","Normal","CALDWELL","TX",5
+"2249","Very severe","CALHOUN","TX",2
+"2250","Severe","CALHOUN","TX",1
+"2251","Moderate","CALHOUN","TX",10
+"2252","Normal","CALHOUN","TX",4
+"2253","Very severe","COLLIN","TX",2
+"2254","Severe","COLLIN","TX",1
+"2255","Moderate","COLLIN","TX",7
+"2256","Normal","COLLIN","TX",6
+"2257","Very severe","DE WITT","TX",2
+"2258","Severe","DE WITT","TX",2
+"2259","Moderate","DE WITT","TX",8
+"2260","Normal","DE WITT","TX",4
+"2261","Very severe","ELLIS","TX",1
+"2262","Severe","ELLIS","TX",2
+"2263","Moderate","ELLIS","TX",8
+"2264","Normal","ELLIS","TX",6
+"2265","Very severe","FALLS","TX",1
+"2266","Severe","FALLS","TX",2
+"2267","Moderate","FALLS","TX",8
+"2268","Normal","FALLS","TX",6
+"2269","Very severe","FAYETTE","TX",2
+"2270","Severe","FAYETTE","TX",2
+"2271","Moderate","FAYETTE","TX",6
+"2272","Normal","FAYETTE","TX",7
+"2273","Very severe","GRAYSON","TX",2
+"2274","Severe","GRAYSON","TX",2
+"2275","Moderate","GRAYSON","TX",6
+"2276","Normal","GRAYSON","TX",7
+"2277","Very severe","GUADALUPE","TX",1
+"2278","Severe","GUADALUPE","TX",1
+"2279","Moderate","GUADALUPE","TX",8
+"2280","Normal","GUADALUPE","TX",6
+"2281","Very severe","HILL","TX",1
+"2282","Severe","HILL","TX",1
+"2283","Moderate","HILL","TX",9
+"2284","Normal","HILL","TX",6
+"2285","Very severe","JACKSON","TX",2
+"2286","Severe","JACKSON","TX",2
+"2287","Moderate","JACKSON","TX",7
+"2288","Normal","JACKSON","TX",6
+"2289","Severe","JOHNSON","TX",2
+"2290","Moderate","JOHNSON","TX",6
+"2291","Normal","JOHNSON","TX",7
+"2292","Severe","LIMESTONE","TX",3
+"2293","Moderate","LIMESTONE","TX",5
+"2294","Normal","LIMESTONE","TX",7
+"2295","Very severe","MATAGORDA","TX",2
+"2296","Severe","MATAGORDA","TX",1
+"2297","Moderate","MATAGORDA","TX",7
+"2298","Normal","MATAGORDA","TX",7
+"2299","Very severe","MCLENNAN","TX",1
+"2300","Severe","MCLENNAN","TX",2
+"2301","Moderate","MCLENNAN","TX",7
+"2302","Normal","MCLENNAN","TX",7
+"2303","Very severe","MILAM","TX",2
+"2304","Severe","MILAM","TX",1
+"2305","Moderate","MILAM","TX",6
+"2306","Normal","MILAM","TX",8
+"2307","Very severe","NAVARRO","TX",1
+"2308","Severe","NAVARRO","TX",1
+"2309","Moderate","NAVARRO","TX",9
+"2310","Normal","NAVARRO","TX",6
+"2311","Very severe","NUECES","TX",1
+"2312","Severe","NUECES","TX",3
+"2313","Moderate","NUECES","TX",8
+"2314","Normal","NUECES","TX",3
+"2315","Very severe","TRAVIS","TX",2
+"2316","Severe","TRAVIS","TX",1
+"2317","Moderate","TRAVIS","TX",8
+"2318","Normal","TRAVIS","TX",6
+"2319","Very severe","VICTORIA","TX",2
+"2320","Severe","VICTORIA","TX",2
+"2321","Moderate","VICTORIA","TX",9
+"2322","Normal","VICTORIA","TX",4
+"2323","Very severe","WILLIAMSON","TX",1
+"2324","Severe","WILLIAMSON","TX",2
+"2325","Moderate","WILLIAMSON","TX",6
+"2326","Normal","WILLIAMSON","TX",8
+"2327","Severe","CHARLOTTE","VA",3
+"2328","Moderate","CHARLOTTE","VA",5
+"2329","Normal","CHARLOTTE","VA",8
+"2330","Severe","CHESAPEAKE CITY","VA",3
+"2331","Moderate","CHESAPEAKE CITY","VA",7
+"2332","Normal","CHESAPEAKE CITY","VA",7
+"2333","Severe","CLARKE","VA",4
+"2334","Moderate","CLARKE","VA",3
+"2335","Normal","CLARKE","VA",8
+"2336","Severe","CULPEPER","VA",4
+"2337","Moderate","CULPEPER","VA",4
+"2338","Normal","CULPEPER","VA",9
+"2339","Very severe","ESSEX","VA",2
+"2340","Severe","ESSEX","VA",2
+"2341","Moderate","ESSEX","VA",4
+"2342","Normal","ESSEX","VA",9
+"2343","Severe","FAUQUIER","VA",4
+"2344","Moderate","FAUQUIER","VA",4
+"2345","Normal","FAUQUIER","VA",9
+"2346","Very severe","FREDERICK","VA",1
+"2347","Severe","FREDERICK","VA",1
+"2348","Moderate","FREDERICK","VA",5
+"2349","Normal","FREDERICK","VA",8
+"2350","Very severe","GLOUCESTER","VA",1
+"2351","Severe","GLOUCESTER","VA",2
+"2352","Moderate","GLOUCESTER","VA",4
+"2353","Normal","GLOUCESTER","VA",9
+"2354","Severe","GREENSVILLE","VA",5
+"2355","Moderate","GREENSVILLE","VA",4
+"2356","Normal","GREENSVILLE","VA",8
+"2357","Very severe","LOUDOUN","VA",1
+"2358","Severe","LOUDOUN","VA",3
+"2359","Moderate","LOUDOUN","VA",6
+"2360","Normal","LOUDOUN","VA",5
+"2361","Severe","LOUISA","VA",1
+"2362","Moderate","LOUISA","VA",8
+"2363","Normal","LOUISA","VA",7
+"2364","Severe","MADISON","VA",4
+"2365","Moderate","MADISON","VA",5
+"2366","Normal","MADISON","VA",8
+"2367","Very severe","MIDDLESEX","VA",2
+"2368","Moderate","MIDDLESEX","VA",6
+"2369","Normal","MIDDLESEX","VA",9
+"2370","Very severe","NORTHUMBERLAND","VA",1
+"2371","Severe","NORTHUMBERLAND","VA",3
+"2372","Moderate","NORTHUMBERLAND","VA",4
+"2373","Normal","NORTHUMBERLAND","VA",9
+"2374","Severe","ORANGE","VA",5
+"2375","Moderate","ORANGE","VA",4
+"2376","Normal","ORANGE","VA",8
+"2377","Very severe","RICHMOND","VA",2
+"2378","Severe","RICHMOND","VA",2
+"2379","Moderate","RICHMOND","VA",3
+"2380","Normal","RICHMOND","VA",9
+"2381","Severe","ROCKBRIDGE","VA",3
+"2382","Moderate","ROCKBRIDGE","VA",5
+"2383","Normal","ROCKBRIDGE","VA",7
+"2384","Very severe","SPOTSYLVANIA","VA",1
+"2385","Severe","SPOTSYLVANIA","VA",2
+"2386","Moderate","SPOTSYLVANIA","VA",6
+"2387","Normal","SPOTSYLVANIA","VA",8
+"2388","Very severe","STAFFORD","VA",1
+"2389","Severe","STAFFORD","VA",3
+"2390","Moderate","STAFFORD","VA",6
+"2391","Normal","STAFFORD","VA",7
+"2392","Very severe","WESTMORELAND","VA",3
+"2393","Severe","WESTMORELAND","VA",1
+"2394","Moderate","WESTMORELAND","VA",4
+"2395","Normal","WESTMORELAND","VA",9
+"2396","Moderate","BROWN","WI",11
+"2397","Normal","BROWN","WI",6
+"2398","Severe","BUFFALO","WI",2
+"2399","Moderate","BUFFALO","WI",5
+"2400","Normal","BUFFALO","WI",10
+"2401","Severe","BURNETT","WI",4
+"2402","Moderate","BURNETT","WI",6
+"2403","Normal","BURNETT","WI",7
+"2404","Moderate","CALUMET","WI",8
+"2405","Normal","CALUMET","WI",8
+"2406","Severe","CHIPPEWA","WI",3
+"2407","Moderate","CHIPPEWA","WI",6
+"2408","Normal","CHIPPEWA","WI",8
+"2409","Severe","CLARK","WI",3
+"2410","Moderate","CLARK","WI",5
+"2411","Normal","CLARK","WI",8
+"2412","Very severe","COLUMBIA","WI",1
+"2413","Moderate","COLUMBIA","WI",6
+"2414","Normal","COLUMBIA","WI",10
+"2415","Very severe","CRAWFORD","WI",1
+"2416","Severe","CRAWFORD","WI",1
+"2417","Moderate","CRAWFORD","WI",3
+"2418","Normal","CRAWFORD","WI",12
+"2419","Very severe","DANE","WI",1
+"2420","Severe","DANE","WI",2
+"2421","Moderate","DANE","WI",4
+"2422","Normal","DANE","WI",10
+"2423","Severe","DODGE","WI",1
+"2424","Moderate","DODGE","WI",5
+"2425","Normal","DODGE","WI",11
+"2426","Severe","DOOR","WI",4
+"2427","Moderate","DOOR","WI",5
+"2428","Normal","DOOR","WI",6
+"2429","Severe","EAU CLAIRE","WI",3
+"2430","Moderate","EAU CLAIRE","WI",5
+"2431","Normal","EAU CLAIRE","WI",9
+"2432","Severe","FOND DU LAC","WI",2
+"2433","Moderate","FOND DU LAC","WI",5
+"2434","Normal","FOND DU LAC","WI",10
+"2435","Very severe","GRANT","WI",1
+"2436","Moderate","GRANT","WI",6
+"2437","Normal","GRANT","WI",10
+"2438","Severe","JUNEAU","WI",1
+"2439","Moderate","JUNEAU","WI",8
+"2440","Normal","JUNEAU","WI",8
+"2441","Severe","KENOSHA","WI",2
+"2442","Moderate","KENOSHA","WI",3
+"2443","Normal","KENOSHA","WI",12
+"2444","Severe","KEWAUNEE","WI",2
+"2445","Moderate","KEWAUNEE","WI",8
+"2446","Normal","KEWAUNEE","WI",7
+"2447","Very severe","LAFAYETTE","WI",1
+"2448","Moderate","LAFAYETTE","WI",5
+"2449","Normal","LAFAYETTE","WI",11
+"2450","Very severe","LINCOLN","WI",1
+"2451","Severe","LINCOLN","WI",1
+"2452","Moderate","LINCOLN","WI",8
+"2453","Normal","LINCOLN","WI",6
+"2454","Severe","MANITOWOC","WI",1
+"2455","Moderate","MANITOWOC","WI",7
+"2456","Normal","MANITOWOC","WI",9
+"2457","Severe","MARATHON","WI",4
+"2458","Moderate","MARATHON","WI",5
+"2459","Normal","MARATHON","WI",8
+"2460","Severe","MARINETTE","WI",3
+"2461","Moderate","MARINETTE","WI",7
+"2462","Normal","MARINETTE","WI",6
+"2463","Severe","MONROE","WI",2
+"2464","Moderate","MONROE","WI",6
+"2465","Normal","MONROE","WI",9
+"2466","Severe","OCONTO","WI",3
+"2467","Moderate","OCONTO","WI",5
+"2468","Normal","OCONTO","WI",9
+"2469","Moderate","OUTAGAMIE","WI",10
+"2470","Normal","OUTAGAMIE","WI",7
+"2471","Moderate","PIERCE","WI",6
+"2472","Normal","PIERCE","WI",11
+"2473","Severe","POLK","WI",4
+"2474","Moderate","POLK","WI",6
+"2475","Normal","POLK","WI",7
+"2476","Severe","RACINE","WI",2
+"2477","Moderate","RACINE","WI",4
+"2478","Normal","RACINE","WI",11
+"2479","Severe","RICHLAND","WI",1
+"2480","Moderate","RICHLAND","WI",7
+"2481","Normal","RICHLAND","WI",9
+"2482","Severe","RUSK","WI",2
+"2483","Moderate","RUSK","WI",6
+"2484","Normal","RUSK","WI",9
+"2485","Severe","SAWYER","WI",3
+"2486","Moderate","SAWYER","WI",4
+"2487","Normal","SAWYER","WI",8
+"2488","Severe","SHAWANO","WI",3
+"2489","Moderate","SHAWANO","WI",8
+"2490","Normal","SHAWANO","WI",6
+"2491","Very severe","SHEBOYGAN","WI",1
+"2492","Moderate","SHEBOYGAN","WI",7
+"2493","Normal","SHEBOYGAN","WI",9
+"2494","Severe","TAYLOR","WI",3
+"2495","Moderate","TAYLOR","WI",5
+"2496","Normal","TAYLOR","WI",7
+"2497","Severe","TREMPEALEAU","WI",2
+"2498","Moderate","TREMPEALEAU","WI",7
+"2499","Normal","TREMPEALEAU","WI",8
+"2500","Severe","VERNON","WI",2
+"2501","Moderate","VERNON","WI",5
+"2502","Normal","VERNON","WI",10
+"2503","Severe","WALWORTH","WI",2
+"2504","Moderate","WALWORTH","WI",3
+"2505","Normal","WALWORTH","WI",12
+"2506","Very severe","WASHINGTON","WI",1
+"2507","Moderate","WASHINGTON","WI",5
+"2508","Normal","WASHINGTON","WI",11
+"2509","Severe","WINNEBAGO","WI",1
+"2510","Moderate","WINNEBAGO","WI",8
+"2511","Normal","WINNEBAGO","WI",7
+"2512","Severe","WOOD","WI",3
+"2513","Moderate","WOOD","WI",5
+"2514","Normal","WOOD","WI",9
+"2515","Very severe","BERKELEY","WV",1
+"2516","Severe","BERKELEY","WV",2
+"2517","Moderate","BERKELEY","WV",7
+"2518","Normal","BERKELEY","WV",7
+"2519","Severe","HARDY","WV",1
+"2520","Moderate","HARDY","WV",6
+"2521","Normal","HARDY","WV",9
+"2522","Very severe","JEFFERSON","WV",1
+"2523","Severe","JEFFERSON","WV",2
+"2524","Moderate","JEFFERSON","WV",7
+"2525","Normal","JEFFERSON","WV",7
+"2526","Severe","MASON","WV",2
+"2527","Moderate","MASON","WV",6
+"2528","Normal","MASON","WV",9
+"2529","Severe","PRESTON","WV",2
+"2530","Moderate","PRESTON","WV",5
+"2531","Normal","PRESTON","WV",9
