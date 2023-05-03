@@ -1,0 +1,177 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+# setup
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rnassqs)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(reshape2)
+library(caret)
+library(parallel)
+library(readr)
+api_key <- as.character(read.csv("code/NASS_API_key.csv", header = F)[1,1])       # api key
+
+# Call in all corn yield data via NASS API ####
+
+nassqs_auth(key = api_key)
+
+```
+
+# Pull data from NASS 
+
+1. Specify years to pull yield data from nass 'SURVEY' and 'CENSUS'
+
+```{r yield}
+# Specify the range of years across which you want to collect data
+survey_years <- as.list(2000:2022)  
+
+census_years <- as.list(c(1997,2002,2007,2012, 2017))
+
+# Specify the parameters to pull
+params.name <- c("source_desc",           "sector_desc",           "group_desc",           
+                 "commodity_desc",        "class_desc",            "prodn_practice_desc",  
+                 "util_practice_desc",    "statisticcat_desc",     "unit_desc",            
+                 "short_desc",            "domain_desc",           "domaincat_desc")
+
+```
+
+2. Pull survey parameter lists for different crops: CORN, SOYBEANS, WHEAT
+
+```{r list}
+
+# ----- Survey -----#
+d <- plyr::ldply(survey_years, function(x){
+  
+  params <- list(
+    year = x,
+    agg_level_desc = "COUNTY", 
+    source_desc = "SURVEY",  # change source to source_desc
+    domain_desc = "TOTAL"
+  )
+    
+  return(
+    nassqs_yields(params) 
+  )
+}) 
+
+# commodity_desc
+
+# [1] "BARLEY"         "BEANS"          "CANOLA"         "CHICKPEAS"      "CORN"          
+# [6] "COTTON"         "FLAXSEED"       "HAY"            "HAY & HAYLAGE"  "LENTILS"       
+#[11] "MUSTARD"        "OATS"           "PEANUTS"        "PEAS"           "RICE"          
+#[16] "RYE"            "SAFFLOWER"      "SORGHUM"        "SOYBEANS"       "SUGARBEETS"    
+#[21] "SUGARCANE"      "SUNFLOWER"      "TOBACCO"        "WHEAT"          "APPLES"        
+#[26] "PEACHES"        "POTATOES"       "SWEET CORN"     "SWEET POTATOES" "TOMATOES"      
+#[31] "PECANS"         "PEPPERS"  
+
+# SOYBEANS
+d.soy <- d %>%
+    dplyr::filter(commodity_desc == 'SOYBEANS') 
+
+soy <-list()
+
+for (i in seq_along(params.name)) {
+  
+  value <- unique(d.soy[i])
+  
+  soy[[i]] <- value
+
+}
+
+soy
+
+# WHEAT
+d.wheat <- d %>%
+    dplyr::filter(commodity_desc == 'WHEAT' ) 
+
+wheat <-list()
+
+for (i in seq_along(params.name)) {
+  
+  value <- unique(d.wheat[i])
+  
+  wheat[[i]] <- value
+
+}
+
+wheat
+
+```
+
+3. Pull CENSUS parameter lists for different crops: CORN, SOYBEANS, WHEAT
+
+```{r list}
+
+# ----- CENSUS -----#
+
+# SOYBEANS
+d.soy.c <- plyr::ldply(census_years, function(x){
+  
+  params <- list(
+    commodity_desc = "SOYBEANS",
+    year = x,
+    agg_level_desc = "COUNTY", 
+    source_desc = "CENSUS",  # change source to source_desc
+    domain_desc = "TOTAL"
+  )
+    
+  return(
+    nassqs(params) 
+  )
+}) 
+
+soy.c <-list()
+
+for (i in seq_along(params.name)) {
+  
+  value <- unique(d.soy.c[i])
+  
+  soy.c[[i]] <- value
+
+}
+
+soy.c
+
+# WHEAT
+d.wheat.c <- plyr::ldply(census_years, function(x){
+  
+  params <- list(
+    commodity_desc = "WHEAT",
+    year = x,
+    agg_level_desc = "COUNTY", 
+    source_desc = "CENSUS",  # change source to source_desc
+    domain_desc = "TOTAL"
+  )
+    
+  return(
+    nassqs(params) 
+  )
+}) 
+
+wheat.c <-list()
+
+for (i in seq_along(params.name)) {
+  
+  value <- unique(d.wheat.c[i])
+  
+  wheat.c[[i]] <- value
+
+}
+
+wheat.c
+
+# combine
+
+params.list <- list(soy.survey=soy, soy.census=soy.c, wheat.survey = wheat, wheat.census = wheat.c)
+
+saveRDS(params.list, file = 'data/soil/soybean_wheat_survey_census_params_list.rds')
+
+```
