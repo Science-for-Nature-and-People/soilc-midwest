@@ -1,0 +1,306 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-05-05"
+---
+
+
+# setup
+```{r setup, include=FALSE}
+#knitr::opts_chunk$set(echo = TRUE)
+
+library(rnassqs)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(reshape2)
+library(caret)
+library(parallel)
+library(readr)
+library(purrr)
+api_key <- as.character(read.csv("/home/shared/Kane_data/nass_key.csv", header = F)[1,1])       # api key
+
+# Call in all corn yield data via NASS API ####
+
+nassqs_auth(key = api_key)
+
+```
+
+# Pull data from NASS   ##### OR YOU CAN SKIP THIS AND GO TO LINE 200 "d.1 <- read_rds(...)" ##### as of 3/29/23
+
+1. Specify years and pull yield data from nass 'SURVEY'
+
+```{r yield}
+# Specify the range of years across which you want to collect data
+years <- as.list(2000:2022)  
+# ML: changed to 2000:2022 to include more data points
+# 2000-2022: 38847 obs
+# 2000-2016: 30108 obs
+
+# BM: Future self, when update with newer data: consider which years to use to minimize 
+# the confounding effect of improvements in maize genetics, i.e., shift the
+# 16 year window forward, drop oldest records.
+
+## Yields
+
+d.wheat <- plyr::ldply(years, function(x){
+  
+  params <- list(
+    commodity_desc = "WHEAT",
+    util_practice_desc = "ALL UTILIZATION PRACTICES",
+    year = x,
+    agg_level_desc = "COUNTY", 
+    source_desc = "SURVEY",  # change source to source_desc
+    domain_desc = "TOTAL"
+  )
+  
+  return(
+    nassqs_yields(params) %>%
+      filter(
+        prodn_practice_desc == "ALL PRODUCTION PRACTICES",
+        county_ansi != ""
+      ) %>%
+      mutate(
+        GEOID = paste(state_ansi, county_ansi, sep = ""),
+        Yield_mg_ha = as.numeric(Value) * 0.0628
+      ) %>%
+      dplyr::select(
+        year,
+        GEOID,
+        state_alpha,
+        state_ansi,
+        county_ansi,
+        county_name,
+        Yield_mg_ha, 
+        short_desc
+      )
+  )
+})
+
+#ATR addition: write the pulled nass data as it's own data file so we no longer have to pull it every time
+#write_rds(d.wheat, path = "/home/aysha/Kane_data/nass_wheat_050523.rds")
+```
+
+2. Calculate irrigation acres from census data and create a filter
+Note: we can skip this step if we'd like to keep data from irrigated land (Aysha)
+Meng: I added the 2017 new census year
+
+short_desc = "WHEAT - ACRES HARVESTED","WHEAT, SPRING, (EXCL DURUM) - ACRES HARVESTED", "WHEAT, SPRING, DURUM - ACRES HARVESTED", "WHEAT, WINTER - ACRES HARVESTED"
+
+
+short_desc for irrigated = "WHEAT, IRRIGATED - ACRES HARVESTED", "WHEAT, SPRING, (EXCL DURUM), IRRIGATED - ACRES HARVESTED", "WHEAT, SPRING, DURUM, IRRIGATED - ACRES HARVESTED", "WHEAT, WINTER, IRRIGATED - ACRES HARVESTED"
+
+```{r}
+unique(d.wheat$short_desc)
+d.wheat %>% count(short_desc, sort = TRUE)
+```
+
+ATR: For some reason running the code filtering for short_desc other than just WHEAT sends an error, so I removed the filtering by short_desc, added it to the resulting data frame and subset from there, I also removed the NAs, but it looks like he also does that in the next step, so this is unnecessary. I did the same thing with the irrigated 
+
+```{r irrgation}
+### Total acres
+census.years <- as.list(c(1997,2002,2007,2012, 2017))
+
+d.wheat.acres.total <- plyr::ldply(census.years, function(x) {
+  
+  params <- list(
+    commodity_desc = "WHEAT",
+    util_practice_desc = "ALL UTILIZATION PRACTICES",
+    source_desc = "CENSUS",
+    year = x,
+    agg_level_desc = "COUNTY",
+    domain_desc = "TOTAL"
+  )
+  
+  return(
+    nassqs(params) %>%
+      filter(county_ansi != "") %>%
+      mutate(
+        GEOID = paste(state_ansi, county_ansi, sep = ""),
+        Acres_total = as.numeric(gsub(
+          Value, pattern = ",", replacement = ""
+        ))
+      ) %>%
+      dplyr::select(
+        year,
+        GEOID,
+        state_alpha,
+        state_ansi,
+        county_ansi,
+        county_name,
+        Acres_total, 
+        short_desc
+      )
+  )
+})
+
+
+
+```
+```{r}
+unique(d.wheat.acres.total$short_desc)
+d.wheat.acres.total %>% count(short_desc, sort = TRUE)
+d.wheat.acres.total <- d.wheat.acres.total %>% 
+  subset(short_desc == "WHEAT, WINTER - ACRES HARVESTED") %>% drop_na(Acres_total)
+d.wheat.acres.total
+```
+
+
+```{r}
+##### IRRIGATED ACRES
+
+d.wheat.acres.irrigated <- plyr::ldply(census.years, function(x) {
+  
+  params <- list(
+    commodity_desc = "WHEAT",
+    util_practice_desc = "ALL UTILIZATION PRACTICES",
+    source_desc = "CENSUS",
+    year = x,
+    agg_level_desc = "COUNTY",
+    domain_desc = "TOTAL"
+  )
+  
+  return(
+    nassqs(params) %>%
+      filter(county_ansi != "") %>%
+      mutate(
+        GEOID = paste(state_ansi, county_ansi, sep = ""),
+        Acres_irrigated = as.numeric(gsub(
+          Value, pattern = ",", replacement = ""
+        ))
+      ) %>%
+      dplyr::select(
+        year,
+        GEOID,
+        state_alpha,
+        state_ansi,
+        county_ansi,
+        county_name,
+        Acres_irrigated,
+        short_desc
+      )
+  )
+})
+
+```
+
+```{r}
+unique(d.wheat.acres.irrigated$short_desc)
+d.wheat.acres.irrigated %>% count(short_desc, sort = TRUE)
+d.wheat.acres.irrigated <- d.wheat.acres.irrigated %>% 
+  subset(short_desc == "WHEAT, WINTER, IRRIGATED - ACRES HARVESTED") %>% 
+  drop_na(Acres_irrigated)
+d.wheat.acres.irrigated
+```
+
+
+
+```{r}
+##
+
+d.wheat.acres <- d.wheat.acres.total %>%
+  left_join(d.wheat.acres.irrigated) %>%
+  filter(GEOID %in% d.wheat$GEOID,!is.na(Acres_total)) %>%
+  replace_na(list(Acres_irrigated = 0)) %>%
+  mutate(Percent_irrigated = Acres_irrigated / Acres_total) %>%
+  group_by(GEOID) %>%
+  summarize(
+    Mean.percent.irrigated = mean(Percent_irrigated),
+    SD.percent.irrigated = sd(Percent_irrigated)
+  )
+
+## FILTER BASED ON IRRIGATED ACRES DATA
+
+# Create filter to select counties that are 5 percent or less irrigated, 
+# choice of 5 percent based on dsitribution of percentages, vast majority of counties are 5 percent or less irrigated
+
+d.wheat.irrgiated.filter <- d.wheat.acres %>%
+  filter(Mean.percent.irrigated <= 0.05) %>%
+  filter(SD.percent.irrigated <= 0.01) 
+
+
+```
+
+
+3. filter yield data based on the availability of year numbers
+ML: Instead of removing data from irrigated land, a new variable 'irrigated' was created:
+irrigated == 'irrigated' means more than 95% of acres of a county were irrigated
+irrigated == 'rainfed' means less than 5% of acres of a county were irrigated
+
+```{r filter}
+
+
+
+
+d.wheat.15 <- d.wheat %>%
+  mutate(irrigated = case_when(GEOID %in% d.wheat.irrgiated.filter$GEOID ~ 'rainfed',
+                               TRUE ~ 'irrigated')) %>%
+  group_by(GEOID) %>%
+  add_count(GEOID) %>%
+  filter(n >= 15) %>% # Filter to >=15 wheat yield observations #ATR: This is where he resricts the acres to 15 years of corn
+  ungroup(.) %>%
+  dplyr::select(-n) #48692 obs of 8 variables
+
+```
+
+4. extract de-trended yield
+
+Note: used gamloess method to model the relationship between yield and year. 
+The model was run for different counties
+
+```{r detrend}
+#install.packages("tictoc")
+library(tictoc) # this is to record the running time
+
+mod <- function(df){
+  df <- df
+  
+  grid <- expand.grid(span = seq(0.3, 0.5, len = 5), degree = seq(0,1, len=2) )
+  
+  grid.control <- trainControl(
+    method = "repeatedcv",
+    number = 10,
+    repeats = 5,
+    search = "grid")
+
+  train_loess <- caret::train(Yield_mg_ha ~ year, 
+                       method = "gamLoess",
+                       tuneGrid=grid,
+                       trControl=grid.control,
+                       data = df)
+  
+  df$Detrend_resids <- as.numeric(residuals(train_loess))
+  df$Detrend_predictions <- as.numeric(predict(train_loess))
+  return(df)
+}
+
+
+```
+
+```{r}
+#---------------n = 15---------------#
+d.wheat.15$year <- as.integer(d.wheat.15$year) # year needs to be converted to integer to run the regression model in the train function above
+
+# Dan's code using mclapply function
+d_wheat.list_15 <- split(d.wheat.15, f = d.wheat.15$GEOID) # ML: it creates a list based on county
+
+tic()
+d_wheat.list_15.1 <- mclapply(X = d_wheat.list_15,FUN = mod, mc.cores = 28) 
+toc()
+# 161.737 sec elapsed
+
+d.wheat.15 <- dplyr::bind_rows(d_wheat.list_15.1)
+
+d.wheat.15.1 <- d.wheat.15 %>%
+  group_by(GEOID) %>%
+  mutate(County_avg_yield = mean(Yield_mg_ha)) %>%
+  ungroup(.) %>%
+  mutate(Yield_decomp_add = County_avg_yield+Detrend_resids,  # de-trended yield 
+         Yield_decomp_mult = Yield_mg_ha/Detrend_predictions) # yield anomaly
+
+# saved the data to a rds file to be used for downstream processing
+write_rds(d.wheat.15.1, file = "/home/aysha/Kane_data/winter_wheat_yield_2000-2022_w_irrigation_n_15.rds")
+
+
+```
+
