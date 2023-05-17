@@ -28,9 +28,13 @@ counties <- c(unique(read_rds("data/corn_yield_2000-2022_w_irrigation_n_15.rds")
 #URL_by_county <- lapply(counties, function(x) paste("http://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=",x,"&startdate=1/1/2017&enddate=12/31/2017&statisticsType=2", sep = ""))
 #########################################################################################################
 
-#Updated URL
 #lapply command applies a function over a list: lapply(list,fxn,...)
-URL_by_county <- lapply(counties, function(x) paste("http://usdmdataservices.unl.edu/api/CountyStatistics/GetDSCI?aoi=",x,"&startdate=1/1/2000&enddate=12/31/2022&statisticsType=1", sep = "")) 
+#Chellie line, pulling DSCI 
+URL_by_county <- lapply(counties, function(x) paste("https://usdmdataservices.unl.edu/api/CountyStatistics/GetDSCI?aoi=",x,"&startdate=1/1/2000&enddate=12/31/2022&statisticsType=1", sep = "")) 
+
+#Pulling percent of area in each drought category, what Kane et al pulled originally
+URL_by_county <- lapply(counties, function(x) paste("https://usdmdataservices.unl.edu/api/CountyStatistics/GetDroughtSeverityStatisticsByAreaPercent?aoi=",x,"&startdate=1/1/2000&enddate=12/31/2022&statisticsType=2", sep = ""))
+
 # Retrieve data via API and resort into dataframe
 
 #Adjust cores as necessary
@@ -40,7 +44,10 @@ data_by_county <- mclapply(mc.cores = 30, URL_by_county, function(x) httr::conte
 #ldply command is command that, for each element of a list, applies a function, then combined result into a data frame
 data_by_county_2 <- ldply(data_by_county, function(x) ldply(x, function(x) data.frame(t(unlist(x)))))
 
-# Save raw data
+#trial save
+#save(list = c("data_by_county_2"), file = "data/drought_by_county_trial.RData")
 
-save(list = c("data_by_county_2"), file = "data/drought_by_county.RData")
+
+# Save raw data
+save(list = c("data_by_county_2"), file = "data/drought_by_county_current.RData")
 
