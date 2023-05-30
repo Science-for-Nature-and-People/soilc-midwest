@@ -1,0 +1,216 @@
+---
+title: "gSSURGO soy part 1"
+output: html_document
+date: "2023-05-30"
+---
+
+
+## setup
+
+```{r setup}
+
+library(tidyverse)
+library(sf)
+library(raster)
+library(tigris)
+library(fuzzyjoin)
+library(parallel)
+library(aqp)
+library(fasterize)
+library(readr)
+
+```
+
+## create a list of gdb files
+
+works if each state is a gdb folder in the directory
+works if the whole dataset is in a single gdb folder
+
+```{r gdb}
+
+# Create list of .gdb files
+gdb_list <- list.files("/home/shared/Kane_data/October 2022 gSSURGO by State/", full.names = T, pattern = "gdb")
+# ML: the gSSURGO CONUS data is too large to be able to read; will try downloading files by states and read by states
+
+# Create a series of objects that will later be used to filter and clip gSSURGO data----
+
+# Call in FIPS information and codes for counties used in analysis
+nass_soy <- readRDS("/home/aysha/Kane_data/soy_yield_2000-2022_w_irrigation_n_15.rds")
+
+data(fips_codes) #ML: this is a dataset from the package tigris
+fips_codes #ML: 3247 observations
+fips_codes <- fips_codes %>%
+  mutate(CH.GEOID = paste(state,county_code, sep = ""), 
+         GEOID = paste(state_code,county_code, sep = "")) %>%
+  filter(GEOID %in% unique(nass_soy$GEOID)) %>%  ## ML: used the new 2000-2022 data file
+  mutate(county = str_remove(county, " County")) # ML: 1640 observations
+
+# Call in 'sacatalog' table from gSSURGO
+# While the CH.GEOID column matches the FIPS code for most counties, 
+# in some states, counties are combined into the same soil survey area
+# This step is to match CH.GEOID to FIPS codes
+
+# ML: this step goes to each state gdb folder 
+
+sa_catalogs <- plyr::ldply(gdb_list, function(i) sf::st_read(dsn = i, layer = "sacatalog")) %>%
+  dplyr::select(-tabularversion, -tabcertstatus, -tabcertstatusdesc, -tabnasisexportdate, -tabularverest, -tabularversion, 
+                -sacatalogkey, -saversion, -saverest, -fgdcmetadata) %>%
+  mutate(state =str_sub(areasymbol, end = 2),
+         areaname = str_remove(areaname, pattern = '\\s*,.*'))
+
+sa_subset <- sa_catalogs %>%
+  regex_right_join(fips_codes %>%
+                     anti_join(sa_catalogs, by = c(CH.GEOID = "areasymbol")), 
+                   by = c(state = "state", areaname = "county")) %>%
+  #Drop Harford County survey area and Boyd/Greenup County in KY
+  filter(!areasymbol == "MD600",
+         !areasymbol == "TN610",
+         !areaname == "Boyd and Greenup Counties") %>%
+  full_join(sa_catalogs %>%
+              inner_join(fips_codes, by = c(areasymbol = "CH.GEOID"))) %>%
+  dplyr::select(-CH.GEOID, -state.y) %>%
+  rename("state" = state.x) # ATR 837 observations
+
+```
+
+
+## extract data (data is saved in this folder all_states_gssurgo)
+
+```{r data}
+# the Valu1 table is a compilation of 58 pre-summarized or "ready to map" attributes
+library(tictoc)
+
+#tic()
+
+x <- split(gdb_list, ceiling(seq_along(gdb_list)/5)) # divide list to combine every 5 states
+
+# loop through the list
+
+for (n in 1:length(x)) {
+  
+gdb_list <- x[[n]]
+  
+all_states_gssurgo <- parallel::mclapply(mc.cores = 28, gdb_list, function(i){
+  
+  # Merge MUPOLYGON and valu1 tables to start
+  temp1 <-  sf::st_read(dsn = i, layer = "MUPOLYGON") %>%
+    left_join(sf::st_read(dsn = i, layer = "Valu1"),
+              by = c("MUKEY" = "mukey")) 
+  #17.89 sec elapsed
+  
+  # Depth slices from chorizon table
+  temp2 <- sf::st_read(i, layer = "chorizon")
+  depths(temp2) <- cokey ~ hzdept_r + hzdepb_r
+  
+  temp2 <- slab(temp2, 
+                fm= cokey ~ sandtotal_r+silttotal_r+claytotal_r+
+                  om_r+awc_r+cec7_r+ph1to1h2o_r+wfifteenbar_r, 
+                slab.structure=c(0, 30), 
+                slab.fun=mean, na.rm=TRUE)  %>%
+    reshape2::dcast(., cokey + bottom ~ variable, value.var = 'value') %>%
+    rename_all(.funs = function(x) paste("SSURGO", x, sep = "_")) %>%
+    dplyr::select(-SSURGO_bottom)  
+  #7.73 sec elapsed
+ 
+  # Component table
+  temp3 <- sf::st_read(i, layer = "component") %>%
+    dplyr::select(comppct_r, taxorder, cokey, mukey,majcompflag) 
+  
+  # Join component and horizon data and take weighted averages for each map unit
+  temp4 <- temp3 %>%
+    left_join(temp2, by = c("cokey"="SSURGO_cokey")) %>%
+    group_by(mukey) %>%
+    mutate(order = taxorder[which(majcompflag %in% "Yes")[1]]) %>%
+    summarize(clay = weighted.mean(SSURGO_claytotal_r, w = comppct_r, na.rm = TRUE),
+              sand = weighted.mean(SSURGO_sandtotal_r, w = comppct_r, na.rm = TRUE),
+              silt = weighted.mean(SSURGO_silttotal_r, w = comppct_r, na.rm = TRUE),
+              om = weighted.mean(SSURGO_om_r, w = comppct_r, na.rm = TRUE),
+              awc = weighted.mean(SSURGO_awc_r, w = comppct_r, na.rm = TRUE),
+              cec = weighted.mean(SSURGO_cec7_r, w = comppct_r, na.rm = TRUE),
+              ph = weighted.mean(SSURGO_ph1to1h2o_r, w = comppct_r, na.rm = TRUE),
+              fifteenbar = weighted.mean(SSURGO_wfifteenbar_r, w = comppct_r, na.rm = TRUE),
+              order = unique(order)) %>%
+    janitor::clean_names(.)
+  
+  temp4[is.na(temp4)] <- NA
+
+  # Join temp4 and temp1 dataframes together to match aggregated component data to mapunits
+  
+  temp5 <- temp1 %>%
+    dplyr::select(AREASYMBOL, MUSYM, MUKEY, aws0_30, soc0_30, droughty) %>%
+    #janitor::clean_names(.) %>% 
+    #ML: this step is trying to make names consistent and unique, but it gives a break sf object and creates the internal error (can't find 'agr' columns) when renaming in the next step; disable this will not generate the error
+    rename(c("aws"="aws0_30","soc"="soc0_30")) %>%
+    left_join(temp4, by =c("MUKEY" = "mukey")) # ML: added by =c("MUKEY" = "mukey")
+  
+  return(temp5)
+})
+
+write_rds(all_states_gssurgo, 
+        file = paste0("/home/aysha/Kane_data/all_states_gssurgo/all_states_gssurgo_soy_n_15_part",n,".rds"))
+
+
+rm(all_states_gssurgo)
+gc()
+
+}
+
+#toc()
+
+
+```
+
+
+# Collapse list of sf features into one object, then split it into a list based on county code
+
+ML: divided into two steps (or the server will crash due to RAM)
+
+## 1. first save county data to the hard drive 
+
+```{r list}
+#list gssurgo files in the folder
+file_list <- list.files(path = '/home/aysha/Kane_data/all_states_gssurgo/','rds',full.names = TRUE)
+
+for (i in 1:length(file_list)) {
+
+all_states_gssurgo <- readRDS(
+  paste0("~/Kane_data/all_states_gssurgo/all_states_gssurgo_soy_n_15_part",i,".rds"))
+
+all_counties_gssurgo <- data.table::rbindlist(all_states_gssurgo) %>%  
+  filter(AREASYMBOL %in% sa_subset$areasymbol) %>% # ML: all captital letters
+  left_join(sa_subset, by = c("AREASYMBOL" = "areasymbol")) %>%
+  dplyr::rename(areasymbol = AREASYMBOL)
+
+write_rds(all_counties_gssurgo, 
+          file = paste0("~/Kane_data/all_counties_gssurgo/all_counties_gssurgo_soy_part",i,".rds"))
+
+rm(all_states_gssurgo)
+
+gc()
+
+}
+
+```
+
+## 2. then split to counties data 
+
+```{r counties}
+
+#list gssurgo files in the folder
+file_list <- list.files(path = '/home/aysha/Kane_data/all_counties_gssurgo/','rds',full.names = TRUE)
+
+for (i in 1:length(file_list)) {
+
+all_counties_gssurgo <- read_rds(file = paste0("/home/aysha/Kane_data/all_counties_gssurgo/all_counties_gssurgo_soy_part",i,".rds"))
+
+mclapply(mc.cores = 4, unique(all_counties_gssurgo$GEOID), FUN = function(x){
+ write_rds(all_counties_gssurgo[all_counties_gssurgo$GEOID == x,], 
+           file = paste("~/Kane_data/county_gssurgo_gdbs/GEOID_", x, ".rds", sep = ""))
+})
+
+rm(all_counties_gssurgo)
+gc()
+
+}
+
+```
