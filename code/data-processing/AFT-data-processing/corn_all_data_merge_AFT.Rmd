@@ -1,0 +1,79 @@
+---
+title: "Merge yield and soil data"
+author: "ML"
+date: "2023-04-25"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(sf)
+library(tigris)
+library(tidyverse)
+library(lme4)
+library(mgcv)
+#library(itsadug)
+#library(reghelper)
+library(caret)
+library(parallel)
+library(dplyr)
+library(stringr)
+```
+
+# Read in data 
+
+```{r data}
+# Yield data
+yield <- read_rds('data/AFT-data/corn_yield_2000-2022_w_irrigation_n_15.rds')
+
+#gssurgo soil data
+soil <- read_rds('data/AFT-data/corn_gssurgo.soil.stats_n_15_filter_om10.rds')
+
+```
+
+# Merge datasets
+
+```{r merge}
+# Merge all data frames
+all_data <-yield %>% 
+  left_join(soil, by = 'GEOID') 
+
+# Define new variables
+all_data.1 <- all_data %>%
+  group_by(GEOID) %>%
+  filter(!any(Yield_mg_ha == 0)) %>%
+  ungroup(.) %>%
+  filter(cell_kept_perc90 == 'Y', #ML: remove counties with >10% cells removed due to high om
+    !is.na(ssurgo_soc_filter_mean), 
+         #!is.na(summer_spei), 
+         ssurgo_om_filter_mean < 10, # Remove super high OM county, must be soil processing error
+         ssurgo_clay_filter_mean > 1) %>% # Remove very low clay, high sand county (PINE, MN), must be soil processing error
+  distinct(.) %>%
+  dplyr::select(year:Yield_decomp_mult,ssurgo_soc_filter_mean:ssurgo_order_filter_mode) %>%
+  dplyr::rename_with(~str_remove(.,'_filter')) %>% # ML: use the filtered data and rename
+  mutate(GEOID = as.factor(GEOID),
+         ssurgo_silt_clay_median = ssurgo_silt_median+ssurgo_clay_median,
+         ssurgo_silt_clay_mean = ssurgo_silt_mean+ssurgo_clay_mean,
+         ssurgo_h = 10^(-1*(ssurgo_ph_mean)),
+         ssurgo_h_square = (ssurgo_h^2))
+
+saveRDS(all_data.1, "data/AFT-data/corn_all_data_n15_om10_AFT.rds")
+
+```
+
+# Standardize soil variables following Dan Kane et al., method in the dataframe (didn't run)
+
+```{r stan}
+scale.2sd <- function(x){
+  (x-mean(x))/(2*sd(x))
+}
+
+all.data.stan <- all_data.1 %>%
+  mutate_at(.vars = vars(c(14:39)),.funs = function(x) {if(is.numeric(x)) as.vector(scale.2sd(x)) else x})
+
+saveRDS(all.data.stan, "data/AFT-data/corn_all_data_stan_n15_om10_AFT.rds")
+
+```
