@@ -21,6 +21,9 @@ library(caret)
 library(parallel)
 library(dplyr)
 library(stringr)
+library(ggplot2)
+library(ggpubr)
+library(readr)
 ```
 
 # Read in data 
@@ -44,7 +47,7 @@ all_data <-yield %>%
 # Define new variables
 all_data.1 <- all_data %>%
   group_by(GEOID) %>%
-  filter(!any(Yield_mg_ha == 0)) %>%
+  filter(!any(Yield_mg_ha == 0)) %>% # filter out counties with no yield data
   ungroup(.) %>%
   filter(cell_kept_perc90 == 'Y', #ML: remove counties with >10% cells removed due to high om
     !is.na(ssurgo_soc_filter_mean), 
@@ -64,7 +67,7 @@ saveRDS(all_data.1, "data/AFT-data/corn_all_data_n15_om10_AFT.rds")
 
 ```
 
-# Standardize soil variables following Dan Kane et al., method in the dataframe (didn't run)
+# (didn't run) Standardize soil variables following Dan Kane et al., method in the dataframe 
 
 ```{r stan}
 scale.2sd <- function(x){
@@ -74,6 +77,56 @@ scale.2sd <- function(x){
 all.data.stan <- all_data.1 %>%
   mutate_at(.vars = vars(c(14:39)),.funs = function(x) {if(is.numeric(x)) as.vector(scale.2sd(x)) else x})
 
-saveRDS(all.data.stan, "data/AFT-data/corn_all_data_stan_n15_om10_AFT.rds")
+#saveRDS(all.data.stan, "data/AFT-data/corn_all_data_stan_n15_om10_AFT.rds")
+
+```
+
+# explore data using ggplots 
+
+```{r check}
+all_data <- read_rds('data/AFT-data/corn_all_data_n15_om10_AFT.rds')
+
+rainfed <- all_data %>% filter(irrigated == 'rainfed')
+
+#-----yield_SOM relationship ----####
+# all data
+ggplot(data = rainfed,aes(x = ssurgo_om_mean, y = Yield_decomp_add)) +
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  stat_regline_equation() #+
+  #scale_y_continuous(limits = c(0,17))
+
+# by state
+ggplot(data = rainfed, aes(x = ssurgo_om_mean, y = Yield_decomp_add)) +
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  facet_wrap(~state_alpha) +
+  stat_regline_equation() #+
+  #scale_y_continuous(limits = c(0,17))
+
+#----ggplot highlight target state----#
+library(gghighlight)
+ggplot(data = rainfed, aes(x = ssurgo_om_mean, y = Yield_decomp_add)) +
+  geom_point() +
+  gghighlight(state_alpha == 'PA')
+  
+
+#----check OM range of each state----#
+
+om_range <- rainfed %>%
+  group_by(state_alpha) %>%
+  reframe(om_range = range(ssurgo_om_mean)) %>%
+  mutate(range = rep(c('min','max'),27)) 
+
+ggplot(data = om_range, aes(x = om_range, y = state_alpha, group = state_alpha)) +
+  geom_line()
+
+yield_range <- rainfed %>%
+  group_by(state_alpha) %>%
+  reframe(yield_range = range(Yield_decomp_add)) %>%
+  mutate(range = rep(c('min','max'),27)) 
+
+ggplot(data = yield_range, aes(x = yield_range, y = state_alpha, group = state_alpha)) +
+  geom_line()
 
 ```
